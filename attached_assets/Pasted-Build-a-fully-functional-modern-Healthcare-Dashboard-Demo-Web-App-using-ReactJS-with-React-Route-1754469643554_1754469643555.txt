@@ -1,0 +1,396 @@
+Build a fully functional, modern Healthcare Dashboard Demo Web App using:
+
+ReactJS (with React Router)
+
+Tailwind CSS
+
+Firebase (Authentication, Firestore, Storage)
+
+Material Icons or @mui/icons-material
+
+Chart.js or Recharts for graph visualizations
+
+💡 The entire app must support working CRUD operations for every user role. All buttons, forms, pages, and workflows must perform real actions and persist data using Firebase Firestore/Storage.
+
+🧑‍⚕ 1. MODERN LANDING PAGE (Home.jsx)
+A professional, modern SaaS-style landing page including:
+
+Hero Section
+
+Background image of healthcare theme
+
+Title: “Smarter Healthcare. For You and Your Family.”
+
+CTA Buttons:
+
+“Get Started” → scroll to Features
+
+“Go to Dashboard” → navigate to /login
+
+Plans Section
+
+Display 2 pricing cards:
+
+Personal Plan: ₹1000/year – 1 user
+
+Family Plan: ₹2500/year – add & manage family members
+
+Highlight features for each plan
+
+Features Section
+
+Grid-based layout showing:
+
+AI Health Report Analysis
+
+Dose Tracking System
+
+Secure Report Upload
+
+Prescription Management
+
+Family Member Profiles
+
+Role-Based Access
+
+AI-based Recommendations & Alerts
+
+Next Appointment Date Scheduling
+
+Integrated Healthcare Chatbot
+
+How It Works
+
+Show step-by-step:
+
+Sign Up
+
+Choose Role (Patient, Doctor, Lab)
+
+Upload/View Reports
+
+Use AI Tools
+
+Track Dosage & Appointments
+
+Chat with Healthcare Bot
+
+Footer
+
+About | Contact | Privacy | Terms
+
+✅ All routing should be powered by react-router-dom.
+
+🔐 2. AUTHENTICATION FLOW
+Firebase Auth with Email/Password
+
+Preload Firestore with 3 users:
+
+patient@example.com – role: "patient"
+
+doctor@example.com – role: "doctor"
+
+lab@example.com – role: "lab"
+
+Redirect users to their respective dashboard after login using role-based navigation.
+
+✅ Auth must persist across refresh and logout should redirect to /login.
+
+📂 3. DASHBOARDS BY ROLE
+✅ PATIENT DASHBOARD /dashboard/patient
+Features:
+
+Uploaded Reports Viewer (Read)
+
+Show all reports from Firestore (reports) filtered by logged-in user
+
+Preview/download from Firebase Storage
+
+Doctor Prescriptions Viewer (Read)
+
+Display all relevant prescriptions from Firestore (prescriptions)
+
+AI Report Analysis (See Section 4 below)
+
+Dose Tracking System (Full CRUD)
+
+Add, view, edit, delete, and mark doses
+
+Firebase collection: doses
+
+Fields: doseName, member, time/date, status (taken/not)
+
+Show calendar or table view
+
+Family Member Management (Full CRUD)
+
+Firebase collection: family_members
+
+Add, edit, delete members
+
+View and manage reports/doses for each
+
+Dosage Reminders & Alerts
+
+Push or in-app notifications for upcoming doses or missed doses
+
+Visual alerts on dashboard and optionally via email or SMS integration (mocked)
+
+Next Appointment Management
+
+Add/view/edit upcoming appointment dates
+
+Show countdown or calendar view for next appointment
+
+Firebase collection: appointments
+
+Fields: patientID, doctorID, date/time, purpose, status
+
+Healthcare Chatbot
+
+Integrated chat widget on dashboard
+
+Provide service-related assistance (appointment scheduling, dosage queries, report explanations)
+
+Simple AI-powered or rule-based chatbot with mock responses for demo
+
+Accessible anytime on dashboard for patient support
+
+✅ DOCTOR DASHBOARD /dashboard/doctor
+Features:
+
+Patient List Viewer
+
+Query all patients from users where role = "patient"
+
+View Patient Reports
+
+Read reports from reports based on selected patient
+
+Create Prescription (Create)
+
+Form: patient email, diagnosis, medication, notes
+
+Stored in prescriptions
+
+Suggest Lab Tests (Update)
+
+Add test suggestion into suggestions collection
+
+Manage Appointments
+
+View and update patient appointments
+
+Confirm, reschedule, or cancel appointments
+
+Chat with Patients via Chatbot Backend Interface
+
+Respond to patient chatbot queries or escalate to doctor
+
+✅ LAB DASHBOARD /dashboard/lab
+Features:
+
+Upload Reports (Create)
+
+Form: patient email, report title, upload file
+
+File stored in Firebase Storage
+
+Metadata stored in Firestore reports
+
+Manage Reports (Full CRUD)
+
+View list of uploaded reports
+
+Edit (title/notes), delete
+
+🧠 4. AI HEALTH REPORT ANALYSIS (Mocked but Rich)
+Component: /components/AIAnalysis.jsx
+Trigger: On report click, open AI Analysis modal or page
+
+Mock AI-generated content must include:
+
+Report Summary Section
+
+Summary of uploaded health report
+
+Key values (BP, Sugar, Cholesterol, etc.)
+
+Highlight abnormalities in red
+
+Table format for detailed readings
+
+Insight Section
+
+“What this report means” – medical insight
+
+“Why this may be happening” – lifestyle causes
+
+“What to do next” – recommendations
+
+“What food to eat/avoid” – diet tips
+
+Graph & Chart Section
+
+Use Chart.js or Recharts
+
+Show:
+
+Health trends over time (e.g., sugar/BP over last 6 reports)
+
+Pie chart for condition distribution (e.g., normal/high levels)
+
+Bar chart: Symptoms vs. Severity
+
+Mock data format (stored in Firestore or static)
+
+Data Table Analysis
+
+Tabular view of:
+
+Lab readings
+
+Range (normal/high/critical)
+
+Interpretation
+
+Recommendation Card
+
+Tailwind card layout with AI suggestions including:
+
+Personalized dosage recommendations
+
+Trend analysis for readings to watch
+
+Alerts for potential health risks based on trends
+
+CTA: “Ask Doctor” → sends question to doctor dashboard (optional)
+
+✅ All AI data can be mocked but structured realistically.
+✅ Graphs must render with sample values and allow future real AI integration.
+✅ Data should be scrollable and clearly sectioned with headings.
+
+💊 5. DOSE TRACKING SYSTEM
+Component to manage personal or family doses:
+
+CRUD operations:
+
+Add Dose: name, date, time, member
+
+Edit/Delete Dose
+
+Mark as Taken/Not Taken (toggle)
+
+Status color badges:
+
+Green = Taken
+
+Red = Missed
+
+Views:
+
+Daily/Weekly list
+
+Optional calendar (react-calendar)
+
+Enhancements:
+
+Real-time reminder alerts for doses using local notifications or service workers
+
+Dosage tracking history with reports on adherence
+
+Integration with AI recommendations for dosage adjustments
+
+📅 6. NEXT APPOINTMENT MANAGEMENT
+Component for patients and doctors to:
+
+Schedule new appointments
+
+View upcoming appointments
+
+Edit or cancel appointments
+
+Notifications and reminders for upcoming appointments
+
+Firebase collection: appointments with fields for userIDs, date/time, status, purpose
+
+Calendar or list view of appointments
+
+🤖 7. INTEGRATED HEALTHCARE CHATBOT
+Chatbot widget accessible on all dashboards
+
+Provide assistance on:
+
+Service-related queries (e.g., how to upload reports, dosage instructions)
+
+Appointment scheduling and reminders
+
+Basic AI-powered answers (mocked for demo)
+
+Ability to escalate queries to doctors or support team
+
+Firebase-powered message storage (optional)
+
+📁 8. FIREBASE COLLECTION STRUCTURE (Updated)
+users: userID, email, role, plan
+
+reports: reportID, userID, title, fileURL, notes
+
+prescriptions: doctorID, patientID, diagnosis, medication, timestamp
+
+suggestions: doctorID, patientID, testName, reason
+
+family_members: userID, name, age, relation
+
+doses: userID, memberName, doseName, time/date, status
+
+ai_insights: reportID, values, insights, food, graphs (optional)
+
+appointments: appointmentID, patientID, doctorID, dateTime, purpose, status
+
+chatbot_messages: userID, message, timestamp, sender (patient/doctor/bot) (optional)
+
+Firebase Storage:
+
+Path: /reports/{userID}/{filename}
+
+Firebase Rules:
+
+Patients only access their data
+
+Doctors access prescriptions, reports, appointments, and chatbot messages
+
+Labs can only upload & manage reports
+
+🛠 9. STACK + DESIGN REQUIREMENTS
+ReactJS + Tailwind CSS
+
+Material Icons or MUI
+
+React Router DOM
+
+Firebase (Auth, Firestore, Storage)
+
+Chart.js or Recharts (graphs)
+
+All buttons and UI must be fully functional
+
+Responsive and accessible UI/UX
+
+🎯 FINAL GOAL
+Create a production-level Healthcare Dashboard Demo with:
+
+✅ Fully designed modern Landing Page
+✅ Role-based login and routing
+✅ Firebase-powered Auth and Firestore CRUD
+✅ Functional dashboards for all 3 roles
+✅ Fully working dose tracker with reminders & alerts
+✅ AI health report analysis with detailed insights and trend charts
+✅ Next Appointment date management with notifications
+✅ Integrated healthcare chatbot for service assistance
+✅ Uploads, downloads, views of reports
+✅ Responsive across all devices
+✅ Every button, feature, and screen working in real time
+
+💡 Keep all code modular and follow naming best practices.
+💡 Mock AI logic is fine, but it must appear real, insightful, and rich in detail.
