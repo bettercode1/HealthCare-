@@ -1,44 +1,48 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import PatientDashboard from './PatientDashboard';
 import DoctorDashboard from './DoctorDashboard';
 import LabDashboard from './LabDashboard';
 
 const DashboardContent: React.FC = () => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
 
   if (!userData) return null;
 
   return (
     <section className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
         
         {/* Welcome Header */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Welcome back!</h1>
-              <p className="text-gray-600">Here's your health overview for today</p>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{t('welcomeBack')}</h1>
+              <p className="text-gray-600 truncate">{t('healthOverview')}</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 flex-shrink-0">
               <div className="text-right">
-                <p className="text-sm text-gray-500">Last login</p>
-                <p className="font-medium">{new Date().toLocaleDateString()}</p>
+                <p className="text-sm text-gray-500">{t('lastLogin')}</p>
+                <p className="font-medium text-sm sm:text-base">{new Date().toLocaleDateString()}</p>
               </div>
               <div 
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white flex-shrink-0"
                 style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
               >
-                <span className="material-icons">person</span>
+                <span className="material-icons text-lg sm:text-xl">person</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Role-based Dashboard Content */}
-        {userData.role === 'patient' && <PatientDashboard />}
-        {userData.role === 'doctor' && <DoctorDashboard />}
-        {userData.role === 'lab' && <LabDashboard />}
+        <div className="overflow-x-hidden">
+          {userData.role === 'patient' && <PatientDashboard />}
+          {userData.role === 'doctor' && <DoctorDashboard />}
+          {userData.role === 'lab' && <LabDashboard />}
+        </div>
 
       </div>
     </section>

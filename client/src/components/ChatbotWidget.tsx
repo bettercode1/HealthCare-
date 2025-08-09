@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,7 @@ const ChatbotWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const { userData } = useAuth();
+  const { t } = useTranslation();
   
   const { data: messages, add: addMessage } = useFirestore<Message>('chat_messages',
     userData ? [{ field: 'userId', operator: '==', value: userData.id }] : undefined
@@ -57,19 +59,19 @@ const ChatbotWidget: React.FC = () => {
     const msg = userMessage.toLowerCase();
     
     if (msg.includes('upload') || msg.includes('report')) {
-      return "To upload a medical report, click on 'Upload Report' in your dashboard. You can upload PDF, JPG, or PNG files up to 10MB.";
+      return t('botResponseUpload');
     } else if (msg.includes('dose') || msg.includes('medication')) {
-      return "You can track your medications in the 'Today's Doses' section. Set reminders and mark doses as taken to maintain your schedule.";
+      return t('botResponseDose');
     } else if (msg.includes('appointment')) {
-      return "To schedule an appointment, use the 'Appointments' section in your dashboard. You can view, reschedule, or cancel existing appointments.";
+      return t('botResponseAppointment');
     } else if (msg.includes('family')) {
-      return "You can add and manage family members in the 'Family Members' section. Each member can have their own medication schedule and health records.";
+      return t('botResponseFamily');
     } else if (msg.includes('ai') || msg.includes('analysis')) {
-      return "Our AI analysis provides insights from your medical reports including health trends, risk factors, and personalized recommendations based on your data.";
+      return t('botResponseAi');
     } else if (msg.includes('hello') || msg.includes('hi')) {
-      return "Hello! I'm your healthcare assistant. I can help you with uploading reports, managing medications, scheduling appointments, and understanding your health data.";
+      return t('botResponseHello');
     } else {
-      return "I'm here to help with your healthcare questions. You can ask me about uploading reports, managing medications, scheduling appointments, or managing family health profiles.";
+      return t('botResponseDefault');
     }
   };
 
@@ -105,11 +107,11 @@ const ChatbotWidget: React.FC = () => {
           <CardHeader className="text-white rounded-t-xl" style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}>
             <CardTitle className="flex items-center space-x-2 text-sm">
               <span className="material-icons">support_agent</span>
-              <span>Healthcare Assistant</span>
+              <span>{t('healthcareAssistant')}</span>
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="p-0 h-80">
+          <CardContent className="p-0">
             <div className="flex flex-col h-full">
               <div className="flex-1 p-4 overflow-y-auto space-y-3">
                 {/* Welcome message */}
@@ -122,7 +124,7 @@ const ChatbotWidget: React.FC = () => {
                       <span className="material-icons text-sm">smart_toy</span>
                     </div>
                     <div className="bg-gray-100 rounded-lg p-3 max-w-64">
-                      <p className="text-sm text-gray-800">Hi! I'm your healthcare assistant. How can I help you today?</p>
+                      <p className="text-sm text-gray-800">{t('botWelcomeMessage')}</p>
                     </div>
                   </div>
                 )}
@@ -161,7 +163,7 @@ const ChatbotWidget: React.FC = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Type your message..."
+                    placeholder={t('typeYourMessage')}
                     className="text-sm"
                   />
                   <Button 

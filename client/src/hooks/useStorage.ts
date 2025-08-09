@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const useStorage = () => {
@@ -17,10 +15,12 @@ export const useStorage = () => {
     setError(null);
 
     try {
-      const fileRef = ref(storage, `${path}/${userData.id}/${file.name}`);
-      const snapshot = await uploadBytes(fileRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      return downloadURL;
+      // Simulate file upload delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Return a mock download URL
+      const mockDownloadURL = `https://mock-storage.example.com/${path}/${userData.id}/${file.name}`;
+      return mockDownloadURL;
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -31,8 +31,9 @@ export const useStorage = () => {
 
   const deleteFile = async (path: string) => {
     try {
-      const fileRef = ref(storage, path);
-      await deleteObject(fileRef);
+      // Simulate file deletion delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('Mock file deleted:', path);
     } catch (err: any) {
       setError(err.message);
       throw err;

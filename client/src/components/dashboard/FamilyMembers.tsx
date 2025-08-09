@@ -1,81 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useFirestore } from '@/hooks/useFirestore';
+import { Badge } from '@/components/ui/badge';
+import { familyAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loading } from '@/components/ui/loading';
+import FamilyMemberDetail from '../FamilyMemberDetail';
 
 interface FamilyMember {
   id: string;
   userId: string;
   name: string;
-  relation: string;
+  relationship: string;
   age: number;
+  gender: string;
+  contactNumber: string;
+  emergencyContact: boolean;
+  bloodType: string;
+  allergies: string[];
+  medicalConditions: string[];
+  medications: string[];
+  lastCheckup: string;
+  nextCheckup: string;
+  profileImage?: string;
   createdAt?: any;
 }
 
 const FamilyMembers: React.FC = () => {
   const { userData } = useAuth();
   const { toast } = useToast();
+  const [members, setMembers] = useState<FamilyMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newMember, setNewMember] = useState({
     name: '',
-    relation: '',
-    age: ''
+    relationship: '',
+    age: '',
+    gender: '',
+    contactNumber: '',
+    bloodType: '',
+    emergencyContact: false,
+    allergies: [] as string[],
+    medicalConditions: [] as string[]
   });
-  
-  const { data: members, add: addMember, remove: removeMember, loading: membersLoading } = useFirestore<FamilyMember>('family_members',
-    userData ? [{ field: 'userId', operator: '==', value: userData.id }] : undefined
-  );
 
-  const getAvatarColor = (relation: string) => {
-    switch (relation.toLowerCase()) {
-      case 'wife': return 'bg-purple-100 text-purple-600';
-      case 'husband': return 'bg-blue-100 text-blue-600';
-      case 'daughter': return 'bg-pink-100 text-pink-600';
-      case 'son': return 'bg-green-100 text-green-600';
-      case 'mother': return 'bg-red-100 text-red-600';
-      case 'father': return 'bg-indigo-100 text-indigo-600';
-      case 'sister': return 'bg-yellow-100 text-yellow-600';
-      case 'brother': return 'bg-teal-100 text-teal-600';
-      default: return 'bg-gray-100 text-gray-600';
-    }
-  };
+  useEffect(() => {
+    const fetchFamilyMembers = async () => {
+      try {
+        setLoading(true);
+        const data = await familyAPI.getFamilyMembers();
+        setMembers(data || []);
+      } catch (error) {
+        console.error('Error fetching family members:', error);
+        setMembers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const getAvatarIcon = (relation: string) => {
-    switch (relation.toLowerCase()) {
-      case 'daughter':
-      case 'son':
-        return 'child_care';
-      case 'father':
-      case 'mother':
-        return 'elderly';
-      default:
-        return 'person';
+    if (userData) {
+      fetchFamilyMembers();
     }
-  };
+  }, [userData]);
 
   const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userData || !newMember.name || !newMember.relation || !newMember.age) return;
+    if (!userData || !newMember.name || !newMember.relationship || !newMember.age) return;
 
     try {
-      await addMember({
-        userId: userData.id,
-        name: newMember.name,
-        relation: newMember.relation,
+      const memberData = {
+        ...newMember,
         age: parseInt(newMember.age),
-      });
+        userId: userData.id,
+        lastCheckup: new Date().toISOString(),
+        nextCheckup: new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000).toISOString(), // 6 months from now
+        medications: [],
+        allergies: newMember.allergies || [],
+        medicalConditions: newMember.medicalConditions || []
+      };
 
+      await familyAPI.createFamilyMember(memberData);
+      
+      // Refresh the members list
+      const updatedMembers = await familyAPI.getFamilyMembers();
+      setMembers(updatedMembers || []);
+      
       setNewMember({
         name: '',
-        relation: '',
-        age: ''
+        relationship: '',
+        age: '',
+        gender: '',
+        contactNumber: '',
+        bloodType: '',
+        emergencyContact: false,
+        allergies: [],
+        medicalConditions: []
       });
       setShowAddModal(false);
 
@@ -97,7 +122,10 @@ const FamilyMembers: React.FC = () => {
     if (!confirm(`Are you sure you want to remove ${memberName} from your family members?`)) return;
 
     try {
-      await removeMember(memberId);
+      await familyAPI.deleteFamilyMember(memberId);
+      const updatedMembers = await familyAPI.getFamilyMembers();
+      setMembers(updatedMembers || []);
+      
       toast({
         title: 'Success',
         description: 'Family member removed successfully',
@@ -112,14 +140,76 @@ const FamilyMembers: React.FC = () => {
     }
   };
 
-  const relations = [
+  const getAvatarColor = (relationship: string | undefined) => {
+    if (!relationship) return 'bg-gray-100 text-gray-600';
+    
+    switch (relationship.toLowerCase()) {
+      case 'spouse':
+      case 'wife':
+      case 'husband':
+        return 'bg-purple-100 text-purple-600';
+      case 'daughter':
+        return 'bg-pink-100 text-pink-600';
+      case 'son':
+        return 'bg-green-100 text-green-600';
+      case 'mother':
+        return 'bg-red-100 text-red-600';
+      case 'father':
+        return 'bg-indigo-100 text-indigo-600';
+      case 'sister':
+        return 'bg-yellow-100 text-yellow-600';
+      case 'brother':
+        return 'bg-teal-100 text-teal-600';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+
+  const getAvatarIcon = (relationship: string | undefined) => {
+    if (!relationship) return 'person';
+    
+    switch (relationship.toLowerCase()) {
+      case 'daughter':
+      case 'son':
+        return 'child_care';
+      case 'father':
+      case 'mother':
+        return 'elderly';
+      case 'spouse':
+      case 'wife':
+      case 'husband':
+        return 'favorite';
+      default:
+        return 'person';
+    }
+  };
+
+  const relationships = [
     'Spouse', 'Wife', 'Husband', 'Mother', 'Father', 
     'Son', 'Daughter', 'Brother', 'Sister', 
     'Grandfather', 'Grandmother', 'Uncle', 'Aunt', 'Other'
   ];
 
+  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-gray-900">Family Members</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Loading text="Loading family members..." />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card>
+    <>
+      <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-gray-900">
@@ -131,7 +221,7 @@ const FamilyMembers: React.FC = () => {
                 <span className="material-icons">person_add</span>
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Add Family Member</DialogTitle>
               </DialogHeader>
@@ -148,16 +238,16 @@ const FamilyMembers: React.FC = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="relation">Relation</Label>
+                  <Label htmlFor="relationship">Relationship</Label>
                   <Select 
-                    value={newMember.relation} 
-                    onValueChange={(value) => setNewMember(prev => ({ ...prev, relation: value }))}
+                    value={newMember.relationship} 
+                    onValueChange={(value) => setNewMember(prev => ({ ...prev, relationship: value }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select relation" />
+                      <SelectValue placeholder="Select relationship" />
                     </SelectTrigger>
                     <SelectContent>
-                      {relations.map((relation) => (
+                      {relationships.map((relation) => (
                         <SelectItem key={relation} value={relation}>
                           {relation}
                         </SelectItem>
@@ -166,18 +256,75 @@ const FamilyMembers: React.FC = () => {
                   </Select>
                 </div>
                 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="age">Age</Label>
+                    <Input
+                      id="age"
+                      type="number"
+                      min="1"
+                      max="120"
+                      value={newMember.age}
+                      onChange={(e) => setNewMember(prev => ({ ...prev, age: e.target.value }))}
+                      placeholder="Enter age"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="gender">Gender</Label>
+                    <Select 
+                      value={newMember.gender} 
+                      onValueChange={(value) => setNewMember(prev => ({ ...prev, gender: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 <div>
-                  <Label htmlFor="age">Age</Label>
+                  <Label htmlFor="contactNumber">Contact Number</Label>
                   <Input
-                    id="age"
-                    type="number"
-                    min="1"
-                    max="120"
-                    value={newMember.age}
-                    onChange={(e) => setNewMember(prev => ({ ...prev, age: e.target.value }))}
-                    placeholder="Enter age"
-                    required
+                    id="contactNumber"
+                    value={newMember.contactNumber}
+                    onChange={(e) => setNewMember(prev => ({ ...prev, contactNumber: e.target.value }))}
+                    placeholder="Enter contact number"
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="bloodType">Blood Type</Label>
+                  <Select 
+                    value={newMember.bloodType} 
+                    onValueChange={(value) => setNewMember(prev => ({ ...prev, bloodType: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select blood type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {bloodTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="emergencyContact"
+                    checked={newMember.emergencyContact}
+                    onChange={(e) => setNewMember(prev => ({ ...prev, emergencyContact: e.target.checked }))}
+                  />
+                  <Label htmlFor="emergencyContact">Emergency Contact</Label>
                 </div>
                 
                 <div className="flex space-x-2">
@@ -204,9 +351,7 @@ const FamilyMembers: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3 max-h-64 overflow-y-auto">
-          {membersLoading ? (
-            <Loading text="Loading family members..." />
-          ) : members.length === 0 ? (
+          {members.length === 0 ? (
             <div className="text-center py-4">
               <span className="material-icons text-gray-400 text-3xl mb-2">family_restroom</span>
               <p className="text-gray-500">No family members added yet</p>
@@ -216,17 +361,24 @@ const FamilyMembers: React.FC = () => {
             members.map((member) => (
               <div 
                 key={member.id}
-                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group"
+                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors group cursor-pointer"
+                onClick={() => setSelectedMember(member.id)}
               >
                 <div className="flex items-center space-x-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getAvatarColor(member.relation)}`}>
-                    <span className="material-icons">{getAvatarIcon(member.relation)}</span>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getAvatarColor(member.relationship)}`}>
+                    <span className="material-icons">{getAvatarIcon(member.relationship)}</span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">{member.name}</p>
+                    <div className="flex items-center space-x-2">
+                      <p className="font-medium text-gray-900">{member.name}</p>
+                      {member.emergencyContact && (
+                        <Badge variant="destructive" className="text-xs">Emergency</Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-600">
-                      {member.relation} • Age {member.age}
+                      {member.relationship} • Age {member.age}
                     </p>
+                    <p className="text-xs text-gray-500">{member.contactNumber}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -235,13 +387,20 @@ const FamilyMembers: React.FC = () => {
                     size="sm"
                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     title="View Health Profile"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedMember(member.id);
+                    }}
                   >
                     <span className="material-icons text-sm">visibility</span>
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm"
-                    onClick={() => handleRemoveMember(member.id, member.name)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveMember(member.id, member.name);
+                    }}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     title="Remove Member"
                   >
@@ -278,6 +437,16 @@ const FamilyMembers: React.FC = () => {
         </div>
       </CardContent>
     </Card>
+
+    {/* Family Member Detail Popup */}
+    {selectedMember && (
+      <FamilyMemberDetail
+        memberId={selectedMember}
+        isOpen={!!selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
+    )}
+  </>
   );
 };
 

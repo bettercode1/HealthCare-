@@ -1,90 +1,280 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { 
+  Brain, 
+  Pill, 
+  Upload, 
+  FileText, 
+  Users, 
+  Shield, 
+  Bell, 
+  Calendar, 
+  MessageCircle,
+  Zap,
+  TrendingUp,
+  Lock,
+  RefreshCw
+} from 'lucide-react';
 
 const FeaturesSection: React.FC = () => {
+  const { t } = useTranslation();
+
   const features = [
     {
-      icon: 'psychology',
-      title: 'AI Health Report Analysis',
-      description: 'Get instant insights and recommendations from your medical reports using advanced AI technology.',
-      color: 'hsl(207, 90%, 54%)'
+      icon: Brain,
+      titleKey: 'aiHealthReportAnalysis',
+      descriptionKey: 'aiHealthReportAnalysisDesc',
+      color: 'bg-blue-500'
     },
     {
-      icon: 'medication',
-      title: 'Dose Tracking System',
-      description: 'Never miss a dose with our intelligent reminder system and comprehensive medication tracking.',
-      color: 'hsl(153, 72%, 51%)'
+      icon: Pill,
+      titleKey: 'doseTrackingSystem',
+      descriptionKey: 'doseTrackingSystemDesc',
+      color: 'bg-green-500'
     },
     {
-      icon: 'cloud_upload',
-      title: 'Secure Report Upload',
-      description: 'Safely store and organize all your medical reports in one secure, encrypted location.',
-      color: 'hsl(271, 81%, 56%)'
+      icon: Upload,
+      titleKey: 'secureReportUpload',
+      descriptionKey: 'secureReportUploadDesc',
+      color: 'bg-purple-500'
     },
     {
-      icon: 'receipt_long',
-      title: 'Prescription Management',
-      description: 'Manage all your prescriptions digitally with automatic refill reminders and dosage tracking.',
-      color: 'hsl(48, 96%, 53%)'
+      icon: FileText,
+      titleKey: 'prescriptionManagement',
+      descriptionKey: 'prescriptionManagementDesc',
+      color: 'bg-orange-500'
     },
     {
-      icon: 'family_restroom',
-      title: 'Family Member Profiles',
-      description: 'Create and manage health profiles for all family members in one convenient dashboard.',
-      color: 'hsl(0, 84%, 60%)'
+      icon: Users,
+      titleKey: 'familyMemberProfiles',
+      descriptionKey: 'familyMemberProfilesDesc',
+      color: 'bg-pink-500'
     },
     {
-      icon: 'security',
-      title: 'Role-Based Access',
-      description: 'Secure access controls for patients, doctors, and labs with appropriate permissions.',
-      color: 'hsl(238, 83%, 67%)'
+      icon: Shield,
+      titleKey: 'roleBasedAccess',
+      descriptionKey: 'roleBasedAccessDesc',
+      color: 'bg-indigo-500'
     },
     {
-      icon: 'notifications_active',
-      title: 'AI Recommendations & Alerts',
-      description: 'Receive intelligent health recommendations and alerts based on your medical data and trends.',
-      color: 'hsl(20, 90%, 58%)'
+      icon: Bell,
+      titleKey: 'aiRecommendationsAlerts',
+      descriptionKey: 'aiRecommendationsAlertsDesc',
+      color: 'bg-red-500'
     },
     {
-      icon: 'event',
-      title: 'Appointment Scheduling',
-      description: 'Schedule, manage, and track all your medical appointments with automatic reminders.',
-      color: 'hsl(173, 80%, 40%)'
+      icon: Calendar,
+      titleKey: 'appointmentScheduling',
+      descriptionKey: 'appointmentSchedulingDesc',
+      color: 'bg-teal-500'
     },
     {
-      icon: 'chat',
-      title: 'Healthcare Chatbot',
-      description: 'Get instant answers to your healthcare questions with our AI-powered assistant available 24/7.',
-      color: 'hsl(316, 73%, 52%)'
+      icon: MessageCircle,
+      titleKey: 'healthcareChatbot',
+      descriptionKey: 'healthcareChatbotDesc',
+      color: 'bg-violet-500'
     }
   ];
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const headerVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 30,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 50,
+      scale: 0.9
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Everything you need to manage your family's healthcare in one place
-          </p>
-        </div>
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+        {/* Header with Animation */}
+        <motion.div 
+          className="text-center mb-12"
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <motion.h2 
+            className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            Powerful Features
+          </motion.h2>
+          <motion.p 
+            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            Everything you need for comprehensive healthcare management
+          </motion.p>
+        </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Features Grid with Staggered Animation */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {features.map((feature, index) => (
-            <Card key={index} className="bg-white hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div 
-                  className="w-12 h-12 rounded-lg flex items-center justify-center mb-4"
-                  style={{ backgroundColor: `${feature.color}20`, color: feature.color }}
-                >
-                  <span className="material-icons">{feature.icon}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </CardContent>
-            </Card>
+            <motion.div
+              key={index}
+              variants={cardVariants}
+              whileHover={{ 
+                y: -8,
+                scale: 1.02,
+                transition: { type: "spring", stiffness: 300, damping: 20 }
+              }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card className="group h-full hover:shadow-2xl transition-all duration-500 border-2 border-gray-200 bg-white/90 backdrop-blur-sm relative overflow-hidden">
+                {/* Background gradient effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.8 }}
+                />
+                
+                <CardContent className="p-6 relative z-10">
+                  <motion.div 
+                    className="flex items-center justify-center mb-6"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <motion.div 
+                      className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden`}
+                      whileHover={{ 
+                        scale: 1.1,
+                        rotate: [0, 5, -5, 0],
+                        transition: { duration: 0.6 }
+                      }}
+                    >
+                      {/* Icon background animation */}
+                      <motion.div
+                        className="absolute inset-0 bg-white/20"
+                        initial={{ scale: 0 }}
+                        whileHover={{ scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                      
+                      <motion.div
+                        className="relative z-10"
+                        animate={{ 
+                          rotate: [0, 2, -2, 0],
+                          scale: [1, 1.05, 1]
+                        }}
+                        transition={{ 
+                          duration: 4, 
+                          repeat: Infinity, 
+                          ease: "easeInOut",
+                          delay: index * 0.2
+                        }}
+                      >
+                        <feature.icon className="w-6 h-6 text-white" />
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                  
+                  <motion.h3 
+                    className="text-lg font-semibold text-gray-900 mb-3 text-center"
+                    whileHover={{ color: "#3B82F6" }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t(feature.titleKey)}
+                  </motion.h3>
+                  
+                  <motion.p 
+                    className="text-gray-600 text-sm text-center leading-relaxed"
+                    whileHover={{ color: "#4B5563" }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {t(feature.descriptionKey)}
+                  </motion.p>
+                </CardContent>
+                
+                {/* Card border glow effect */}
+                <motion.div
+                  className="absolute inset-0 rounded-lg border-2 border-transparent"
+                  whileHover={{ 
+                    borderColor: "#3B82F6",
+                    boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)"
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+
+        {/* Bottom decorative element */}
+        <motion.div
+          className="mt-16 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <motion.div
+            className="inline-block w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+            animate={{ 
+              scaleX: [1, 1.2, 1],
+              opacity: [0.7, 1, 0.7]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+          />
+        </motion.div>
       </div>
     </section>
   );

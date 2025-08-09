@@ -1,9 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 const AIAnalysis: React.FC = () => {
+  const { t } = useTranslation();
+
   // Mock AI analysis data - in real app, this would come from actual health reports analysis
   const healthTrendData = [
     { month: 'Jul', bloodPressure: 130, bloodSugar: 95, cholesterol: 200 },
@@ -15,49 +18,49 @@ const AIAnalysis: React.FC = () => {
   ];
 
   const conditionData = [
-    { name: 'Normal', value: 60, color: 'hsl(153, 72%, 51%)' },
-    { name: 'Borderline', value: 25, color: 'hsl(48, 96%, 53%)' },
-    { name: 'High', value: 15, color: 'hsl(0, 84%, 60%)' },
+    { name: t('normal'), value: 60, color: 'hsl(153, 72%, 51%)' },
+    { name: t('borderline'), value: 25, color: 'hsl(48, 96%, 53%)' },
+    { name: t('high'), value: 15, color: 'hsl(0, 84%, 60%)' },
   ];
 
   const symptomsData = [
-    { symptom: 'Fatigue', severity: 3 },
-    { symptom: 'Headache', severity: 2 },
-    { symptom: 'Dizziness', severity: 1 },
-    { symptom: 'Chest Pain', severity: 0 },
+    { symptom: t('fatigue'), severity: 3 },
+    { symptom: t('headache'), severity: 2 },
+    { symptom: t('dizziness'), severity: 1 },
+    { symptom: t('chestPain'), severity: 0 },
   ];
 
   const labReadings = [
     {
-      reading: 'Blood Pressure',
+      reading: t('bloodPressure'),
       value: '145/92 mmHg',
       range: '120/80 - 140/90',
-      status: 'High',
-      recommendation: 'Reduce sodium, increase exercise',
+      status: t('high'),
+      recommendation: t('reduceSodiumIncreaseExercise'),
       color: 'hsl(0, 84%, 60%)'
     },
     {
-      reading: 'Blood Sugar',
+      reading: t('bloodSugar'),
       value: '98 mg/dL',
       range: '70-100',
-      status: 'Normal',
-      recommendation: 'Maintain current diet',
+      status: t('normal'),
+      recommendation: t('maintainCurrentDiet'),
       color: 'hsl(153, 72%, 51%)'
     },
     {
-      reading: 'Cholesterol',
+      reading: t('cholesterol'),
       value: '220 mg/dL',
-      range: 'Less than 200',
-      status: 'Borderline',
-      recommendation: 'Increase fiber intake',
+      range: t('lessThan200'),
+      status: t('borderline'),
+      recommendation: t('increaseFiberIntake'),
       color: 'hsl(48, 96%, 53%)'
     },
     {
-      reading: 'BMI',
+      reading: t('bmi'),
       value: '23.5',
       range: '18.5-24.9',
-      status: 'Normal',
-      recommendation: 'Maintain current weight',
+      status: t('normal'),
+      recommendation: t('maintainCurrentWeight'),
       color: 'hsl(153, 72%, 51%)'
     }
   ];
@@ -66,7 +69,7 @@ const AIAnalysis: React.FC = () => {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-semibold text-gray-900">AI Health Analysis</CardTitle>
+          <CardTitle className="text-xl font-semibold text-gray-900">{t('aiHealthAnalysis')}</CardTitle>
           <Button variant="ghost" size="sm" style={{ color: 'hsl(207, 90%, 54%)' }}>
             <span className="material-icons">refresh</span>
           </Button>
@@ -91,7 +94,7 @@ const AIAnalysis: React.FC = () => {
 
         {/* Health Trend Chart */}
         <div className="mb-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Health Trends (Last 6 Months)</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('healthTrendsLast6Months')}</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={healthTrendData}>
@@ -105,21 +108,21 @@ const AIAnalysis: React.FC = () => {
                   dataKey="bloodPressure" 
                   stroke="hsl(0, 84%, 60%)" 
                   strokeWidth={2}
-                  name="Blood Pressure (Systolic)"
+                  name={t('bloodPressureSystolic')}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="bloodSugar" 
                   stroke="hsl(153, 72%, 51%)" 
                   strokeWidth={2}
-                  name="Blood Sugar"
+                  name={t('bloodSugar')}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="cholesterol" 
                   stroke="hsl(48, 96%, 53%)" 
                   strokeWidth={2}
-                  name="Cholesterol"
+                  name={t('cholesterol')}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -130,7 +133,7 @@ const AIAnalysis: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Condition Distribution */}
           <div>
-            <h4 className="text-md font-medium text-gray-900 mb-3">Condition Distribution</h4>
+            <h4 className="text-md font-medium text-gray-900 mb-3">{t('conditionDistribution')}</h4>
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -154,7 +157,7 @@ const AIAnalysis: React.FC = () => {
 
           {/* Symptoms Severity */}
           <div>
-            <h4 className="text-md font-medium text-gray-900 mb-3">Symptoms vs Severity</h4>
+            <h4 className="text-md font-medium text-gray-900 mb-3">{t('symptomsVsSeverity')}</h4>
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={symptomsData}>
@@ -177,36 +180,36 @@ const AIAnalysis: React.FC = () => {
         <div className="bg-blue-50 rounded-lg p-4 mb-6">
           <h4 className="font-medium mb-2 flex items-center" style={{ color: 'hsl(207, 90%, 54%)' }}>
             <span className="material-icons mr-2">psychology</span>
-            AI Insights & Recommendations
+            {t('aiInsightsAndRecommendations')}
           </h4>
           <div className="space-y-2 text-sm text-gray-700">
-            <p>• <strong>Blood Pressure Alert:</strong> Your systolic pressure has increased to 145 mmHg. Consider reducing sodium intake and increasing physical activity.</p>
-            <p>• <strong>Cholesterol Warning:</strong> At 220 mg/dL, your cholesterol is approaching high risk. Include more fiber-rich foods and omega-3 fatty acids.</p>
-            <p>• <strong>Positive Trend:</strong> Blood sugar levels remain stable within normal range. Continue current dietary habits.</p>
-            <p>• <strong>Overall Assessment:</strong> Health metrics show mixed results. Focus on cardiovascular health through diet and exercise.</p>
+            <p>• <strong>{t('bloodPressureAlert')}:</strong> {t('bloodPressureAlertDesc')}</p>
+            <p>• <strong>{t('cholesterolWarning')}:</strong> {t('cholesterolWarningDesc')}</p>
+            <p>• <strong>{t('positiveTrend')}:</strong> {t('positiveTrendDesc')}</p>
+            <p>• <strong>{t('overallAssessment')}:</strong> {t('overallAssessmentDesc')}</p>
           </div>
           <div className="mt-4 flex space-x-2">
             <Button variant="link" className="p-0 h-auto text-xs hover:text-blue-700" style={{ color: 'hsl(207, 90%, 54%)' }}>
-              View Detailed Analysis →
+              {t('viewDetailedAnalysis')} →
             </Button>
             <Button variant="link" className="p-0 h-auto text-xs hover:text-green-700" style={{ color: 'hsl(153, 72%, 51%)' }}>
-              Download Report →
+              {t('downloadReport')} →
             </Button>
           </div>
         </div>
 
         {/* Data Table */}
         <div>
-          <h4 className="text-md font-medium text-gray-900 mb-3">Lab Readings Analysis</h4>
+          <h4 className="text-md font-medium text-gray-900 mb-3">{t('labReadingsAnalysis')}</h4>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-2 font-medium text-gray-900">Reading</th>
-                  <th className="text-left py-3 px-2 font-medium text-gray-900">Value</th>
-                  <th className="text-left py-3 px-2 font-medium text-gray-900">Normal Range</th>
-                  <th className="text-left py-3 px-2 font-medium text-gray-900">Status</th>
-                  <th className="text-left py-3 px-2 font-medium text-gray-900">Recommendation</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-900">{t('reading')}</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-900">{t('value')}</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-900">{t('normalRange')}</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-900">{t('status')}</th>
+                  <th className="text-left py-3 px-2 font-medium text-gray-900">{t('recommendation')}</th>
                 </tr>
               </thead>
               <tbody className="text-gray-600">
@@ -239,7 +242,7 @@ const AIAnalysis: React.FC = () => {
             className="text-blue-600 border-blue-200 hover:bg-blue-50"
           >
             <span className="material-icons mr-2 text-sm">share</span>
-            Share with Doctor
+            {t('shareWithDoctor')}
           </Button>
           <Button 
             variant="outline" 
@@ -247,7 +250,7 @@ const AIAnalysis: React.FC = () => {
             className="text-green-600 border-green-200 hover:bg-green-50"
           >
             <span className="material-icons mr-2 text-sm">schedule</span>
-            Set Reminders
+            {t('setReminders')}
           </Button>
           <Button 
             variant="outline" 
@@ -255,7 +258,7 @@ const AIAnalysis: React.FC = () => {
             className="text-purple-600 border-purple-200 hover:bg-purple-50"
           >
             <span className="material-icons mr-2 text-sm">history</span>
-            View History
+            {t('viewHistory')}
           </Button>
         </div>
 

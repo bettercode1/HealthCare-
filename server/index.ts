@@ -3,6 +3,23 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// CORS middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, user-id');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+  
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -60,12 +77,24 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
+  const port = parseInt(process.env.PORT || '5001', 10);
+  
   server.listen({
     port,
-    host: "0.0.0.0",
-    reusePort: true,
+    host: "127.0.0.1", // Use IPv4 localhost
   }, () => {
     log(`serving on port ${port}`);
+  }).on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      log(`Port ${port} is already in use. Trying port ${port + 1}`);
+      server.listen({
+        port: port + 1,
+        host: "127.0.0.1", // Use IPv4 localhost
+      }, () => {
+        log(`serving on port ${port + 1}`);
+      });
+    } else {
+      log(`Server error: ${err.message}`);
+    }
   });
 })();

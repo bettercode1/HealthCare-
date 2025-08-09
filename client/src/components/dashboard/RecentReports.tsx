@@ -9,7 +9,8 @@ import { useFirestore } from '@/hooks/useFirestore';
 import { useStorage } from '@/hooks/useStorage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loading } from '@/components/ui/loading';
+import { Loading, HealthcareLoading } from '@/components/ui/loading';
+import { formatDateAsMonthYear } from '@/lib/utils';
 
 interface Report {
   id: string;
@@ -18,6 +19,8 @@ interface Report {
   fileURL: string;
   notes?: string;
   createdAt?: any;
+  fileType?: string;
+  fileSize?: number;
 }
 
 const RecentReports: React.FC = () => {
@@ -31,7 +34,7 @@ const RecentReports: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { data: reports, add: addReport, remove: removeReport, loading: reportsLoading } = useFirestore<Report>('reports',
+  const { data: reports, add: addReport, remove: removeReport, loading: reportsLoading, refresh } = useFirestore<Report>('reports',
     userData ? [{ field: 'userId', operator: '==', value: userData.id }] : undefined
   );
 
@@ -81,8 +84,15 @@ const RecentReports: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Upload file to Firebase Storage
-      const fileURL = await uploadFile(selectedFile, 'reports');
+      // For demo users, simulate file upload
+      let fileURL = '';
+      if (userData.email?.includes('@example.com')) {
+        // Simulate file upload for demo
+        fileURL = `https://demo-storage.example.com/reports/${selectedFile.name}`;
+      } else {
+        // Mock file upload
+        fileURL = await uploadFile(selectedFile, 'reports');
+      }
 
       // Create report document
       await addReport({
@@ -90,6 +100,8 @@ const RecentReports: React.FC = () => {
         title: uploadForm.title,
         fileURL: fileURL,
         notes: uploadForm.notes,
+        fileType: selectedFile.type,
+        fileSize: selectedFile.size,
       });
 
       // Reset form
@@ -150,6 +162,14 @@ const RecentReports: React.FC = () => {
     }
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   // Sort reports by creation date (newest first)
   const sortedReports = reports.sort((a, b) => {
     const dateA = a.createdAt?.toDate?.() || new Date(0);
@@ -164,91 +184,106 @@ const RecentReports: React.FC = () => {
           <CardTitle className="text-xl font-semibold text-gray-900">
             Recent Reports ({reports.length})
           </CardTitle>
-          <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
-            <DialogTrigger asChild>
-              <Button className="text-white hover:bg-blue-700" style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}>
-                <span className="material-icons mr-2 text-sm">upload</span>
-                Upload Report
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Upload Medical Report</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleUploadSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Report Title</Label>
-                  <Input
-                    id="title"
-                    value={uploadForm.title}
-                    onChange={(e) => setUploadForm(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="e.g., Blood Test Report"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="upload-file">Report File (PDF, JPG, PNG - Max 10MB)</Label>
-                  <Input
-                    id="upload-file"
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileSelect}
-                    required
-                    className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                  {selectedFile && (
-                    <p className="text-sm text-gray-500 mt-1">
-                      Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                    </p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label htmlFor="notes">Notes (Optional)</Label>
-                  <Textarea
-                    id="notes"
-                    value={uploadForm.notes}
-                    onChange={(e) => setUploadForm(prev => ({ ...prev, notes: e.target.value }))}
-                    placeholder="Additional notes about this report"
-                    rows={3}
-                  />
-                </div>
-                
-                <div className="flex space-x-2">
-                  <Button 
-                    type="submit" 
-                    className="flex-1 text-white hover:bg-blue-700"
-                    disabled={isSubmitting || uploading}
-                    style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
-                  >
-                    {isSubmitting || uploading ? (
-                      <div className="flex items-center">
-                        <Loading size="sm" />
-                        <span className="ml-2">Uploading...</span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={refresh}
+              className="text-blue-600 hover:text-blue-700"
+            >
+              <span className="material-icons text-sm">refresh</span>
+            </Button>
+            <Dialog open={showUploadModal} onOpenChange={setShowUploadModal}>
+              <DialogTrigger asChild>
+                <Button className="text-white hover:bg-blue-700" style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}>
+                  <span className="material-icons mr-2 text-sm">upload</span>
+                  Upload Report
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Upload Medical Report</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleUploadSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">Report Title *</Label>
+                    <Input
+                      id="title"
+                      value={uploadForm.title}
+                      onChange={(e) => setUploadForm(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="e.g., Blood Test Report"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="upload-file">Report File * (PDF, JPG, PNG - Max 10MB)</Label>
+                    <Input
+                      id="upload-file"
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleFileSelect}
+                      required
+                      className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    {selectedFile && (
+                      <div className="mt-2 p-2 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          <strong>Selected:</strong> {selectedFile.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Size: {formatFileSize(selectedFile.size)} | Type: {selectedFile.type}
+                        </p>
                       </div>
-                    ) : (
-                      'Upload Report'
                     )}
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => setShowUploadModal(false)}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="notes">Notes (Optional)</Label>
+                    <Textarea
+                      id="notes"
+                      value={uploadForm.notes}
+                      onChange={(e) => setUploadForm(prev => ({ ...prev, notes: e.target.value }))}
+                      placeholder="Additional notes about this report"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Button 
+                      type="submit" 
+                      className="flex-1 text-white hover:bg-blue-700"
+                      disabled={isSubmitting || uploading}
+                      style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
+                    >
+                      {isSubmitting || uploading ? (
+                        <div className="flex items-center">
+                          <Loading size="sm" />
+                          <span className="ml-2">Uploading...</span>
+                        </div>
+                      ) : (
+                        'Upload Report'
+                      )}
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setShowUploadModal(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {reportsLoading ? (
-            <Loading text="Loading reports..." />
+            <HealthcareLoading text="Loading reports..." />
           ) : sortedReports.length === 0 ? (
             <div className="text-center py-8">
               <span className="material-icons text-gray-400 text-4xl mb-2">description</span>
@@ -268,11 +303,16 @@ const RecentReports: React.FC = () => {
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{report.title}</p>
                     <p className="text-sm text-gray-600">
-                      {report.createdAt?.toDate?.()?.toLocaleDateString() || 'No date'}
+                      {formatDateAsMonthYear(report.createdAt?.toDate?.())}
                       {report.createdAt?.toDate?.() && (
                         <span> • {report.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       )}
                     </p>
+                    {report.fileSize && (
+                      <p className="text-xs text-gray-500">
+                        Size: {formatFileSize(report.fileSize)}
+                      </p>
+                    )}
                     {report.notes && (
                       <p className="text-sm text-gray-500 mt-1 line-clamp-2">{report.notes}</p>
                     )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +8,10 @@ import { Label } from '@/components/ui/label';
 import { useFirestore } from '@/hooks/useFirestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { formatDateAsMonthYear } from '@/lib/utils';
 
 const DoctorDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const { toast } = useToast();
   const [selectedPatient, setSelectedPatient] = useState<string>('');
@@ -58,13 +61,13 @@ const DoctorDashboard: React.FC = () => {
       });
 
       toast({
-        title: 'Success',
-        description: 'Prescription created successfully',
+        title: t('success'),
+        description: t('prescriptionCreated'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to create prescription',
+        title: t('error'),
+        description: t('prescriptionFailed'),
         variant: 'destructive',
       });
     }
@@ -81,13 +84,13 @@ const DoctorDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <span className="material-icons mr-2">people</span>
-              Patient List
+              {t('patientList')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {patients.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No patients found</p>
+                <p className="text-gray-500 text-center py-4">{t('noPatientsFound')}</p>
               ) : (
                 patients.map((patient) => (
                   <div 
@@ -123,7 +126,7 @@ const DoctorDashboard: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <span className="material-icons mr-2">description</span>
-                Patient Reports
+                {t('patientReports')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -137,7 +140,7 @@ const DoctorDashboard: React.FC = () => {
                         <div>
                           <p className="font-medium text-gray-900">{report.title}</p>
                           <p className="text-sm text-gray-600">
-                            {report.createdAt?.toDate?.()?.toLocaleDateString() || 'No date'}
+                            {formatDateAsMonthYear(report.createdAt?.toDate?.())}
                           </p>
                         </div>
                         <Button variant="outline" size="sm">
@@ -169,7 +172,7 @@ const DoctorDashboard: React.FC = () => {
           <CardContent>
             <form onSubmit={handlePrescriptionSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="patientEmail">Patient Email</Label>
+                <Label htmlFor="patientEmail">{t('patientEmail')}</Label>
                 <Input
                   id="patientEmail"
                   type="email"
@@ -181,7 +184,7 @@ const DoctorDashboard: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="diagnosis">Diagnosis</Label>
+                <Label htmlFor="diagnosis">{t('diagnosis')}</Label>
                 <Input
                   id="diagnosis"
                   value={prescriptionForm.diagnosis}
@@ -192,7 +195,7 @@ const DoctorDashboard: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="medication">Medication</Label>
+                <Label htmlFor="medication">{t('medication')}</Label>
                 <Input
                   id="medication"
                   value={prescriptionForm.medication}
@@ -203,7 +206,7 @@ const DoctorDashboard: React.FC = () => {
               </div>
               
               <div>
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="notes">{t('notes')}</Label>
                 <Textarea
                   id="notes"
                   value={prescriptionForm.notes}
@@ -218,7 +221,7 @@ const DoctorDashboard: React.FC = () => {
                 className="w-full text-white hover:bg-blue-700"
                 style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
               >
-                Create Prescription
+                {t('createPrescription')}
               </Button>
             </form>
           </CardContent>
@@ -229,33 +232,33 @@ const DoctorDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <span className="material-icons mr-2">event</span>
-              Upcoming Appointments
+              {t('upcomingAppointments')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {appointments.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No upcoming appointments</p>
+                <p className="text-gray-500 text-center py-4">{t('noUpcomingAppointments')}</p>
               ) : (
                 appointments.map((appointment) => (
                   <div key={appointment.id} className="p-4 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium text-gray-900">{appointment.purpose}</p>
-                        <p className="text-sm text-gray-600">Patient ID: {appointment.patientId.slice(0, 8)}...</p>
+                        <p className="text-sm text-gray-600">{t('patientId')}: {appointment.patientId.slice(0, 8)}...</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium text-gray-900">
-                          {appointment.dateTime?.toDate?.()?.toLocaleDateString() || 'No date'}
+                          {formatDateAsMonthYear(appointment.dateTime?.toDate?.())}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {appointment.dateTime?.toDate?.()?.toLocaleTimeString() || 'No time'}
+                          {appointment.dateTime?.toDate?.()?.toLocaleTimeString() || t('noTime')}
                         </p>
                       </div>
                     </div>
                     <div className="mt-2 flex space-x-2">
-                      <Button variant="outline" size="sm">Confirm</Button>
-                      <Button variant="outline" size="sm">Reschedule</Button>
+                      <Button variant="outline" size="sm">{t('confirm')}</Button>
+                      <Button variant="outline" size="sm">{t('reschedule')}</Button>
                     </div>
                   </div>
                 ))
