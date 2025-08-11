@@ -81,7 +81,7 @@ app.use((req, res, next) => {
   
   server.listen({
     port,
-    host: "127.0.0.1", // Use IPv4 localhost
+    host: "0.0.0.0", // Use 0.0.0.0 to allow external access
   }, () => {
     log(`serving on port ${port}`);
   }).on('error', (err: any) => {
@@ -89,7 +89,7 @@ app.use((req, res, next) => {
       log(`Port ${port} is already in use. Trying port ${port + 1}`);
       server.listen({
         port: port + 1,
-        host: "127.0.0.1", // Use IPv4 localhost
+        host: "0.0.0.0", // Use 0.0.0.0 to allow external access
       }, () => {
         log(`serving on port ${port + 1}`);
       });
