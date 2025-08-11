@@ -9,7 +9,16 @@ const DashboardContent: React.FC = () => {
   const { t } = useTranslation();
   const { userData } = useAuth();
 
-  if (!userData) return null;
+  console.log('=== DASHBOARD CONTENT DEBUG ===');
+  console.log('User data in DashboardContent:', userData);
+  console.log('User role:', userData?.role);
+
+  if (!userData) {
+    console.log('No user data, returning null');
+    return null;
+  }
+
+  console.log('Rendering dashboard content for role:', userData.role);
 
   return (
     <section className="min-h-screen bg-gray-50">

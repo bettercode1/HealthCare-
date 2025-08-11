@@ -125,7 +125,7 @@ const FeaturesSection: React.FC = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden">
+    <section id="features-section" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         {/* Header with Animation */}
         <motion.div 
@@ -157,7 +157,7 @@ const FeaturesSection: React.FC = () => {
         
         {/* Features Grid with Staggered Animation */}
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -174,23 +174,23 @@ const FeaturesSection: React.FC = () => {
               }}
               whileTap={{ scale: 0.98 }}
             >
-              <Card className="group h-full hover:shadow-2xl transition-all duration-500 border-2 border-gray-200 bg-white/90 backdrop-blur-sm relative overflow-hidden">
+              <Card className="features-section-card">
                 {/* Background gradient effect */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                  className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
                   transition={{ duration: 0.8 }}
                 />
                 
-                <CardContent className="p-6 relative z-10">
+                <CardContent className="p-8 relative z-10">
                   <motion.div 
-                    className="flex items-center justify-center mb-6"
+                    className="flex items-center justify-center mb-8"
                     whileHover={{ scale: 1.1 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <motion.div 
-                      className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden`}
+                      className={`features-section-icon-container ${feature.color}`}
                       whileHover={{ 
                         scale: 1.1,
                         rotate: [0, 5, -5, 0],
@@ -199,14 +199,14 @@ const FeaturesSection: React.FC = () => {
                     >
                       {/* Icon background animation */}
                       <motion.div
-                        className="absolute inset-0 bg-white/20"
+                        className="features-section-icon-bg"
                         initial={{ scale: 0 }}
                         whileHover={{ scale: 1 }}
                         transition={{ duration: 0.3 }}
                       />
                       
                       <motion.div
-                        className="relative z-10"
+                        className="features-section-icon"
                         animate={{ 
                           rotate: [0, 2, -2, 0],
                           scale: [1, 1.05, 1]
@@ -218,13 +218,13 @@ const FeaturesSection: React.FC = () => {
                           delay: index * 0.2
                         }}
                       >
-                        <feature.icon className="w-6 h-6 text-white" />
+                        <feature.icon className="w-10 h-10 text-white drop-shadow-lg" />
                       </motion.div>
                     </motion.div>
                   </motion.div>
                   
                   <motion.h3 
-                    className="text-lg font-semibold text-gray-900 mb-3 text-center"
+                    className="text-xl font-bold text-gray-900 mb-4 text-center"
                     whileHover={{ color: "#3B82F6" }}
                     transition={{ duration: 0.3 }}
                   >
@@ -232,7 +232,7 @@ const FeaturesSection: React.FC = () => {
                   </motion.h3>
                   
                   <motion.p 
-                    className="text-gray-600 text-sm text-center leading-relaxed"
+                    className="text-gray-600 text-base text-center leading-relaxed"
                     whileHover={{ color: "#4B5563" }}
                     transition={{ duration: 0.3 }}
                   >
@@ -245,7 +245,7 @@ const FeaturesSection: React.FC = () => {
                   className="absolute inset-0 rounded-lg border-2 border-transparent"
                   whileHover={{ 
                     borderColor: "#3B82F6",
-                    boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)"
+                    boxShadow: "0 0 30px rgba(59, 130, 246, 0.4)"
                   }}
                   transition={{ duration: 0.3 }}
                 />

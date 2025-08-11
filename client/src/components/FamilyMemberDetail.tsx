@@ -5,8 +5,11 @@ import { familyAPI, medicationAPI, doseAPI, reportAPI, diseaseAnalysisAPI } from
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
+  DialogCloseButton
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +23,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Loading } from '@/components/ui/loading';
+import FileViewer from '@/components/ui/file-viewer';
 import { motion } from 'framer-motion';
 
 interface FamilyMember {
@@ -163,6 +167,9 @@ const FamilyMemberDetail: React.FC<{
     file: null as File | null
   });
   const [editMember, setEditMember] = useState<Partial<FamilyMember>>({});
+  const [selectedReportFile, setSelectedReportFile] = useState<File | null>(null);
+  const [showFileViewer, setShowFileViewer] = useState(false);
+  const [selectedReportForViewing, setSelectedReportForViewing] = useState<HealthReport | null>(null);
 
   useEffect(() => {
     if (memberId && userData && isOpen) {
@@ -459,10 +466,23 @@ const FamilyMemberDetail: React.FC<{
     }
   };
 
+  const handleReportFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedReportFile(file);
+      setNewReport(prev => ({ ...prev, file }));
+    }
+  };
+
+  const handleViewReport = (report: HealthReport) => {
+    setSelectedReportForViewing(report);
+    setShowFileViewer(true);
+  };
+
   if (loading) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-center h-32">
             <Loading />
           </div>
@@ -474,7 +494,7 @@ const FamilyMemberDetail: React.FC<{
   if (!member) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
           <Alert variant="destructive">
             <AlertDescription>Family member not found</AlertDescription>
           </Alert>
@@ -485,9 +505,9 @@ const FamilyMemberDetail: React.FC<{
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto bg-gradient-to-br from-white to-gray-50/50">
+              <DialogContent className="max-w-6xl w-[95vw] sm:w-auto max-h-[95vh] overflow-y-auto bg-gradient-to-br from-white to-gray-50/50">
         <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg -mt-6 -mx-6 px-6 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div className="flex items-center space-x-4">
               <motion.div 
                 className={`w-16 h-16 rounded-full flex items-center justify-center ${getAvatarColor(member.relationship)} shadow-lg`}
@@ -499,7 +519,7 @@ const FamilyMemberDetail: React.FC<{
               </motion.div>
               <div>
                 <motion.h1 
-                  className="text-3xl font-bold text-white"
+                  className="text-2xl lg:text-3xl font-bold text-white"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
@@ -507,7 +527,7 @@ const FamilyMemberDetail: React.FC<{
                   {member.name}
                 </motion.h1>
                 <motion.p 
-                  className="text-blue-100 text-lg"
+                  className="text-blue-100 text-base lg:text-lg"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
@@ -516,7 +536,7 @@ const FamilyMemberDetail: React.FC<{
                 </motion.p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3">
               {member.emergencyContact && (
                 <motion.div
                   initial={{ scale: 0 }}
@@ -525,7 +545,8 @@ const FamilyMemberDetail: React.FC<{
                 >
                   <Badge variant="destructive" className="text-sm animate-pulse bg-red-500 text-white">
                     <span className="material-icons text-xs mr-1">emergency</span>
-                    Emergency Contact
+                    <span className="hidden sm:inline">Emergency Contact</span>
+                    <span className="sm:hidden">Emergency</span>
                   </Badge>
                 </motion.div>
               )}
@@ -540,7 +561,8 @@ const FamilyMemberDetail: React.FC<{
                 className="text-white/90 hover:text-white hover:bg-white/20 transition-all duration-200"
               >
                 <span className="material-icons mr-2">edit</span>
-                Edit Profile
+                <span className="hidden sm:inline">Edit Profile</span>
+                <span className="sm:hidden">Edit</span>
               </Button>
             </div>
           </div>
@@ -555,7 +577,7 @@ const FamilyMemberDetail: React.FC<{
             transition={{ delay: 0.4 }}
           >
             <h3 className="text-lg font-bold text-blue-900 mb-4">Health Data Summary</h3>
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
               <motion.div 
                 className="text-center p-4 bg-white rounded-lg border border-blue-200 shadow-sm"
                 initial={{ opacity: 0, y: 10 }}
@@ -612,7 +634,7 @@ const FamilyMemberDetail: React.FC<{
 
           {/* Enhanced Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-gray-100 p-1 rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-gray-100 p-1 rounded-lg">
               <TabsTrigger 
                 value="overview" 
                 className="data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200"
@@ -1410,10 +1432,10 @@ const FamilyMemberDetail: React.FC<{
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    onClick={() => window.open(report.fileUrl, '_blank')}
+                                    onClick={() => handleViewReport(report)}
                                     className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
                                   >
-                                    <span className="material-icons text-sm mr-1">download</span>
+                                    <span className="material-icons text-sm mr-1">visibility</span>
                                     View
                                   </Button>
                                 )}
@@ -1648,75 +1670,126 @@ const FamilyMemberDetail: React.FC<{
         {/* Add Report Dialog */}
         {showAddReport && (
           <Dialog open={showAddReport} onOpenChange={setShowAddReport}>
-            <DialogContent>
+            <DialogContent className="max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl w-[95vw] relative">
+              <DialogCloseButton />
               <DialogHeader>
-                <DialogTitle>Upload Report</DialogTitle>
+                <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+                  Upload Report
+                </DialogTitle>
+                <DialogDescription className="text-sm text-gray-600 mb-4">
+                  Upload medical reports, prescriptions, and health documents
+                </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="reportTitle">Report Title</Label>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="reportTitle" className="text-sm font-medium text-gray-700">
+                    Report Title
+                  </Label>
                   <Input
                     id="reportTitle"
                     value={newReport.title}
-                    onChange={(e) => setNewReport({...newReport, title: e.target.value})}
+                    onChange={(e) => setNewReport(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Blood Test Report"
+                    required
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="reportType">Report Type</Label>
-                  <Select value={newReport.reportType} onValueChange={(value: any) => setNewReport({...newReport, reportType: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
+                
+                <div className="space-y-2">
+                  <Label htmlFor="reportType" className="text-sm font-medium text-gray-700">
+                    Report Type
+                  </Label>
+                  <Select
+                    value={newReport.type}
+                    onValueChange={(value) => setNewReport(prev => ({ ...prev, type: value }))}
+                  >
+                    <SelectTrigger className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                      <SelectValue placeholder="Select report type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="lab_report">Lab Report</SelectItem>
-                      <SelectItem value="prescription">Prescription</SelectItem>
-                      <SelectItem value="medical_record">Medical Record</SelectItem>
-                      <SelectItem value="imaging">Imaging</SelectItem>
+                      <SelectItem value="bloodTest">Blood Test</SelectItem>
+                      <SelectItem value="xray">X-Ray</SelectItem>
+                      <SelectItem value="mri">MRI</SelectItem>
+                      <SelectItem value="ecg">ECG</SelectItem>
+                      <SelectItem value="urineTest">Urine Test</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="doctorName">Doctor Name (Optional)</Label>
-                    <Input
-                      id="doctorName"
-                      value={newReport.doctorName}
-                      onChange={(e) => setNewReport({...newReport, doctorName: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="labName">Lab Name (Optional)</Label>
-                    <Input
-                      id="labName"
-                      value={newReport.labName}
-                      onChange={(e) => setNewReport({...newReport, labName: e.target.value})}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="reportFile">Upload File</Label>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="reportFile" className="text-sm font-medium text-gray-700">
+                    Upload File
+                  </Label>
                   <Input
                     id="reportFile"
                     type="file"
-                    onChange={(e) => setNewReport({...newReport, file: e.target.files?.[0] || null})}
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleReportFileSelect}
+                    required
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:transition-colors"
                   />
+                  {selectedReportFile && (
+                    <div className="mt-3 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg shadow-sm">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+                        <div className="flex items-center space-x-3 min-w-0 flex-1">
+                          <span className="material-icons text-blue-600 text-xl flex-shrink-0">description</span>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-blue-900 truncate">
+                              {selectedReportFile.name}
+                            </p>
+                            <p className="text-xs text-blue-700">
+                              Size: {(selectedReportFile.size / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                            <p className="text-xs text-blue-600 mt-1">
+                              Type: {selectedReportFile.type || 'Unknown'}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedReportFile(null)}
+                          className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 p-2 rounded-full transition-colors flex-shrink-0"
+                          title="Remove file"
+                        >
+                          <span className="material-icons text-lg">close</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <Label htmlFor="reportNotes">Notes (Optional)</Label>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="reportNotes" className="text-sm font-medium text-gray-700">
+                    Notes
+                  </Label>
                   <Textarea
                     id="reportNotes"
                     value={newReport.notes}
-                    onChange={(e) => setNewReport({...newReport, notes: e.target.value})}
+                    onChange={(e) => setNewReport(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Additional notes about this report"
+                    rows={3}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
                   />
                 </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowAddReport(false)}>
+                
+                <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowAddReport(false)}
+                    className="w-full sm:w-auto"
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={handleAddReport}>
+                  <Button
+                    onClick={handleAddReport}
+                    disabled={!selectedReportFile || !newReport.title}
+                    className="w-full sm:w-auto px-6 py-2.5 text-white hover:bg-blue-700 transition-colors shadow-sm"
+                    style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
+                  >
                     Upload Report
                   </Button>
-                </div>
+                </DialogFooter>
               </div>
             </DialogContent>
           </Dialog>
@@ -1725,7 +1798,7 @@ const FamilyMemberDetail: React.FC<{
         {/* Edit Member Dialog */}
         {showEditMember && (
           <Dialog open={showEditMember} onOpenChange={setShowEditMember}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Edit Family Member</DialogTitle>
               </DialogHeader>
@@ -1733,7 +1806,7 @@ const FamilyMemberDetail: React.FC<{
                 {/* Basic Information */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Basic Information</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <Label htmlFor="editName">Name</Label>
                       <Input
@@ -1752,7 +1825,7 @@ const FamilyMemberDetail: React.FC<{
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <Label htmlFor="editGender">Gender</Label>
                       <Select value={editMember.gender || ''} onValueChange={(value) => setEditMember({...editMember, gender: value})}>
@@ -1814,7 +1887,7 @@ const FamilyMemberDetail: React.FC<{
                 {/* Physical Information */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Physical Information</h3>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <div>
                       <Label htmlFor="editHeight">Height (cm)</Label>
                       <Input
@@ -1930,6 +2003,20 @@ const FamilyMemberDetail: React.FC<{
               </div>
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* File Viewer Modal */}
+        {selectedReportForViewing && (
+          <FileViewer
+            isOpen={showFileViewer}
+            onClose={() => {
+              setShowFileViewer(false);
+              setSelectedReportForViewing(null);
+            }}
+            fileUrl={selectedReportForViewing.fileUrl || ''}
+            fileName={selectedReportForViewing.title}
+            fileType={selectedReportForViewing.fileType}
+          />
         )}
       </DialogContent>
     </Dialog>

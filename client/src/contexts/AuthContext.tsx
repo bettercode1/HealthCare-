@@ -109,8 +109,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('=== LOGIN DEBUG ===');
+      console.log('Attempting login with:', { email, password });
+      
       // Check if it's a demo user
       if (DEMO_USERS[email as keyof typeof DEMO_USERS] && password === 'password123') {
+        console.log('Demo user login successful');
         const demoUser = DEMO_USERS[email as keyof typeof DEMO_USERS];
         const mockUser = createMockUser(email);
         
@@ -127,12 +131,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           address: demoUser.address,
         };
         
+        console.log('Setting user data:', userData);
         setCurrentUser(mockUser);
         setUserData(userData);
         
         // Store in localStorage for persistence
         localStorage.setItem('demoUser', JSON.stringify(mockUser));
         localStorage.setItem('demoUserData', JSON.stringify(userData));
+        
+        console.log('User data stored in localStorage');
         
         // Initialize demo data
         try {
@@ -293,6 +300,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Clear invalid data
         localStorage.removeItem('demoUser');
         localStorage.removeItem('demoUserData');
+      }
+    }
+
+    // If no demo user exists, create one automatically for demo mode
+    if (!demoUser || !demoUserData) {
+      console.log('=== AUTO DEMO USER CREATION DEBUG ===');
+      console.log('No demo user found, creating automatic demo user...');
+      console.log('demoUser:', demoUser);
+      console.log('demoUserData:', demoUserData);
+      
+      try {
+        const autoUser = createMockUser('patient@demo.com');
+        console.log('Created auto user:', autoUser);
+        
+        const autoUserData: UserData = {
+          id: autoUser.uid,
+          email: 'patient@demo.com',
+          role: 'patient',
+          plan: 'family',
+          name: 'Demo Patient',
+          age: 35,
+          phone: '+1-555-0123',
+          address: '123 Health St, Medical City, MC 12345'
+        };
+        
+        console.log('Created auto user data:', autoUserData);
+        
+        // Store the auto-created user
+        localStorage.setItem('demoUser', JSON.stringify(autoUser));
+        localStorage.setItem('demoUserData', JSON.stringify(autoUserData));
+        
+        console.log('Stored auto user in localStorage');
+        
+        // Set the user in state
+        setCurrentUser(autoUser);
+        setUserData(autoUserData);
+        setLoading(false);
+        
+        console.log('Automatic demo user created and logged in');
+        console.log('Current user state:', autoUser);
+        console.log('User data state:', autoUserData);
+        
+        // Initialize demo data for the new user
+        setTimeout(async () => {
+          try {
+            console.log('Initializing demo data for new auto user...');
+            await generateDemoData(autoUser.uid, autoUserData.role, autoUserData.email);
+          } catch (error) {
+            console.error('Error initializing demo data for auto user:', error);
+          }
+        }, 1000);
+        
+        return;
+      } catch (error) {
+        console.error('Error creating automatic demo user:', error);
       }
     }
 

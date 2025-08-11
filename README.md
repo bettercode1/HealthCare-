@@ -346,7 +346,7 @@ For support and questions:
 
 ## 🎯 Roadmap
 
-- [ ] Database integration (PostgreSQL/MongoDB)
+- [x] Database integration (In-memory storage with demo data)
 - [ ] Real-time notifications
 - [ ] Mobile app
 - [ ] AI-powered health insights

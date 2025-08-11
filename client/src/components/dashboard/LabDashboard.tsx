@@ -122,6 +122,16 @@ const LabDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState<'date' | 'priority' | 'status'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
+  // Upload form state
+  const [uploadForm, setUploadForm] = useState({
+    patientEmail: '',
+    title: '',
+    file: null as File | null,
+    notes: '',
+  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+
   // Initialize demo data
   useEffect(() => {
     const initializeDemoData = async () => {
@@ -315,6 +325,64 @@ const LabDashboard: React.FC = () => {
     });
   };
 
+  // Upload functionality
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUploadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userData || !selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('patientEmail', uploadForm.patientEmail);
+    formData.append('title', uploadForm.title);
+    formData.append('notes', uploadForm.notes);
+
+    setUploading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      const newReport: LabReport = {
+        id: `report_${Date.now()}`,
+        labId: userData.id,
+        patientId: 'patient_1', // Placeholder, needs actual patient ID
+        patientName: 'Patient Name', // Placeholder
+        patientEmail: uploadForm.patientEmail,
+        title: uploadForm.title,
+        testType: 'Blood Test', // Placeholder
+        status: 'pending',
+        priority: 'medium',
+        createdAt: new Date().toISOString(),
+        dueDate: '2023-12-31', // Placeholder
+        notes: uploadForm.notes,
+        results: [],
+        doctorName: 'Dr. Smith', // Placeholder
+        labName: userData.labName || 'Medical Laboratory'
+      };
+      setLabReports(prev => [...prev, newReport]);
+      saveData('lab_reports', [...labReports, newReport]);
+      toast({
+        title: 'Success',
+        description: 'Report uploaded successfully!',
+      });
+      setUploadForm({ patientEmail: '', title: '', file: null, notes: '' });
+      setSelectedFile(null);
+    } catch (error) {
+      console.error('Error uploading report:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to upload report.',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // Form reset functions
   const resetReportForm = () => {
     setNewReport({
@@ -420,636 +488,242 @@ const LabDashboard: React.FC = () => {
   }
 
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50">
-          <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-t-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <span className="material-icons text-white text-xl">science</span>
-                </div>
-                <CardTitle className="text-xl font-bold text-white">Laboratory Dashboard</CardTitle>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-white/90">
-                  Welcome back, {userData?.labName || 'Lab Technician'}
-                </span>
-              </div>
-            </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+      
+      {/* Upload Reports */}
+      <div className="space-y-6">
+        
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-blue-50">
+          <CardHeader className="space-y-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg border-b border-blue-100">
+            <CardTitle className="flex items-center text-xl sm:text-2xl font-bold text-gray-900">
+              <span className="material-icons mr-2 text-blue-600">cloud_upload</span>
+              {t('uploadReport')}
+            </CardTitle>
+            <p className="text-sm text-gray-600">
+              Upload medical reports and lab results for patients
+            </p>
           </CardHeader>
-          
+          <CardContent className="space-y-4 sm:space-y-6 p-6">
+            <form onSubmit={handleUploadSubmit} className="space-y-4 sm:space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="patientEmail" className="text-sm font-medium text-gray-700">
+                  {t('patientEmail')}
+                </Label>
+                <Input
+                  id="patientEmail"
+                  type="email"
+                  value={uploadForm.patientEmail}
+                  onChange={(e) => setUploadForm(prev => ({ ...prev, patientEmail: e.target.value }))}
+                  placeholder="patient@example.com"
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-sm font-medium text-gray-700">
+                  {t('reportTitle')}
+                </Label>
+                <Input
+                  id="title"
+                  value={uploadForm.title}
+                  onChange={(e) => setUploadForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Blood Test Report"
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="file" className="text-sm font-medium text-gray-700">
+                  {t('reportFile')}
+                </Label>
+                <Input
+                  id="file"
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileSelect}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:transition-colors"
+                />
+                {selectedFile && (
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="material-icons text-blue-600 text-lg">description</span>
+                        <div>
+                          <p className="text-sm font-medium text-blue-900">
+                            {selectedFile.name}
+                          </p>
+                          <p className="text-xs text-blue-700">
+                            Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFile(null)}
+                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        <span className="material-icons text-lg">close</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
+                  {t('notes')}
+                </Label>
+                <Textarea
+                  id="notes"
+                  value={uploadForm.notes}
+                  onChange={(e) => setUploadForm(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder={t('additionalNotesAboutReport')}
+                  rows={3}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                />
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full px-6 py-2.5 text-white hover:bg-blue-700 transition-colors shadow-sm"
+                disabled={uploading}
+                style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
+              >
+                {uploading ? (
+                  <div className="flex items-center justify-center">
+                    <Loading size="sm" />
+                    <span className="ml-2">{t('uploading')}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <span className="material-icons mr-2">cloud_upload</span>
+                    {t('uploadReport')}
+                  </div>
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+      </div>
+
+      {/* Manage Reports */}
+      <div className="space-y-6">
+        
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-green-50">
+          <CardHeader className="space-y-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-lg border-b border-green-100">
+            <CardTitle className="flex items-center text-xl sm:text-2xl font-bold text-gray-900">
+              <span className="material-icons mr-2 text-green-600">manage_accounts</span>
+              {t('manageReports')}
+            </CardTitle>
+            <p className="text-sm text-gray-600">
+              View and manage uploaded reports
+            </p>
+          </CardHeader>
           <CardContent className="p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 mb-6">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="reports">Lab Reports</TabsTrigger>
-                <TabsTrigger value="patients">Patients</TabsTrigger>
-                <TabsTrigger value="testTypes">Test Types</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="overview" className="text-sm font-medium">
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="reports" className="text-sm font-medium">
+                  Reports ({labReports.length})
+                </TabsTrigger>
               </TabsList>
-
-              {/* Overview Tab */}
-              <TabsContent value="overview" className="space-y-6">
-                {/* Dashboard Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <motion.div 
-                    className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl text-white"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <div className="text-2xl font-bold">{dashboardStats.totalReports}</div>
-                    <div className="text-sm text-blue-100">Total Reports</div>
-                  </motion.div>
-                  
-                  <motion.div 
-                    className="p-4 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl text-white"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <div className="text-2xl font-bold">{dashboardStats.pendingReports}</div>
-                    <div className="text-sm text-yellow-100">Pending Reports</div>
-                  </motion.div>
-                  
-                  <motion.div 
-                    className="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-xl text-white"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <div className="text-2xl font-bold">{dashboardStats.completedReports}</div>
-                    <div className="text-sm text-green-100">Completed Reports</div>
-                  </motion.div>
-                  
-                  <motion.div 
-                    className="p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-xl text-white"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <div className="text-2xl font-bold">{dashboardStats.urgentReports}</div>
-                    <div className="text-sm text-red-100">Urgent Reports</div>
-                  </motion.div>
-                </div>
-
-                {/* Recent Activity */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Recent Reports */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Recent Lab Reports</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {labReports.slice(0, 5).map((report) => (
-                          <div key={report.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                              <p className="font-medium">{report.patientName}</p>
-                              <p className="text-sm text-gray-600">{report.testType}</p>
-                            </div>
-                            <Badge variant={report.status === 'completed' ? 'default' : 'secondary'}>
-                              {report.status}
-                            </Badge>
-                          </div>
-                        ))}
+              
+              <TabsContent value="overview" className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-blue-900">Total Reports</p>
+                        <p className="text-2xl font-bold text-blue-600">{labReports.length}</p>
                       </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Recent Patients */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Recent Patients</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {patients.slice(0, 5).map((patient) => (
-                          <div key={patient.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                              <p className="font-medium">{patient.name}</p>
-                              <p className="text-sm text-gray-600">{patient.age} years • {patient.gender}</p>
-                            </div>
-                            <Badge variant="outline">{patient.bloodType}</Badge>
-                          </div>
-                        ))}
+                      <span className="material-icons text-blue-600 text-2xl">description</span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-green-900">Completed</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          {labReports.filter(r => r.status === 'completed').length}
+                        </p>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <span className="material-icons text-green-600 text-2xl">check_circle</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-yellow-900">Pending Reports</p>
+                      <p className="text-2xl font-bold text-yellow-600">
+                        {labReports.filter(r => r.status === 'pending').length}
+                      </p>
+                    </div>
+                    <span className="material-icons text-yellow-600 text-2xl">pending</span>
+                  </div>
                 </div>
               </TabsContent>
-
-              {/* Lab Reports Tab */}
-              <TabsContent value="reports" className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold">Lab Report Management</h3>
-                  <Dialog open={showReportModal} onOpenChange={setShowReportModal}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-purple-600 hover:bg-purple-700">
-                        <span className="material-icons mr-2">add</span>
-                        Create Report
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Create New Lab Report</DialogTitle>
-                      </DialogHeader>
-                      <form onSubmit={handleAddReport} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="patientId">Patient</Label>
-                            <Select value={newReport.patientId} onValueChange={(value) => setNewReport(prev => ({ ...prev, patientId: value }))}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select patient" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {patients.map((patient) => (
-                                  <SelectItem key={patient.id} value={patient.id}>
-                                    {patient.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="testType">Test Type</Label>
-                            <Select value={newReport.testType} onValueChange={(value) => setNewReport(prev => ({ ...prev, testType: value }))}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select test type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {testTypes.map((testType) => (
-                                  <SelectItem key={testType.id} value={testType.id}>
-                                    {testType.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="title">Report Title</Label>
-                          <Input
-                            id="title"
-                            value={newReport.title}
-                            onChange={(e) => setNewReport(prev => ({ ...prev, title: e.target.value }))}
-                            placeholder="Enter report title"
-                            required
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="priority">Priority</Label>
-                            <Select value={newReport.priority} onValueChange={(value: LabReport['priority']) => setNewReport(prev => ({ ...prev, priority: value }))}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="low">Low</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="high">High</SelectItem>
-                                <SelectItem value="urgent">Urgent</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="dueDate">Due Date</Label>
-                            <Input
-                              id="dueDate"
-                              type="date"
-                              value={newReport.dueDate}
-                              onChange={(e) => setNewReport(prev => ({ ...prev, dueDate: e.target.value }))}
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="doctorName">Referring Doctor</Label>
-                          <Input
-                            id="doctorName"
-                            value={newReport.doctorName}
-                            onChange={(e) => setNewReport(prev => ({ ...prev, doctorName: e.target.value }))}
-                            placeholder="Doctor's name"
-                          />
-                        </div>
-
-                        <div>
-                          <Label htmlFor="notes">Notes</Label>
-                          <Textarea
-                            id="notes"
-                            value={newReport.notes}
-                            onChange={(e) => setNewReport(prev => ({ ...prev, notes: e.target.value }))}
-                            placeholder="Additional notes"
-                          />
-                        </div>
-
+              
+              <TabsContent value="reports" className="space-y-4">
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {labReports.map((report) => (
+                    <div
+                      key={report.id}
+                      className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-gray-900">{report.title}</h4>
+                        <Badge 
+                          variant={report.status === 'completed' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {report.status.replace('_', ' ')}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Patient: {report.patientName} • Type: {report.testType}
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>Created: {new Date(report.createdAt).toLocaleDateString()}</span>
                         <div className="flex space-x-2">
-                          <Button type="submit" className="flex-1">Create Report</Button>
-                          <Button type="button" variant="outline" onClick={() => setShowReportModal(false)}>
-                            Cancel
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleUpdateReportStatus(report.id, 'completed')}
+                            disabled={report.status === 'completed'}
+                            className="h-7 px-2 text-xs"
+                          >
+                            Complete
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleUpdateReportStatus(report.id, 'in_progress')}
+                            disabled={report.status === 'in_progress'}
+                            className="h-7 px-2 text-xs"
+                          >
+                            In Progress
                           </Button>
                         </div>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-
-                {/* Search and Filter */}
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <Input
-                    placeholder="Search reports..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="col-span-2"
-                  />
-                  <Select value={filterStatus} onValueChange={setFilterStatus}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Filter by status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={filterPriority} onValueChange={setFilterPriority}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Filter by priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Priority</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Reports Table */}
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Patient</TableHead>
-                          <TableHead>Test Type</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Priority</TableHead>
-                          <TableHead>Due Date</TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredReports.map((report) => (
-                          <TableRow key={report.id}>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">{report.patientName}</p>
-                                <p className="text-sm text-gray-500">{report.patientEmail}</p>
-                              </div>
-                            </TableCell>
-                            <TableCell>{report.testType}</TableCell>
-                            <TableCell>
-                              <Badge variant={report.status === 'completed' ? 'default' : 'secondary'}>
-                                {report.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge 
-                                variant={report.priority === 'urgent' ? 'destructive' : 'outline'}
-                                className={report.priority === 'high' ? 'border-red-500 text-red-700' : ''}
-                              >
-                                {report.priority}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              {new Date(report.dueDate).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex space-x-2">
-                                <Select 
-                                  value={report.status} 
-                                  onValueChange={(value: LabReport['status']) => handleUpdateReportStatus(report.id, value)}
-                                >
-                                  <SelectTrigger className="w-32">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="pending">Pending</SelectItem>
-                                    <SelectItem value="in_progress">In Progress</SelectItem>
-                                    <SelectItem value="completed">Completed</SelectItem>
-                                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  onClick={() => handleDeleteReport(report.id)}
-                                  className="text-red-600"
-                                >
-                                  Delete
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Patients Tab */}
-              <TabsContent value="patients" className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold">Patient Management</h3>
-                  <Dialog open={showPatientModal} onOpenChange={setShowPatientModal}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700">
-                        <span className="material-icons mr-2">person_add</span>
-                        Add Patient
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Add New Patient</DialogTitle>
-                      </DialogHeader>
-                      <form onSubmit={handleAddPatient} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input
-                              id="name"
-                              value={newPatient.name}
-                              onChange={(e) => setNewPatient(prev => ({ ...prev, name: e.target.value }))}
-                              placeholder="Enter full name"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="age">Age</Label>
-                            <Input
-                              id="age"
-                              type="number"
-                              value={newPatient.age}
-                              onChange={(e) => setNewPatient(prev => ({ ...prev, age: e.target.value }))}
-                              placeholder="Age"
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                              id="email"
-                              type="email"
-                              value={newPatient.email}
-                              onChange={(e) => setNewPatient(prev => ({ ...prev, email: e.target.value }))}
-                              placeholder="Email address"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="phone">Phone</Label>
-                            <Input
-                              id="phone"
-                              value={newPatient.phone}
-                              onChange={(e) => setNewPatient(prev => ({ ...prev, phone: e.target.value }))}
-                              placeholder="Phone number"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="gender">Gender</Label>
-                            <Select value={newPatient.gender} onValueChange={(value) => setNewPatient(prev => ({ ...prev, gender: value }))}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select gender" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Male">Male</SelectItem>
-                                <SelectItem value="Female">Female</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="bloodType">Blood Type</Label>
-                            <Select value={newPatient.bloodType} onValueChange={(value) => setNewPatient(prev => ({ ...prev, bloodType: value }))}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select blood type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="A+">A+</SelectItem>
-                                <SelectItem value="A-">A-</SelectItem>
-                                <SelectItem value="B+">B+</SelectItem>
-                                <SelectItem value="B-">B-</SelectItem>
-                                <SelectItem value="AB+">AB+</SelectItem>
-                                <SelectItem value="AB-">AB-</SelectItem>
-                                <SelectItem value="O+">O+</SelectItem>
-                                <SelectItem value="O-">O-</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="flex space-x-2">
-                          <Button type="submit" className="flex-1">Add Patient</Button>
-                          <Button type="button" variant="outline" onClick={() => setShowPatientModal(false)}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {/* Patients Table */}
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Age</TableHead>
-                          <TableHead>Contact</TableHead>
-                          <TableHead>Blood Type</TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {patients.map((patient) => (
-                          <TableRow key={patient.id}>
-                            <TableCell className="font-medium">{patient.name}</TableCell>
-                            <TableCell>{patient.age} years</TableCell>
-                            <TableCell>
-                              <div>
-                                <p>{patient.email}</p>
-                                <p className="text-sm text-gray-500">{patient.phone}</p>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline">{patient.bloodType}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => handleDeletePatient(patient.id)}
-                                className="text-red-600"
-                              >
-                                Delete
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Test Types Tab */}
-              <TabsContent value="testTypes" className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold">Test Type Management</h3>
-                  <Dialog open={showTestTypeModal} onOpenChange={setShowTestTypeModal}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-indigo-600 hover:bg-indigo-700">
-                        <span className="material-icons mr-2">add</span>
-                        Add Test Type
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Add New Test Type</DialogTitle>
-                      </DialogHeader>
-                      <form onSubmit={handleAddTestType} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="name">Test Name</Label>
-                            <Input
-                              id="name"
-                              value={newTestType.name}
-                              onChange={(e) => setNewTestType(prev => ({ ...prev, name: e.target.value }))}
-                              placeholder="Enter test name"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="category">Category</Label>
-                            <Input
-                              id="category"
-                              value={newTestType.category}
-                              onChange={(e) => setNewTestType(prev => ({ ...prev, category: e.target.value }))}
-                              placeholder="Test category"
-                              required
-                            />
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="description">Description</Label>
-                          <Textarea
-                            id="description"
-                            value={newTestType.description}
-                            onChange={(e) => setNewTestType(prev => ({ ...prev, description: e.target.value }))}
-                            placeholder="Test description"
-                            required
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-4">
-                          <div>
-                            <Label htmlFor="preparation">Preparation</Label>
-                            <Input
-                              id="preparation"
-                              value={newTestType.preparation}
-                              onChange={(e) => setNewTestType(prev => ({ ...prev, preparation: e.target.value }))}
-                              placeholder="Patient preparation"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="turnaroundTime">Turnaround Time</Label>
-                            <Input
-                              id="turnaroundTime"
-                              value={newTestType.turnaroundTime}
-                              onChange={(e) => setNewTestType(prev => ({ ...prev, turnaroundTime: e.target.value }))}
-                              placeholder="e.g., 24 hours"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="price">Price ($)</Label>
-                            <Input
-                              id="price"
-                              type="number"
-                              step="0.01"
-                              value={newTestType.price}
-                              onChange={(e) => setNewTestType(prev => ({ ...prev, price: e.target.value }))}
-                              placeholder="0.00"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex space-x-2">
-                          <Button type="submit" className="flex-1">Add Test Type</Button>
-                          <Button type="button" variant="outline" onClick={() => setShowTestTypeModal(false)}>
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {/* Test Types Table */}
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Category</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Turnaround Time</TableHead>
-                          <TableHead>Price</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {testTypes.map((testType) => (
-                          <TableRow key={testType.id}>
-                            <TableCell className="font-medium">{testType.name}</TableCell>
-                            <TableCell>{testType.category}</TableCell>
-                            <TableCell className="max-w-xs truncate">{testType.description}</TableCell>
-                            <TableCell>{testType.turnaroundTime}</TableCell>
-                            <TableCell>${testType.price.toFixed(2)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
-      </motion.div>
-    </>
+
+      </div>
+    </div>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -6,7 +7,6 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Calendar, FileText, User, Pill, AlertCircle, Download, Eye, Plus, X } from 'lucide-react';
-import { prescriptionAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/use-toast';
 import { format } from 'date-fns';
@@ -81,8 +81,9 @@ const DUMMY_PRESCRIPTIONS: Prescription[] = [
 ];
 
 const Prescriptions: React.FC = () => {
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>(DUMMY_PRESCRIPTIONS);
-  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newPrescription, setNewPrescription] = useState({
@@ -96,7 +97,7 @@ const Prescriptions: React.FC = () => {
     interactions: '',
     monitoring: ''
   });
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -106,44 +107,66 @@ const Prescriptions: React.FC = () => {
   const loadPrescriptions = async () => {
     try {
       setLoading(true);
-      const data = await prescriptionAPI.getPrescriptions(user?.uid);
-      console.log('Loaded prescriptions data:', data);
       
-      // If API returns data, use it; otherwise, use dummy data
-      if (data && Array.isArray(data) && data.length > 0) {
-        setPrescriptions(data);
-      } else {
-        // Keep dummy data if API doesn't return anything
-        console.log('Using dummy prescriptions data');
-        setPrescriptions(DUMMY_PRESCRIPTIONS);
+      // Try to load from localStorage first
+      const storedPrescriptions = localStorage.getItem('mock_prescriptions');
+      let prescriptionData: Prescription[] = [];
+      
+      if (storedPrescriptions) {
+        try {
+          prescriptionData = JSON.parse(storedPrescriptions);
+        } catch (e) {
+          console.warn('Error parsing stored prescriptions, using dummy data');
+        }
       }
+      
+      // If no stored data or empty, use dummy data
+      if (!prescriptionData || prescriptionData.length === 0) {
+        prescriptionData = DUMMY_PRESCRIPTIONS;
+        // Store dummy data for future use
+        localStorage.setItem('mock_prescriptions', JSON.stringify(DUMMY_PRESCRIPTIONS));
+      }
+      
+      setPrescriptions(prescriptionData);
+      console.log('Loaded prescriptions:', prescriptionData.length);
+      
     } catch (error) {
       console.error('Error loading prescriptions:', error);
       // Fallback to dummy data on error
       setPrescriptions(DUMMY_PRESCRIPTIONS);
       toast({
-        title: "Info",
-        description: "Using demo prescriptions data",
+        title: t('info'),
+        description: t('usingDemoPrescriptionsData'),
       });
     } finally {
       setLoading(false);
     }
   };
 
+  const savePrescriptionsToStorage = (updatedPrescriptions: Prescription[]) => {
+    try {
+      localStorage.setItem('mock_prescriptions', JSON.stringify(updatedPrescriptions));
+      console.log('Saved prescriptions to storage:', updatedPrescriptions.length);
+    } catch (error) {
+      console.error('Error saving prescriptions to storage:', error);
+    }
+  };
+
   const handleAddPrescription = async () => {
     if (!newPrescription.diagnosis || !newPrescription.medication || !newPrescription.prescribedDate) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields",
+        title: t('error'),
+        description: t('pleaseFillInAllRequiredFields'),
         variant: "destructive",
       });
       return;
     }
 
     try {
-      const prescriptionData = {
+      const prescriptionData: Prescription = {
+        id: `pres_${Date.now()}`,
         doctorId: 'demo-doctor-1',
-        patientId: user?.uid || 'demo-patient-1',
+        patientId: currentUser?.uid || 'demo-patient-1',
         diagnosis: newPrescription.diagnosis,
         medication: newPrescription.medication,
         notes: newPrescription.notes,
@@ -152,13 +175,17 @@ const Prescriptions: React.FC = () => {
         status: newPrescription.status,
         sideEffects: newPrescription.sideEffects ? newPrescription.sideEffects.split(',').map(s => s.trim()) : [],
         interactions: newPrescription.interactions ? newPrescription.interactions.split(',').map(s => s.trim()) : [],
-        monitoring: newPrescription.monitoring ? newPrescription.monitoring.split(',').map(s => s.trim()) : []
+        monitoring: newPrescription.monitoring ? newPrescription.monitoring.split(',').map(s => s.trim()) : [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
-      const createdPrescription = await prescriptionAPI.createPrescription(prescriptionData);
-      
       // Add to local state
-      setPrescriptions(prev => [...prev, createdPrescription]);
+      const updatedPrescriptions = [...prescriptions, prescriptionData];
+      setPrescriptions(updatedPrescriptions);
+      
+      // Save to localStorage
+      savePrescriptionsToStorage(updatedPrescriptions);
       
       // Reset form
       setNewPrescription({
@@ -176,16 +203,38 @@ const Prescriptions: React.FC = () => {
       setShowAddForm(false);
       
       toast({
-        title: "Success",
-        description: "Prescription added successfully",
+        title: t('success'),
+        description: t('prescriptionAddedSuccessfully'),
       });
     } catch (error) {
       console.error('Error adding prescription:', error);
       toast({
-        title: "Error",
-        description: "Failed to add prescription",
+        title: t('error'),
+        description: t('failedToAddPrescription'),
         variant: "destructive",
       });
+    }
+  };
+
+  const handleDeletePrescription = (prescriptionId: string) => {
+    if (window.confirm('Are you sure you want to delete this prescription? This action cannot be undone.')) {
+      try {
+        const updatedPrescriptions = prescriptions.filter(p => p.id !== prescriptionId);
+        setPrescriptions(updatedPrescriptions);
+        savePrescriptionsToStorage(updatedPrescriptions);
+        
+        toast({
+          title: t('success'),
+          description: t('prescriptionDeletedSuccessfully'),
+        });
+      } catch (error) {
+        console.error('Error deleting prescription:', error);
+        toast({
+          title: t('error'),
+          description: t('failedToDeletePrescription'),
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -217,10 +266,9 @@ const Prescriptions: React.FC = () => {
   };
 
   const handleDownloadPrescription = (prescription: Prescription) => {
-    // In a real app, this would download the actual prescription file
     toast({
-      title: "Download Started",
-      description: `Downloading prescription for ${prescription.diagnosis}`,
+      title: t('download'),
+      description: `${t('downloading')} ${t('prescription')} ${t('for')} ${prescription.diagnosis}`,
     });
   };
 
@@ -236,121 +284,178 @@ const Prescriptions: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">My Prescriptions</h2>
-          <p className="text-gray-600">View and manage prescriptions from your doctors</p>
+          <h2 className="text-2xl font-bold text-gray-900">{t('myPrescriptions')}</h2>
+          <p className="text-gray-600">{t('viewAndManagePrescriptions')}</p>
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="secondary" className="text-sm">
-            {prescriptions.length} prescription{prescriptions.length !== 1 ? 's' : ''}
+            {prescriptions.length} {prescriptions.length !== 1 ? t('prescriptions') : t('prescription')}
           </Badge>
-          <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2">
+          <Button 
+            variant="outline"
+            onClick={loadPrescriptions}
+            className="flex items-center gap-2 border-gray-300 hover:bg-gray-50"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {t('refresh')}
+          </Button>
+          <Button 
+            onClick={() => setShowAddForm(true)} 
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
             <Plus className="h-4 w-4" />
-            Add Prescription
+            {t('addPrescription')}
           </Button>
         </div>
       </div>
 
       {/* Add Prescription Form */}
       {showAddForm && (
-        <Card className="border-2 border-blue-200">
-          <CardHeader>
+        <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-white shadow-lg">
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Add New Prescription</CardTitle>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <Plus className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-green-900">{t('addNewPrescription')}</CardTitle>
+                  <p className="text-sm text-green-700">{t('enterPrescriptionDetails')}</p>
+                </div>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowAddForm(false)}
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700">Diagnosis *</label>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  {t('diagnosis')} *
+                </label>
                 <Input
                   value={newPrescription.diagnosis}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, diagnosis: e.target.value }))}
-                  placeholder="e.g., Hypertension"
+                  placeholder={t('diagnosisPlaceholder')}
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Medication *</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  {t('medication')} *
+                </label>
                 <Input
                   value={newPrescription.medication}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, medication: e.target.value }))}
-                  placeholder="e.g., Lisinopril 10mg daily"
+                  placeholder={t('medicationPlaceholder')}
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Prescribed Date *</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  {t('prescribedDate')} *
+                </label>
                 <Input
                   type="date"
                   value={newPrescription.prescribedDate}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, prescribedDate: e.target.value }))}
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Status</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  {t('status')}
+                </label>
                 <Select
                   value={newPrescription.status}
                   onValueChange={(value) => setNewPrescription(prev => ({ ...prev, status: value }))}
                 >
-                  <SelectTrigger>
-                    <SelectValue />
+                  <SelectTrigger className="h-11 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
+                    <SelectValue placeholder={t('selectStatus')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="expired">Expired</SelectItem>
-                    <SelectItem value="refilled">Refilled</SelectItem>
+                    <SelectItem value="active">🟢 {t('active')}</SelectItem>
+                    <SelectItem value="expired">🔴 {t('expired')}</SelectItem>
+                    <SelectItem value="refilled">🔄 {t('refilled')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Refills</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  {t('refills')}
+                </label>
                 <Input
                   type="number"
                   value={newPrescription.refills}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, refills: parseInt(e.target.value) || 0 }))}
                   placeholder="0"
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                 />
               </div>
             </div>
             
-            <div>
-              <label className="text-sm font-medium text-gray-700">Notes</label>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                {t('notesAndInstructions')}
+              </label>
               <Textarea
                 value={newPrescription.notes}
                 onChange={(e) => setNewPrescription(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="Additional notes about the prescription..."
+                placeholder={t('notesPlaceholder')}
                 rows={3}
+                className="border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 resize-none"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700">Side Effects</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                  {t('sideEffects')}
+                </label>
                 <Input
                   value={newPrescription.sideEffects}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, sideEffects: e.target.value }))}
-                  placeholder="dizziness, nausea (comma separated)"
+                  placeholder={t('sideEffectsPlaceholder')}
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Drug Interactions</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                  {t('drugInteractions')}
+                </label>
                 <Input
                   value={newPrescription.interactions}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, interactions: e.target.value }))}
-                  placeholder="NSAIDs, alcohol (comma separated)"
+                  placeholder={t('interactionsPlaceholder')}
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Monitoring Required</label>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  {t('monitoringRequired')}
+                </label>
                 <Input
                   value={newPrescription.monitoring}
                   onChange={(e) => setNewPrescription(prev => ({ ...prev, monitoring: e.target.value }))}
-                  placeholder="blood pressure, kidney function (comma separated)"
+                  placeholder={t('monitoringPlaceholder')}
+                  className="h-11 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 />
               </div>
             </div>
@@ -359,25 +464,43 @@ const Prescriptions: React.FC = () => {
               <Button
                 variant="outline"
                 onClick={() => setShowAddForm(false)}
-                className="flex-1"
+                className="flex-1 h-11 border-gray-300 hover:bg-gray-50"
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 onClick={handleAddPrescription}
-                className="flex-1"
+                className="flex-1 h-11 bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                disabled={!newPrescription.diagnosis || !newPrescription.medication || !newPrescription.prescribedDate}
               >
-                Add Prescription
+                <Plus className="h-4 w-4 mr-2" />
+                {t('addPrescription')}
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {prescriptions
-          .filter(prescription => prescription && prescription.id && prescription.diagnosis && prescription.medication)
-          .map((prescription) => (
+      {prescriptions.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+            <Pill className="h-8 w-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('noPrescriptionsFound')}</h3>
+          <p className="text-gray-600 mb-4">{t('noPrescriptionsDescription')}</p>
+          <Button 
+            onClick={() => setShowAddForm(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t('addYourFirstPrescription')}
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {prescriptions
+            .filter(prescription => prescription && prescription.id && prescription.diagnosis && prescription.medication)
+            .map((prescription) => (
           <Card key={prescription.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
@@ -390,7 +513,7 @@ const Prescriptions: React.FC = () => {
                   </CardDescription>
                 </div>
                 <Badge className={getStatusColor(prescription.status)}>
-                  {prescription.status || 'Unknown'}
+                  {prescription.status || t('unknown')}
                 </Badge>
               </div>
             </CardHeader>
@@ -399,20 +522,20 @@ const Prescriptions: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex items-center text-sm text-gray-600">
                   <Calendar className="h-4 w-4 mr-2" />
-                  <span>Prescribed: {formatDate(prescription.prescribedDate)}</span>
+                  <span>{t('prescribed')}: {formatDate(prescription.prescribedDate)}</span>
                 </div>
                 
                 {prescription.refills !== undefined && (
                   <div className="flex items-center text-sm text-gray-600">
                     <Pill className="h-4 w-4 mr-2" />
-                    <span>Refills: {prescription.refills}</span>
+                    <span>{t('refills')}: {prescription.refills}</span>
                   </div>
                 )}
               </div>
 
               {prescription.notes && (
                 <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md">
-                  <p className="font-medium mb-1">Notes:</p>
+                  <p className="font-medium mb-1">{t('notes')}:</p>
                   <p>{prescription.notes}</p>
                 </div>
               )}
@@ -421,7 +544,7 @@ const Prescriptions: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600">
                     <AlertCircle className="h-4 w-4 mr-2 text-amber-500" />
-                    <span className="font-medium">Side Effects:</span>
+                    <span className="font-medium">{t('sideEffects')}:</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {prescription.sideEffects.map((effect, index) => (
@@ -441,7 +564,7 @@ const Prescriptions: React.FC = () => {
                   onClick={() => handleViewPrescription(prescription)}
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  View Details
+                  {t('viewDetails')}
                 </Button>
                 <Button
                   variant="outline"
@@ -450,27 +573,37 @@ const Prescriptions: React.FC = () => {
                   onClick={() => handleDownloadPrescription(prescription)}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download
+                  {t('download')}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                  onClick={() => handleDeletePrescription(prescription.id)}
+                >
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
           </Card>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Prescription Detail Modal */}
       {selectedPrescription && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-95 backdrop-blur-lg flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-blue-200">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  Prescription Details
+                  {t('prescriptionDetails')}
                 </h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedPrescription(null)}
+                  className="hover:bg-gray-100 rounded-full p-2"
                 >
                   ×
                 </Button>
@@ -479,44 +612,44 @@ const Prescriptions: React.FC = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Diagnosis</label>
+                    <label className="text-sm font-medium text-gray-700">{t('diagnosis')}</label>
                     <p className="text-sm text-gray-900">{selectedPrescription.diagnosis}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Status</label>
+                    <label className="text-sm font-medium text-gray-700">{t('status')}</label>
                     <Badge className={getStatusColor(selectedPrescription.status)}>
-                      {selectedPrescription.status || 'Unknown'}
+                      {selectedPrescription.status || t('unknown')}
                     </Badge>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Prescribed Date</label>
+                    <label className="text-sm font-medium text-gray-700">{t('prescribedDate')}</label>
                     <p className="text-sm text-gray-900">
                       {formatDate(selectedPrescription.prescribedDate)}
                     </p>
                   </div>
                   {selectedPrescription.refills !== undefined && (
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Refills</label>
+                      <label className="text-sm font-medium text-gray-700">{t('refills')}</label>
                       <p className="text-sm text-gray-900">{selectedPrescription.refills}</p>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Medication</label>
+                  <label className="text-sm font-medium text-gray-700">{t('medication')}</label>
                   <p className="text-sm text-gray-900">{selectedPrescription.medication}</p>
                 </div>
 
                 {selectedPrescription.notes && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Notes</label>
+                    <label className="text-sm font-medium text-gray-700">{t('notes')}</label>
                     <p className="text-sm text-gray-900">{selectedPrescription.notes}</p>
                   </div>
                 )}
 
                 {selectedPrescription.sideEffects && selectedPrescription.sideEffects.length > 0 && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Side Effects</label>
+                    <label className="text-sm font-medium text-gray-700">{t('sideEffects')}</label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {selectedPrescription.sideEffects.map((effect, index) => (
                         <Badge key={index} variant="outline">
@@ -529,7 +662,7 @@ const Prescriptions: React.FC = () => {
 
                 {selectedPrescription.interactions && selectedPrescription.interactions.length > 0 && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Drug Interactions</label>
+                    <label className="text-sm font-medium text-gray-700">{t('drugInteractions')}</label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {selectedPrescription.interactions.map((interaction, index) => (
                         <Badge key={index} variant="outline" className="bg-red-50 text-red-700">
@@ -542,7 +675,7 @@ const Prescriptions: React.FC = () => {
 
                 {selectedPrescription.monitoring && selectedPrescription.monitoring.length > 0 && (
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Monitoring Required</label>
+                    <label className="text-sm font-medium text-gray-700">{t('monitoringRequired')}</label>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {selectedPrescription.monitoring.map((item, index) => (
                         <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700">
@@ -560,14 +693,14 @@ const Prescriptions: React.FC = () => {
                   className="flex-1"
                   onClick={() => setSelectedPrescription(null)}
                 >
-                  Close
+                  {t('close')}
                 </Button>
                 <Button
                   className="flex-1"
                   onClick={() => handleDownloadPrescription(selectedPrescription)}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download Prescription
+                  {t('downloadPrescription')}
                 </Button>
               </div>
             </div>

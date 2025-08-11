@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,8 +9,9 @@ import { familyAPI, medicationAPI, doseAPI, reportAPI, diseaseAnalysisAPI } from
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loading } from '@/components/ui/loading';
-import FamilyMembers from './FamilyMembers';
+import FamilyMembers from './dashboard/FamilyMembers';
 import FamilyMemberDetail from './FamilyMemberDetail';
+import InsuranceManagement from './InsuranceManagement';
 
 interface FamilyMember {
   id: string;
@@ -41,6 +43,7 @@ interface DashboardStats {
 }
 
 const FamilyManagement: React.FC = () => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const { toast } = useToast();
   const [members, setMembers] = useState<FamilyMember[]>([]);
@@ -164,15 +167,15 @@ const FamilyManagement: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Family Health Management</h1>
-          <p className="text-gray-600 mt-2">Manage your family's health records, medications, and AI analysis</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('familyHealthManagement')}</h1>
+          <p className="text-gray-600 mt-2">{t('manageFamilyHealthRecords')}</p>
         </div>
         <div className="flex items-center space-x-2">
           <Badge variant="outline" className="text-sm">
-            {stats.totalMembers} Family Members
+            {stats.totalMembers} {t('familyMembers')}
           </Badge>
           <Badge variant="outline" className="text-sm">
-            {stats.activeMedications} Active Medications
+            {stats.activeMedications} {t('activeMedications')}
           </Badge>
         </div>
       </div>
@@ -186,7 +189,7 @@ const FamilyManagement: React.FC = () => {
                 <span className="material-icons text-blue-600 text-sm">family</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-sm font-medium text-gray-600">{t('totalMembers')}</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.totalMembers}</p>
               </div>
             </div>
@@ -200,7 +203,7 @@ const FamilyManagement: React.FC = () => {
                 <span className="material-icons text-green-600 text-sm">medication</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Medications</p>
+                <p className="text-sm font-medium text-gray-600">{t('activeMedications')}</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.activeMedications}</p>
               </div>
             </div>
@@ -214,7 +217,7 @@ const FamilyManagement: React.FC = () => {
                 <span className="material-icons text-orange-600 text-sm">schedule</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Pending Doses</p>
+                <p className="text-sm font-medium text-gray-600">{t('pendingDoses')}</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.pendingDoses}</p>
               </div>
             </div>
@@ -228,7 +231,7 @@ const FamilyManagement: React.FC = () => {
                 <span className="material-icons text-purple-600 text-sm">psychology</span>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">AI Analysis</p>
+                <p className="text-sm font-medium text-gray-600">{t('aiAnalysis')}</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.aiAnalysisCount}</p>
               </div>
             </div>
@@ -238,10 +241,11 @@ const FamilyManagement: React.FC = () => {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="members">Family Members</TabsTrigger>
-          <TabsTrigger value="health">Health Tracking</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+          <TabsTrigger value="members">{t('familyMembers')}</TabsTrigger>
+          <TabsTrigger value="health">{t('healthTracking')}</TabsTrigger>
+          <TabsTrigger value="insurance">{t('insurance')}</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -250,7 +254,7 @@ const FamilyManagement: React.FC = () => {
             {/* Recent Activity */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle>{t('recentActivity')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
@@ -258,8 +262,8 @@ const FamilyManagement: React.FC = () => {
                     <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
                       <span className="material-icons text-blue-600">description</span>
                       <div>
-                        <p className="font-medium">{stats.recentReports} new reports uploaded</p>
-                        <p className="text-sm text-gray-600">In the last 7 days</p>
+                        <p className="font-medium">{stats.recentReports} {t('newReportsUploaded')}</p>
+                        <p className="text-sm text-gray-600">{t('inTheLast7Days')}</p>
                       </div>
                     </div>
                   )}
@@ -268,8 +272,8 @@ const FamilyManagement: React.FC = () => {
                     <div className="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg">
                       <span className="material-icons text-orange-600">medication</span>
                       <div>
-                        <p className="font-medium">{stats.pendingDoses} doses pending</p>
-                        <p className="text-sm text-gray-600">Requires attention</p>
+                        <p className="font-medium">{stats.pendingDoses} {t('dosesPending')}</p>
+                        <p className="text-sm text-gray-600">{t('requiresAttention')}</p>
                       </div>
                     </div>
                   )}
@@ -278,8 +282,8 @@ const FamilyManagement: React.FC = () => {
                     <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
                       <span className="material-icons text-green-600">event</span>
                       <div>
-                        <p className="font-medium">{stats.upcomingCheckups} checkups due</p>
-                        <p className="text-sm text-gray-600">Within 30 days</p>
+                        <p className="font-medium">{stats.upcomingCheckups} {t('checkupsDue')}</p>
+                        <p className="text-sm text-gray-600">{t('within30Days')}</p>
                       </div>
                     </div>
                   )}
@@ -290,7 +294,7 @@ const FamilyManagement: React.FC = () => {
             {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+                <CardTitle>{t('quickActions')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
@@ -299,7 +303,7 @@ const FamilyManagement: React.FC = () => {
                   onClick={() => setActiveTab('members')}
                 >
                   <span className="material-icons mr-2">person_add</span>
-                  Add Family Member
+                  {t('addFamilyMember')}
                 </Button>
                 
                 <Button 
@@ -308,7 +312,7 @@ const FamilyManagement: React.FC = () => {
                   onClick={() => setActiveTab('health')}
                 >
                   <span className="material-icons mr-2">upload</span>
-                  Upload Health Report
+                  {t('uploadHealthReport')}
                 </Button>
                 
                 <Button 
@@ -316,7 +320,7 @@ const FamilyManagement: React.FC = () => {
                   variant="outline"
                 >
                   <span className="material-icons mr-2">psychology</span>
-                  Run AI Analysis
+                  {t('runAiAnalysis')}
                 </Button>
                 
                 <Button 
@@ -324,7 +328,7 @@ const FamilyManagement: React.FC = () => {
                   variant="outline"
                 >
                   <span className="material-icons mr-2">schedule</span>
-                  Schedule Checkup
+                  {t('scheduleCheckup')}
                 </Button>
               </CardContent>
             </Card>
@@ -333,7 +337,7 @@ const FamilyManagement: React.FC = () => {
           {/* Family Members Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Family Members Overview</CardTitle>
+              <CardTitle>{t('familyMembersOverview')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -349,7 +353,7 @@ const FamilyManagement: React.FC = () => {
                       </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900">{member.name}</h3>
-                        <p className="text-sm text-gray-600">{member.relationship} • Age {member.age}</p>
+                        <p className="text-sm text-gray-600">{member.relationship} • {t('age')} {member.age}</p>
                       </div>
                       <Badge 
                         variant="outline" 
@@ -361,20 +365,20 @@ const FamilyManagement: React.FC = () => {
                     
                     <div className="mt-3 space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Next Checkup:</span>
+                        <span className="text-gray-600">{t('nextCheckup')}:</span>
                         <span className="font-medium">
                           {new Date(member.nextCheckup).toLocaleDateString()}
                         </span>
                       </div>
                       
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Blood Type:</span>
+                        <span className="text-gray-600">{t('bloodType')}:</span>
                         <span className="font-medium">{member.bloodType}</span>
                       </div>
                       
                       {member.emergencyContact && (
                         <Badge variant="destructive" className="text-xs">
-                          Emergency Contact
+                          {t('emergencyContact')}
                         </Badge>
                       )}
                     </div>
@@ -396,24 +400,24 @@ const FamilyManagement: React.FC = () => {
             {/* Medication Adherence */}
             <Card>
               <CardHeader>
-                <CardTitle>Medication Adherence</CardTitle>
+                <CardTitle>{t('medicationAdherence')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Overall Adherence</span>
+                    <span className="text-sm font-medium">{t('overallAdherence')}</span>
                     <span className="text-lg font-bold text-green-600">85%</span>
                   </div>
                   <Progress value={85} className="h-2" />
                   
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-600">Taken Today</p>
-                      <p className="font-medium">12/15 doses</p>
+                      <p className="text-gray-600">{t('takenToday')}</p>
+                      <p className="font-medium">12/15 {t('doses')}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">This Week</p>
-                      <p className="font-medium">78/105 doses</p>
+                      <p className="text-gray-600">{t('thisWeek')}</p>
+                      <p className="font-medium">78/105 {t('doses')}</p>
                     </div>
                   </div>
                 </div>
@@ -423,31 +427,31 @@ const FamilyManagement: React.FC = () => {
             {/* Health Metrics */}
             <Card>
               <CardHeader>
-                <CardTitle>Health Metrics</CardTitle>
+                <CardTitle>{t('healthMetrics')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 bg-blue-50 rounded-lg">
                     <p className="text-2xl font-bold text-blue-600">{stats.recentReports}</p>
-                    <p className="text-sm text-gray-600">Reports</p>
+                    <p className="text-sm text-gray-600">{t('reports')}</p>
                   </div>
                   <div className="text-center p-3 bg-green-50 rounded-lg">
                     <p className="text-2xl font-bold text-green-600">{stats.aiAnalysisCount}</p>
-                    <p className="text-sm text-gray-600">AI Analysis</p>
+                    <p className="text-sm text-gray-600">{t('aiAnalysis')}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Average Blood Pressure</span>
+                    <span>{t('averageBloodPressure')}</span>
                     <span className="font-medium">120/80</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Average Heart Rate</span>
+                    <span>{t('averageHeartRate')}</span>
                     <span className="font-medium">72 bpm</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Average Weight</span>
+                    <span>{t('averageWeight')}</span>
                     <span className="font-medium">75.2 kg</span>
                   </div>
                 </div>
@@ -458,20 +462,46 @@ const FamilyManagement: React.FC = () => {
           {/* Recent Reports */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Health Reports</CardTitle>
+              <CardTitle>{t('recentHealthReports')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <span className="material-icons text-gray-400 text-4xl mb-4">description</span>
-                <p className="text-gray-500">No recent reports</p>
-                <p className="text-sm text-gray-400">Upload health reports to see them here</p>
-                <Button className="mt-4" variant="outline">
+                <p className="text-gray-500">{t('noRecentReports')}</p>
+                <p className="text-sm text-gray-400">{t('uploadHealthReportsToSeeThemHere')}</p>
+                <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                   <span className="material-icons mr-2">upload</span>
-                  Upload Report
+                  {t('uploadReport')}
                 </Button>
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Insurance Tab */}
+        <TabsContent value="insurance" className="space-y-6">
+          <div className="space-y-6">
+            {/* Header with Quick Actions */}
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-0 shadow-lg">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-2xl text-blue-900">Family Insurance Management</CardTitle>
+                    <p className="text-blue-700">Manage insurance policies for all family members</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <span className="material-icons mr-2">shield</span>
+                      Add Policy
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+            
+            {/* Insurance Management Component */}
+            <InsuranceManagement />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

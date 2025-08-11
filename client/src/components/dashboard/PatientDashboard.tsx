@@ -31,6 +31,7 @@ import { useFirestore } from '@/hooks/useFirestore';
 import { useRealtimeDb } from '@/hooks/useRealtimeDb';
 import FeatureStatus from '@/components/FeatureStatus';
 import { MedicalLoading, HealthcareLoading } from '@/components/ui/loading';
+import FileViewer from '@/components/ui/file-viewer';
 import DoseTracker from './DoseTracker';
 import UpcomingAppointments from './UpcomingAppointments';
 import RecentReports from './RecentReports';
@@ -50,6 +51,8 @@ const PatientDashboard: React.FC = () => {
     medicationAdherence: 0,
     lastSync: new Date()
   });
+  const [showFileViewer, setShowFileViewer] = useState(false);
+  const [selectedReportForViewing, setSelectedReportForViewing] = useState<any>(null);
 
   // Fetch data using hooks
   const { data: reports, loading: reportsLoading } = useFirestore('reports',
@@ -124,6 +127,20 @@ const PatientDashboard: React.FC = () => {
       return <ArrowDownRight className="h-4 w-4 text-red-600" />;
     }
     return <Minus className="h-4 w-4 text-gray-400" />;
+  };
+
+  const handleViewReport = (report: any) => {
+    setSelectedReportForViewing(report);
+    setShowFileViewer(true);
+  };
+
+  const handleDownloadReport = (report: any) => {
+    if (report.fileURL) {
+      const link = document.createElement('a');
+      link.href = report.fileURL;
+      link.download = report.title || 'report';
+      link.click();
+    }
   };
 
   if (reportsLoading || medicationsLoading || appointmentsLoading || familyLoading || metricsLoading) {
@@ -395,10 +412,20 @@ const PatientDashboard: React.FC = () => {
                         <Badge variant="outline" className="text-xs">
                           {report.fileSize}
                         </Badge>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleViewReport(report)}
+                          title="View Report"
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDownloadReport(report)}
+                          title="Download Report"
+                        >
                           <Download className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="sm">
@@ -455,6 +482,20 @@ const PatientDashboard: React.FC = () => {
 
       {/* Feature Status Component */}
       <FeatureStatus className="mt-6" />
+
+      {/* File Viewer Modal */}
+      {selectedReportForViewing && (
+        <FileViewer
+          isOpen={showFileViewer}
+          onClose={() => {
+            setShowFileViewer(false);
+            setSelectedReportForViewing(null);
+          }}
+          fileUrl={selectedReportForViewing.fileURL || selectedReportForViewing.fileUrl}
+          fileName={selectedReportForViewing.title}
+          fileType={selectedReportForViewing.fileType}
+        />
+      )}
     </div>
   );
 };

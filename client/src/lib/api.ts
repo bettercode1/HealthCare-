@@ -28,9 +28,53 @@ const loadDemoData = (userId: string) => {
 
 // Merge demo data with existing mock data
 const mergeDemoData = (userId: string) => {
-  // Since demo data is now stored directly in mock_* keys,
-  // we don't need to merge anymore - the data is already in the correct format
-  console.log('Demo data is already stored in correct format, no merging needed');
+  try {
+    console.log('=== MERGE DEMO DATA DEBUG ===');
+    console.log('Merging demo data for user:', userId);
+    
+    // Check if demo data exists in localStorage
+    const demoDataKeys = [
+      'mock_medications',
+      'mock_dose_records', 
+      'mock_family_members',
+      'mock_reports',
+      'mock_appointments',
+      'mock_health_metrics',
+      'mock_disease_analysis',
+      'mock_health_trends',
+      'mock_prescriptions',
+      'mock_self_reminders'
+    ];
+    
+    let hasDemoData = false;
+    demoDataKeys.forEach(key => {
+      const data = localStorage.getItem(key);
+      if (data && data !== '[]') {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed && parsed.length > 0) {
+            hasDemoData = true;
+            console.log(`Found demo data in ${key}:`, parsed.length, 'items');
+          }
+        } catch (e) {
+          console.warn(`Invalid JSON in ${key}:`, e);
+        }
+      }
+    });
+    
+    if (!hasDemoData) {
+      console.log('No demo data found, initializing with default data...');
+      // Initialize with default demo data
+      if (!localStorage.getItem('mock_prescriptions')) {
+        localStorage.setItem('mock_prescriptions', JSON.stringify(DEMO_PRESCRIPTIONS));
+        console.log('Initialized demo prescriptions');
+      }
+    } else {
+      console.log('Demo data already exists, no initialization needed');
+    }
+  } catch (error) {
+    console.error('Error in mergeDemoData:', error);
+  }
 };
 
 // Demo prescription data
@@ -159,7 +203,8 @@ const mockStorage = {
   healthMetrics: JSON.parse(localStorage.getItem('mock_health_metrics') || JSON.stringify([])),
   diseaseAnalysis: JSON.parse(localStorage.getItem('mock_disease_analysis') || JSON.stringify([])),
   healthTrends: JSON.parse(localStorage.getItem('mock_health_trends') || JSON.stringify([])),
-  prescriptions: JSON.parse(localStorage.getItem('mock_prescriptions') || JSON.stringify(DEMO_PRESCRIPTIONS))
+  prescriptions: JSON.parse(localStorage.getItem('mock_prescriptions') || JSON.stringify(DEMO_PRESCRIPTIONS)),
+  selfReminders: JSON.parse(localStorage.getItem('mock_self_reminders') || JSON.stringify([]))
 };
 
 // Initialize prescriptions if they don't exist
@@ -190,6 +235,11 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
   // Use user ID from headers if provided, otherwise fall back to default
   const userId = (options.headers as any)?.['user-id'] || getAuthHeaders()['user-id'];
   
+  console.log('=== MOCK API REQUEST DEBUG ===');
+  console.log('Endpoint:', endpoint);
+  console.log('User ID:', userId);
+  console.log('Options:', options);
+  
   // Merge demo data if available
   mergeDemoData(userId);
   
@@ -208,6 +258,7 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
       const diseaseAnalysisData = localStorage.getItem('mock_disease_analysis');
       const healthTrendsData = localStorage.getItem('mock_health_trends');
       const prescriptionsData = localStorage.getItem('mock_prescriptions');
+      const selfRemindersData = localStorage.getItem('mock_self_reminders');
       
       console.log('Raw localStorage data:');
       console.log('- medications:', medicationsData);
@@ -219,6 +270,7 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
       console.log('- diseaseAnalysis:', diseaseAnalysisData);
       console.log('- healthTrends:', healthTrendsData);
       console.log('- prescriptions:', prescriptionsData);
+      console.log('- selfReminders:', selfRemindersData);
       
       mockStorage.medications = JSON.parse(medicationsData || '[]');
       mockStorage.doseRecords = JSON.parse(doseRecordsData || '[]');
@@ -229,6 +281,7 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
       mockStorage.diseaseAnalysis = JSON.parse(diseaseAnalysisData || '[]');
       mockStorage.healthTrends = JSON.parse(healthTrendsData || '[]');
       mockStorage.prescriptions = JSON.parse(prescriptionsData || JSON.stringify(DEMO_PRESCRIPTIONS));
+      mockStorage.selfReminders = JSON.parse(selfRemindersData || '[]');
       
       console.log('Mock storage reloaded:');
       console.log('- medications:', mockStorage.medications.length);
@@ -240,6 +293,7 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
       console.log('- diseaseAnalysis:', mockStorage.diseaseAnalysis.length);
       console.log('- healthTrends:', mockStorage.healthTrends.length);
       console.log('- prescriptions:', mockStorage.prescriptions.length);
+      console.log('- selfReminders:', mockStorage.selfReminders.length);
       
       // Ensure prescriptions are always available
       if (!mockStorage.prescriptions || mockStorage.prescriptions.length === 0) {
@@ -647,7 +701,8 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
       totalFamilyMembers: mockStorage.familyMembers.length,
       totalReports: mockStorage.reports.length,
       totalPrescriptions: mockStorage.prescriptions.length,
-      totalAppointments: mockStorage.appointments.length
+      totalAppointments: mockStorage.appointments.length,
+      totalSelfReminders: mockStorage.selfReminders.length
     };
   }
 
@@ -682,6 +737,43 @@ const mockApiRequest = async (endpoint: string, options: RequestInit = {}) => {
   }
 
   if (endpoint.startsWith('/users/') && options.method === 'DELETE') {
+    return { success: true };
+  }
+
+  // Self reminders API endpoints
+  if (endpoint.startsWith('/self-reminders') && (options.method === 'GET' || !options.method)) {
+    const selfReminders = filterByUserId(mockStorage.selfReminders);
+    return selfReminders;
+  }
+
+  if (endpoint === '/self-reminders' && options.method === 'POST') {
+    const reminder = JSON.parse(options.body as string);
+    const newReminder = {
+      ...reminder,
+      id: `reminder_${Date.now()}`,
+      userId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const updatedReminders = [...mockStorage.selfReminders, newReminder];
+    saveToStorage('selfReminders', updatedReminders);
+    return newReminder;
+  }
+
+  if (endpoint.startsWith('/self-reminders/') && options.method === 'PUT') {
+    const id = endpoint.split('/').pop();
+    const updates = JSON.parse(options.body as string);
+    const updatedReminders = mockStorage.selfReminders.map((r: any) => 
+      r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString() } : r
+    );
+    saveToStorage('selfReminders', updatedReminders);
+    return updatedReminders.find((r: any) => r.id === id);
+  }
+
+  if (endpoint.startsWith('/self-reminders/') && options.method === 'DELETE') {
+    const id = endpoint.split('/').pop();
+    const updatedReminders = mockStorage.selfReminders.filter((r: any) => r.id !== id);
+    saveToStorage('selfReminders', updatedReminders);
     return { success: true };
   }
 
@@ -863,6 +955,25 @@ export const userAPI = {
   })
 };
 
+// Self reminders API
+export const selfRemindersAPI = {
+  getSelfReminders: (userId?: string) => apiRequest('/self-reminders', { 
+    headers: { 'user-id': userId || '' } 
+  }),
+  getSelfReminder: (id: string) => apiRequest(`/self-reminders/${id}`),
+  createSelfReminder: (reminder: any) => apiRequest('/self-reminders', {
+    method: 'POST',
+    body: JSON.stringify(reminder)
+  }),
+  updateSelfReminder: (id: string, updates: any) => apiRequest(`/self-reminders/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(updates)
+  }),
+  deleteSelfReminder: (id: string) => apiRequest(`/self-reminders/${id}`, {
+    method: 'DELETE'
+  })
+};
+
 // Export all APIs
 export const api = {
   medications: medicationAPI,
@@ -875,5 +986,6 @@ export const api = {
   users: userAPI,
   healthMetrics: metricsAPI,
   diseaseAnalysis: diseaseAnalysisAPI,
-  healthTrends: healthTrendsAPI
+  healthTrends: healthTrendsAPI,
+  selfReminders: selfRemindersAPI
 };

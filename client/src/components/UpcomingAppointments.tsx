@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -55,20 +56,20 @@ interface FamilyMember {
 }
 
 // Helper function to get status badge
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: string, t: any) => {
   switch (status) {
     case 'confirmed':
-      return <Badge className="bg-green-100 text-green-800 border-green-200">Confirmed</Badge>;
+      return <Badge className="bg-green-100 text-green-800 border-green-200">{t('confirmed')}</Badge>;
     case 'scheduled':
-      return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Scheduled</Badge>;
+      return <Badge className="bg-blue-100 text-blue-800 border-blue-200">{t('scheduled')}</Badge>;
     case 'pending':
-      return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>;
+      return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('pending')}</Badge>;
     case 'cancelled':
-      return <Badge className="bg-red-100 text-red-800 border-red-200">Cancelled</Badge>;
+      return <Badge className="bg-red-100 text-red-800 border-red-200">{t('cancelled')}</Badge>;
     case 'completed':
-      return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Completed</Badge>;
+      return <Badge className="bg-gray-100 text-gray-800 border-gray-200">{t('completed')}</Badge>;
     default:
-      return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Unknown</Badge>;
+      return <Badge className="bg-gray-100 text-gray-800 border-gray-200">{t('unknown')}</Badge>;
   }
 };
 
@@ -337,225 +338,208 @@ const UpcomingAppointments: React.FC = () => {
 
   // Component mount effect - ensure loading state is properly managed
   useEffect(() => {
-    // Reset loading state on mount
-    setLoading(true);
-  }, []);
-
-  // Sample data for demonstration
-  useEffect(() => {
-    console.log('Loading sample appointments data...');
-    const savedAppointments = localStorage.getItem('mock_appointments');
-    if (savedAppointments) {
-      console.log('Using saved appointments from localStorage');
-      setAppointments(JSON.parse(savedAppointments));
-    } else {
-      console.log('Creating new sample appointments data');
-      // Initialize with sample data
-      const sampleAppointments: Appointment[] = [
-        {
-          id: 'apt_1',
-          patientId: 'user_1',
-          patientName: 'You',
-          doctorName: 'Dr. Sarah Johnson',
-          specialty: 'Cardiology',
-          dateTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
-          purpose: 'Annual Heart Checkup',
-          status: 'scheduled',
-          location: 'City Medical Center',
-          room: 'Cardiology Suite 3',
-          notes: 'Please bring recent blood work results',
-          type: 'in-person',
-          duration: 45,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isFamilyAppointment: false,
-          scheduledBy: 'self',
-          priority: 'medium',
-          insuranceInfo: 'Blue Cross Blue Shield',
-          cost: 150,
-          followUpRequired: false
-        },
-        {
-          id: 'apt_2',
-          patientId: 'family_1',
-          patientName: 'Emma Wilson',
-          familyMemberId: 'family_1',
-          familyMemberName: 'Emma Wilson',
-          familyMemberRelationship: 'Daughter',
-          doctorName: 'Dr. Michael Chen',
-          specialty: 'Pediatrics',
-          dateTime: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day from now
-          purpose: 'Vaccination Schedule',
-          status: 'confirmed',
-          location: 'Children\'s Medical Center',
-          room: 'Pediatrics 2',
-          notes: 'Routine vaccination appointment',
-          type: 'in-person',
-          duration: 30,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isFamilyAppointment: true,
-          scheduledBy: 'self',
-          priority: 'medium',
-          insuranceInfo: 'Family Health Plan',
-          cost: 75,
-          followUpRequired: false
-        },
-        {
-          id: 'apt_3',
-          patientId: 'family_2',
-          patientName: 'John Wilson',
-          familyMemberId: 'family_2',
-          familyMemberName: 'John Wilson',
-          familyMemberRelationship: 'Father',
-          doctorName: 'Dr. Lisa Rodriguez',
-          specialty: 'Orthopedics',
-          dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-          purpose: 'Knee Pain Consultation',
-          status: 'completed',
-          location: 'Orthopedic Institute',
-          room: 'Exam Room 5',
-          notes: 'Follow-up in 6 weeks if pain persists',
-          type: 'in-person',
-          duration: 60,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isFamilyAppointment: true,
-          scheduledBy: 'self',
-          priority: 'high',
-          insuranceInfo: 'Medicare',
-          cost: 200,
-          followUpRequired: true,
-          followUpDate: new Date(Date.now() + 6 * 7 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'apt_4',
-          patientId: 'user_1',
-          patientName: 'You',
-          doctorName: 'Dr. David Kim',
-          specialty: 'Dermatology',
-          dateTime: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-          purpose: 'Skin Cancer Screening',
-          status: 'completed',
-          location: 'Dermatology Associates',
-          room: 'Exam Room 2',
-          notes: 'All clear, annual follow-up recommended',
-          type: 'in-person',
-          duration: 30,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isFamilyAppointment: false,
-          scheduledBy: 'self',
-          priority: 'medium',
-          insuranceInfo: 'Blue Cross Blue Shield',
-          cost: 120,
-          followUpRequired: true,
-          followUpDate: new Date(Date.now() + 12 * 30 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 'apt_5',
-          patientId: 'user_1',
-          patientName: 'You',
-          doctorName: 'Dr. Amanda Foster',
-          specialty: 'Endocrinology',
-          dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
-          purpose: 'Diabetes Management',
-          status: 'scheduled',
-          location: 'Endocrine Center',
-          room: 'Virtual',
-          notes: 'Virtual consultation - will send meeting link',
-          type: 'virtual',
-          duration: 45,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isFamilyAppointment: false,
-          scheduledBy: 'doctor',
-          priority: 'high',
-          insuranceInfo: 'Blue Cross Blue Shield',
-          cost: 180,
-          followUpRequired: true
+    const initializeData = async () => {
+      try {
+        setLoading(true);
+        console.log('Loading sample appointments data...');
+        
+        // Load sample appointments data
+        const savedAppointments = localStorage.getItem('mock_appointments');
+        if (savedAppointments) {
+          console.log('Using saved appointments from localStorage');
+          setAppointments(JSON.parse(savedAppointments));
+        } else {
+          console.log('Creating new sample appointments data');
+          // Initialize with sample data
+          const sampleAppointments: Appointment[] = [
+            {
+              id: 'apt_1',
+              patientId: 'user_1',
+              patientName: 'You',
+              doctorName: 'Dr. Sarah Johnson',
+              specialty: 'Cardiology',
+              dateTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
+              purpose: 'Annual Heart Checkup',
+              status: 'scheduled',
+              location: 'City Medical Center',
+              room: 'Cardiology Suite 3',
+              notes: 'Please bring recent blood work results',
+              type: 'in-person',
+              duration: 45,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isFamilyAppointment: false,
+              scheduledBy: 'self',
+              priority: 'medium',
+              insuranceInfo: 'Blue Cross Blue Shield',
+              cost: 150,
+              followUpRequired: false
+            },
+            {
+              id: 'apt_2',
+              patientId: 'family_1',
+              patientName: 'Emma Wilson',
+              familyMemberId: 'family_1',
+              familyMemberName: 'Emma Wilson',
+              familyMemberRelationship: 'Daughter',
+              doctorName: 'Dr. Michael Chen',
+              specialty: 'Pediatrics',
+              dateTime: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day from now
+              purpose: 'Vaccination Schedule',
+              status: 'confirmed',
+              location: 'Children\'s Medical Center',
+              room: 'Pediatrics 2',
+              notes: 'Routine vaccination appointment',
+              type: 'in-person',
+              duration: 30,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isFamilyAppointment: true,
+              scheduledBy: 'self',
+              priority: 'medium',
+              insuranceInfo: 'Family Health Plan',
+              cost: 75,
+              followUpRequired: false
+            },
+            {
+              id: 'apt_3',
+              patientId: 'family_2',
+              patientName: 'John Wilson',
+              familyMemberId: 'family_2',
+              familyMemberName: 'John Wilson',
+              familyMemberRelationship: 'Father',
+              doctorName: 'Dr. Lisa Rodriguez',
+              specialty: 'Orthopedics',
+              dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+              purpose: 'Knee Pain Consultation',
+              status: 'completed',
+              location: 'Orthopedic Institute',
+              room: 'Exam Room 5',
+              notes: 'Follow-up in 6 weeks if pain persists',
+              type: 'in-person',
+              duration: 60,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isFamilyAppointment: true,
+              scheduledBy: 'self',
+              priority: 'high',
+              insuranceInfo: 'Medicare',
+              cost: 200,
+              followUpRequired: true,
+              followUpDate: new Date(Date.now() + 6 * 7 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+              id: 'apt_4',
+              patientId: 'user_1',
+              patientName: 'You',
+              doctorName: 'Dr. David Kim',
+              specialty: 'Dermatology',
+              dateTime: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+              purpose: 'Skin Cancer Screening',
+              status: 'completed',
+              location: 'Dermatology Associates',
+              room: 'Exam Room 2',
+              notes: 'All clear, annual follow-up recommended',
+              type: 'in-person',
+              duration: 30,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isFamilyAppointment: false,
+              scheduledBy: 'self',
+              priority: 'medium',
+              insuranceInfo: 'Blue Cross Blue Shield',
+              cost: 120,
+              followUpRequired: true,
+              followUpDate: new Date(Date.now() + 12 * 30 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+              id: 'apt_5',
+              patientId: 'user_1',
+              patientName: 'You',
+              doctorName: 'Dr. Amanda Foster',
+              specialty: 'Endocrinology',
+              dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
+              purpose: 'Diabetes Management',
+              status: 'scheduled',
+              location: 'Endocrine Center',
+              room: 'Virtual',
+              notes: 'Virtual consultation - will send meeting link',
+              type: 'virtual',
+              duration: 45,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isFamilyAppointment: false,
+              scheduledBy: 'doctor',
+              priority: 'high',
+              insuranceInfo: 'Blue Cross Blue Shield',
+              cost: 180,
+              followUpRequired: true
+            }
+          ];
+          setAppointments(sampleAppointments);
+          localStorage.setItem('mock_appointments', JSON.stringify(sampleAppointments));
         }
-      ];
-      setAppointments(sampleAppointments);
-      localStorage.setItem('mock_appointments', JSON.stringify(sampleAppointments));
-    }
 
-    // Also ensure we have some basic family members data
-    const savedFamilyMembers = localStorage.getItem('mock_family_members');
-    if (!savedFamilyMembers) {
-      console.log('Creating basic family members data');
-      const basicFamilyMembers: FamilyMember[] = [
-        {
-          id: 'family_1',
-          name: 'Emma Wilson',
-          relationship: 'Daughter',
-          age: 8,
-          gender: 'Female'
-        },
-        {
-          id: 'family_2',
-          name: 'John Wilson',
-          relationship: 'Father',
-          age: 72,
-          gender: 'Male'
+        // Also ensure we have some basic family members data
+        const savedFamilyMembers = localStorage.getItem('mock_family_members');
+        if (!savedFamilyMembers) {
+          console.log('Creating basic family members data');
+          const basicFamilyMembers: FamilyMember[] = [
+            {
+              id: 'family_1',
+              name: 'Emma Wilson',
+              relationship: 'Daughter',
+              age: 8,
+              gender: 'Female'
+            },
+            {
+              id: 'family_2',
+              name: 'John Wilson',
+              relationship: 'Father',
+              age: 72,
+              gender: 'Male'
+            }
+          ];
+          localStorage.setItem('mock_family_members', JSON.stringify(basicFamilyMembers));
+          setFamilyMembers(basicFamilyMembers);
         }
-      ];
-      localStorage.setItem('mock_family_members', JSON.stringify(basicFamilyMembers));
-      setFamilyMembers(basicFamilyMembers);
-    }
 
-    // Ensure loading is set to false after data is loaded
-    console.log('Sample data loaded, setting loading to false');
-    setLoading(false);
-  }, []);
-
-  // Load family members
-  useEffect(() => {
-    const loadFamilyMembers = async () => {
-      console.log('Loading family members for user:', userData?.id);
-      if (userData) {
-        try {
-          // Add a timeout to prevent infinite loading
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Family members loading timeout')), 3000)
-          );
-          
-          const membersPromise = familyAPI.getFamilyMembers(userData.id);
-          const members = await Promise.race([membersPromise, timeoutPromise]);
-          console.log('Family members loaded successfully:', members);
-          setFamilyMembers(members || []);
-        } catch (error) {
-          console.error('Error loading family members:', error);
-          // Fallback to localStorage data if API fails
-          const savedFamilyMembers = localStorage.getItem('mock_family_members');
-          if (savedFamilyMembers) {
-            console.log('Using fallback family members from localStorage');
-            setFamilyMembers(JSON.parse(savedFamilyMembers));
+        // Load family members if user data is available
+        if (userData) {
+          console.log('Loading family members for user:', userData.id);
+          try {
+            // Add a timeout to prevent infinite loading
+            const timeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Family members loading timeout')), 3000)
+            );
+            
+            const membersPromise = familyAPI.getFamilyMembers(userData.id);
+            const members = await Promise.race([membersPromise, timeoutPromise]);
+            console.log('Family members loaded successfully:', members);
+            if (members && members.length > 0) {
+              setFamilyMembers(members);
+            }
+          } catch (error) {
+            console.error('Error loading family members:', error);
+            // Fallback to localStorage data if API fails
+            const savedFamilyMembers = localStorage.getItem('mock_family_members');
+            if (savedFamilyMembers) {
+              console.log('Using fallback family members from localStorage');
+              setFamilyMembers(JSON.parse(savedFamilyMembers));
+            }
           }
-        } finally {
-          // Always set loading to false after attempting to load family members
-          console.log('Setting loading to false');
-          setLoading(false);
         }
-      } else {
-        // If no user data, still set loading to false
-        console.log('No user data, setting loading to false');
+
+        console.log('All data loaded successfully');
+      } catch (error) {
+        console.error('Error initializing data:', error);
+      } finally {
         setLoading(false);
       }
     };
 
-    // Set a fallback timeout to prevent infinite loading
-    const fallbackTimeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Appointments loading timeout - forcing completion');
-        setLoading(false);
-      }
-    }, 2000);
-
-    loadFamilyMembers();
-
-    return () => clearTimeout(fallbackTimeout);
-  }, [userData, loading]);
+    initializeData();
+  }, [userData]);
 
   // Filter appointments by date and status
   const upcomingAppointments = appointments
@@ -865,7 +849,7 @@ const UpcomingAppointments: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+          <CardHeader className="bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-t-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -878,20 +862,41 @@ const UpcomingAppointments: React.FC = () => {
                   <Button 
                     variant="secondary" 
                     size="sm" 
-                    className="bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all duration-200"
+                    className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                   >
                     <span className="material-icons mr-2">add</span>
                     New Appointment
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Schedule New Appointment</DialogTitle>
+                  <DialogHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                          <span className="material-icons text-purple-600 text-xl">event</span>
+                        </div>
+                        <div>
+                          <DialogTitle className="text-2xl font-bold text-purple-900">Schedule New Appointment</DialogTitle>
+                          <p className="text-sm text-purple-700">Book your next medical consultation or checkup</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowAddModal(false)}
+                        className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </DialogHeader>
                   <form onSubmit={handleAddAppointment} className="space-y-6">
                     {/* Appointment Type Selection */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Appointment Type</h3>
+                      <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        Appointment Type
+                      </h3>
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="isFamilyAppointment"
@@ -902,17 +907,17 @@ const UpcomingAppointments: React.FC = () => {
                             familyMemberId: checked ? prev.familyMemberId : ''
                           }))}
                         />
-                        <Label htmlFor="isFamilyAppointment">This is a family member appointment</Label>
+                        <Label htmlFor="isFamilyAppointment" className="text-gray-700">This is a family member appointment</Label>
                       </div>
                       
                       {newAppointment.isFamilyAppointment && (
                         <div>
-                          <Label htmlFor="familyMemberId">Family Member</Label>
+                          <Label htmlFor="familyMemberId" className="text-gray-700">Family Member</Label>
                           <Select 
                             value={newAppointment.familyMemberId} 
                             onValueChange={(value) => setNewAppointment(prev => ({ ...prev, familyMemberId: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="h-11 focus:ring-2 focus:ring-purple-500">
                               <SelectValue placeholder="Select family member" />
                             </SelectTrigger>
                             <SelectContent>
@@ -929,25 +934,29 @@ const UpcomingAppointments: React.FC = () => {
 
                     {/* Basic Information */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Appointment Details</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        Appointment Details
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="purpose">Purpose</Label>
+                          <Label htmlFor="purpose" className="text-gray-700">Purpose</Label>
                           <Input
                             id="purpose"
                             value={newAppointment.purpose}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, purpose: e.target.value }))}
                             placeholder="e.g., Regular checkup, Consultation"
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                             required
                           />
                         </div>
                         <div>
-                          <Label htmlFor="specialty">Medical Specialty</Label>
+                          <Label htmlFor="specialty" className="text-gray-700">Medical Specialty</Label>
                           <Select 
                             value={newAppointment.specialty} 
                             onValueChange={(value) => setNewAppointment(prev => ({ ...prev, specialty: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="h-11 focus:ring-2 focus:ring-purple-500">
                               <SelectValue placeholder="Select specialty" />
                             </SelectTrigger>
                             <SelectContent>
@@ -964,23 +973,24 @@ const UpcomingAppointments: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="doctorName">Doctor Name</Label>
+                          <Label htmlFor="doctorName" className="text-gray-700">Doctor Name</Label>
                           <Input
                             id="doctorName"
                             value={newAppointment.doctorName}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, doctorName: e.target.value }))}
                             placeholder="e.g., Dr. Sarah Johnson"
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="duration">Duration (minutes)</Label>
+                          <Label htmlFor="duration" className="text-gray-700">Duration (minutes)</Label>
                           <Select 
                             value={newAppointment.duration.toString()} 
                             onValueChange={(value) => setNewAppointment(prev => ({ ...prev, duration: parseInt(value) }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="h-11 focus:ring-2 focus:ring-purple-500">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -995,24 +1005,25 @@ const UpcomingAppointments: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="dateTime">Date & Time</Label>
+                          <Label htmlFor="dateTime" className="text-gray-700">Date & Time</Label>
                           <Input
                             id="dateTime"
                             type="datetime-local"
                             value={newAppointment.dateTime}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, dateTime: e.target.value }))}
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                             required
                           />
                         </div>
                         <div>
-                          <Label htmlFor="type">Appointment Type</Label>
+                          <Label htmlFor="type" className="text-gray-700">Appointment Type</Label>
                           <Select 
                             value={newAppointment.type} 
                             onValueChange={(value: 'in-person' | 'virtual') => setNewAppointment(prev => ({ ...prev, type: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="h-11 focus:ring-2 focus:ring-purple-500">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -1026,24 +1037,29 @@ const UpcomingAppointments: React.FC = () => {
 
                     {/* Location Information */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Location Details</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        Location Details
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="location">Location/Hospital</Label>
+                          <Label htmlFor="location" className="text-gray-700">Location/Hospital</Label>
                           <Input
                             id="location"
                             value={newAppointment.location}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, location: e.target.value }))}
                             placeholder="e.g., City Medical Center"
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="room">Room Number</Label>
+                          <Label htmlFor="room" className="text-gray-700">Room Number</Label>
                           <Input
                             id="room"
                             value={newAppointment.room}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, room: e.target.value }))}
                             placeholder="e.g., Room 205"
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                           />
                         </div>
                       </div>
@@ -1051,15 +1067,18 @@ const UpcomingAppointments: React.FC = () => {
 
                     {/* Additional Appointment Details */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Additional Details</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        Additional Details
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="priority">Priority Level</Label>
+                          <Label htmlFor="priority" className="text-gray-700">Priority Level</Label>
                           <Select 
                             value={newAppointment.priority} 
                             onValueChange={(value: 'low' | 'medium' | 'high' | 'urgent') => setNewAppointment(prev => ({ ...prev, priority: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="h-11 focus:ring-2 focus:ring-purple-500">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -1071,12 +1090,12 @@ const UpcomingAppointments: React.FC = () => {
                           </Select>
                         </div>
                         <div>
-                          <Label htmlFor="scheduledBy">Scheduled By</Label>
+                          <Label htmlFor="scheduledBy" className="text-gray-700">Scheduled By</Label>
                           <Select 
                             value={newAppointment.scheduledBy} 
                             onValueChange={(value: 'self' | 'doctor' | 'family_member') => setNewAppointment(prev => ({ ...prev, scheduledBy: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="h-11 focus:ring-2 focus:ring-purple-500">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -1088,18 +1107,19 @@ const UpcomingAppointments: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="insuranceInfo">Insurance Information</Label>
+                          <Label htmlFor="insuranceInfo" className="text-gray-700">Insurance Information</Label>
                           <Input
                             id="insuranceInfo"
                             value={newAppointment.insuranceInfo}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, insuranceInfo: e.target.value }))}
                             placeholder="e.g., Blue Cross Blue Shield"
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="cost">Estimated Cost ($)</Label>
+                          <Label htmlFor="cost" className="text-gray-700">Estimated Cost ($)</Label>
                           <Input
                             id="cost"
                             type="number"
@@ -1108,6 +1128,7 @@ const UpcomingAppointments: React.FC = () => {
                             value={newAppointment.cost}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, cost: parseFloat(e.target.value) || 0 }))}
                             placeholder="0.00"
+                            className="h-11 focus:ring-2 focus:ring-purple-500"
                           />
                         </div>
                       </div>
@@ -1123,17 +1144,18 @@ const UpcomingAppointments: React.FC = () => {
                               followUpDate: checked ? prev.followUpDate : ''
                             }))}
                           />
-                          <Label htmlFor="followUpRequired">Follow-up required</Label>
+                          <Label htmlFor="followUpRequired" className="text-gray-700">Follow-up required</Label>
                         </div>
                         
                         {newAppointment.followUpRequired && (
                           <div className="flex-1">
-                            <Label htmlFor="followUpDate">Follow-up Date</Label>
+                            <Label htmlFor="followUpDate" className="text-gray-700">Follow-up Date</Label>
                             <Input
                               id="followUpDate"
                               type="date"
                               value={newAppointment.followUpDate}
                               onChange={(e) => setNewAppointment(prev => ({ ...prev, followUpDate: e.target.value }))}
+                              className="h-11 focus:ring-2 focus:ring-purple-500"
                             />
                           </div>
                         )}
@@ -1142,32 +1164,36 @@ const UpcomingAppointments: React.FC = () => {
 
                     {/* Additional Notes */}
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold">Additional Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        Additional Information
+                      </h3>
                       <div>
-                        <Label htmlFor="notes">Notes</Label>
+                        <Label htmlFor="notes" className="text-gray-700">Notes</Label>
                         <Textarea
                           id="notes"
                           value={newAppointment.notes}
                           onChange={(e) => setNewAppointment(prev => ({ ...prev, notes: e.target.value }))}
                           placeholder="Any additional notes or special requirements..."
                           rows={3}
+                          className="focus:ring-2 focus:ring-purple-500"
                         />
                       </div>
                     </div>
 
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                       <Button 
                         type="submit" 
-                        className="flex-1 text-white hover:bg-blue-700"
-                        style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
+                        className="flex-1 h-11 bg-purple-600 hover:bg-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                       >
+                        <span className="material-icons mr-2">schedule</span>
                         Schedule Appointment
                       </Button>
                       <Button 
                         type="button" 
                         variant="outline" 
                         onClick={() => setShowAddModal(false)}
-                        className="flex-1"
+                        className="flex-1 h-11 shadow-lg hover:shadow-xl transition-all duration-200"
                       >
                         Cancel
                       </Button>
@@ -1182,20 +1208,22 @@ const UpcomingAppointments: React.FC = () => {
             {/* Appointment Tabs */}
             <div className="mb-6">
               <Tabs value={activeTab} onValueChange={(value: 'scheduled' | 'past') => setActiveTab(value)} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 bg-white shadow-lg rounded-xl p-1">
                   <TabsTrigger 
                     value="scheduled" 
-                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                    className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-900 data-[state=active]:shadow-sm flex items-center space-x-2"
                   >
-                    <span className="material-icons mr-2 text-sm">schedule</span>
-                    Upcoming Appointments ({upcomingAppointments.length})
+                    <span className="material-icons text-sm">schedule</span>
+                    <span className="hidden sm:inline">Upcoming ({upcomingAppointments.length})</span>
+                    <span className="sm:hidden">Upcoming ({upcomingAppointments.length})</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="past" 
-                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                    className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-900 data-[state=active]:shadow-sm flex items-center space-x-2"
                   >
-                    <span className="material-icons mr-2 text-sm">history</span>
-                    Past Appointments ({pastAppointments.length})
+                    <span className="material-icons text-sm">history</span>
+                    <span className="hidden sm:inline">Past ({pastAppointments.length})</span>
+                    <span className="sm:hidden">Past ({pastAppointments.length})</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -1527,8 +1555,26 @@ const UpcomingAppointments: React.FC = () => {
       {/* Edit Appointment Modal */}
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Appointment</DialogTitle>
+          <DialogHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                  <span className="material-icons text-orange-600 text-xl">edit</span>
+                </div>
+                <div>
+                  <DialogTitle className="text-2xl font-bold text-orange-900">Edit Appointment</DialogTitle>
+                  <p className="text-sm text-orange-700">Modify your appointment details</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </DialogHeader>
           <form onSubmit={handleUpdateAppointment} className="space-y-6">
             {/* Same form fields as add modal, but with editingAppointment data */}

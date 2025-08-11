@@ -1,5 +1,21 @@
-import { type User, type InsertUser } from "@shared/schema";
 import { randomUUID } from "crypto";
+
+// User types (previously from database schema)
+export interface User {
+  id: string;
+  email: string;
+  role: string; // 'patient', 'doctor', 'lab'
+  plan?: string; // 'personal', 'family'
+  username?: string;
+  createdAt?: Date;
+}
+
+export interface InsertUser {
+  email: string;
+  role: string;
+  plan?: string;
+  username?: string;
+}
 
 // Healthcare data interfaces
 export interface Medication {

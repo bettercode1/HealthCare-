@@ -5,249 +5,462 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(153, 72%, 51%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
-}
-
-.dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-}
-
-/* Healthcare specific styles */
-.health-gradient {
-  background: linear-gradient(135deg, hsl(207, 90%, 54%) 0%, hsl(153, 72%, 51%) 100%);
-}
-
-/* Blob animation for background effects */
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Grid background pattern */
-.bg-grid-slate-100 {
-  background-image: 
-    linear-gradient(to right, rgb(241 245 249) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(241 245 249) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* Container utilities */
-.container {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-}
-
-/* Ensure proper overflow handling */
-.overflow-hidden {
-  overflow: hidden;
-}
-
-/* Responsive text sizing */
-@media (max-width: 640px) {
-  .text-3xl {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
+/* Custom CSS for better responsiveness */
+@layer components {
+  /* Responsive modal improvements */
+  .dialog-responsive {
+    @apply w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl;
   }
   
-  .text-4xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
+  /* Enhanced popup visibility */
+  .popup-enhanced {
+    @apply z-[10000] shadow-2xl border border-gray-200 bg-white rounded-lg;
+  }
+  
+  .popup-overlay-enhanced {
+    @apply z-[9999] bg-black/80 backdrop-blur-sm;
+  }
+  
+  .popup-content-enhanced {
+    @apply z-[10000] shadow-xl border border-gray-200 bg-white rounded-lg;
+  }
+  
+  /* Fix for popup design disturbances */
+  .popup-fixed {
+    @apply fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[10000];
+  }
+
+  .popup-overlay-fixed {
+    @apply fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm;
+  }
+  
+  /* Popup background variations */
+  .popup-bg-white {
+    @apply bg-white text-gray-900;
+  }
+  
+  .popup-bg-blue {
+    @apply bg-blue-50 text-blue-900 border-blue-300;
+  }
+  
+  .popup-bg-green {
+    @apply bg-green-50 text-green-900 border-green-300;
+  }
+  
+  .popup-bg-purple {
+    @apply bg-purple-50 text-purple-900 border-purple-300;
+  }
+  
+  /* File upload popup enhancements */
+  .file-upload-popup {
+    @apply w-full max-w-full;
+  }
+  
+  .file-upload-popup .upload-area {
+    @apply min-h-[120px] sm:min-h-[140px] flex items-center justify-center;
+  }
+  
+  .file-upload-popup .file-info {
+    @apply text-left sm:text-center;
+  }
+  
+  .file-upload-popup .file-details {
+    @apply flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0;
+  }
+  
+  .file-upload-popup .file-icon {
+    @apply flex-shrink-0;
+  }
+  
+  .file-upload-popup .file-text {
+    @apply min-w-0 flex-1;
+  }
+  
+  .file-upload-popup .file-actions {
+    @apply flex-shrink-0;
+  }
+  
+  /* Responsive file upload in modals */
+  .modal-file-upload {
+    @apply w-full max-w-full overflow-hidden;
+  }
+  
+  .modal-file-upload .file-preview {
+    @apply max-w-full overflow-hidden;
+  }
+  
+  .modal-file-upload .file-name {
+    @apply truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px];
+  }
+  
+  .modal-file-upload .file-size {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .modal-file-upload .file-type {
+    @apply text-xs;
+  }
+  
+  /* Modal content fixes */
+  .modal-content-fixed {
+    @apply w-[95vw] max-w-lg sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl;
+  }
+
+  .modal-scrollable {
+    @apply max-h-[90vh] overflow-hidden flex flex-col;
+  }
+
+  .modal-header-fixed {
+    @apply flex-shrink-0;
+  }
+
+  .modal-body-scrollable {
+    @apply flex-1 overflow-y-auto pr-2 -mr-2;
+  }
+
+  .modal-footer-fixed {
+    @apply flex-shrink-0 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3 pt-4 border-t border-gray-200;
+  }
+  
+  /* Popup scrolling and layout */
+  .popup-scrollable {
+    @apply max-h-[90vh] overflow-hidden flex flex-col;
+  }
+  
+  .popup-scrollable .popup-header {
+    @apply flex-shrink-0;
+  }
+  
+  .popup-scrollable .popup-content {
+    @apply flex-1 overflow-y-auto pr-2 -mr-2;
+  }
+  
+  .popup-scrollable .popup-footer {
+    @apply flex-shrink-0 border-t border-gray-200;
+  }
+  
+  /* Enhanced file upload in popups */
+  .popup-file-upload {
+    @apply w-full space-y-3;
+  }
+  
+  .popup-file-upload .upload-area {
+    @apply min-h-[120px] sm:min-h-[140px] flex items-center justify-center cursor-pointer;
+  }
+  
+  .popup-file-upload .file-info {
+    @apply text-left sm:text-center;
+  }
+  
+  .popup-file-upload .file-details {
+    @apply flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0;
+  }
+  
+  .popup-file-upload .file-icon {
+    @apply flex-shrink-0;
+  }
+  
+  .popup-file-upload .file-text {
+    @apply min-w-0 flex-1;
+  }
+  
+  .popup-file-upload .file-actions {
+    @apply flex-shrink-0;
+  }
+  
+  /* PDF extraction feedback */
+  .pdf-extracting {
+    @apply animate-pulse;
+  }
+  
+  .pdf-extracted {
+    @apply border-green-300 bg-green-50;
+  }
+  
+  /* Responsive form layout in popups */
+  .popup-form-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+  }
+  
+  .popup-form-full {
+    @apply col-span-1 sm:col-span-2;
+  }
+  
+  /* Mobile-first spacing */
+  .mobile-spacing {
+    @apply space-y-4 sm:space-y-6;
+  }
+  
+  /* Responsive text sizes */
+  .text-responsive {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-lg {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  /* Responsive padding */
+  .p-responsive {
+    @apply p-4 sm:p-6;
+  }
+  
+  .px-responsive {
+    @apply px-3 sm:px-4;
+  }
+  
+  .py-responsive {
+    @apply py-2.5 sm:py-3;
+  }
+  
+  /* Responsive margins */
+  .m-responsive {
+    @apply m-4 sm:m-6;
+  }
+  
+  .mx-responsive {
+    @apply mx-3 sm:mx-4;
+  }
+  
+  .my-responsive {
+    @apply my-3 sm:my-4;
+  }
+  
+  /* Responsive gaps */
+  .gap-responsive {
+    @apply gap-3 sm:gap-4;
+  }
+  
+  .gap-responsive-lg {
+    @apply gap-4 sm:gap-6;
+  }
+  
+  /* Responsive grid */
+  .grid-responsive {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  /* Responsive flex */
+  .flex-responsive {
+    @apply flex-col sm:flex-row;
+  }
+  
+  .flex-responsive-reverse {
+    @apply flex-col-reverse sm:flex-row;
+  }
+  
+  /* Responsive width */
+  .w-responsive {
+    @apply w-full sm:w-auto;
+  }
+  
+  /* Responsive button groups */
+  .button-group-responsive {
+    @apply flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3;
+  }
+  
+  /* Responsive form layout */
+  .form-responsive {
+    @apply space-y-4 sm:space-y-6;
+  }
+  
+  .form-grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6;
+  }
+  
+  /* Enhanced focus states */
+  .focus-enhanced {
+    @apply focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+  }
+  
+  /* Smooth transitions */
+  .transition-smooth {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  /* Hover effects */
+  .hover-enhanced {
+    @apply hover:scale-[1.02] hover:shadow-lg transition-all duration-200;
+  }
+  
+  /* Loading states */
+  .loading-state {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  
+  /* Success states */
+  .success-state {
+    @apply border-green-200 bg-green-50 text-green-800;
+  }
+  
+  /* Error states */
+  .error-state {
+    @apply border-red-200 bg-red-50 text-red-800;
+  }
+  
+  /* Warning states */
+  .warning-state {
+    @apply border-yellow-200 bg-yellow-50 text-yellow-800;
+  }
+  
+  /* Info states */
+  .info-state {
+    @apply border-blue-200 bg-blue-50 text-blue-800;
   }
 }
 
-/* Material Icons override for consistent sizing */
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
+/* Custom scrollbar for better UX */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-/* Chart container styles */
-.recharts-wrapper {
-  font-family: 'Inter', system-ui, sans-serif;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 6px;
-  height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: hsl(60, 4.8%, 95.9%);
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(25, 5.3%, 44.7%);
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(20, 14.3%, 4.1%);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
 }
 
-/* Animation utilities */
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-@keyframes fadeIn {
+/* Enhanced backdrop blur for modals */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Enhanced modal visibility and styling */
+.modal-enhanced {
+  @apply shadow-2xl border-0 bg-white;
+}
+
+.modal-header-enhanced {
+  @apply bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 rounded-t-lg;
+}
+
+.modal-content-enhanced {
+  @apply p-6 space-y-6;
+}
+
+/* Improved close button styling */
+.close-button-enhanced {
+  @apply absolute right-3 top-3 rounded-full p-2 opacity-80 hover:opacity-100 hover:bg-gray-100 hover:scale-110 transition-all duration-200 z-10;
+}
+
+/* Enhanced backdrop */
+.backdrop-enhanced {
+  @apply bg-black/80 backdrop-blur-sm;
+}
+
+/* Modal animations */
+.modal-enter {
+  @apply opacity-0 scale-95;
+}
+
+.modal-enter-active {
+  @apply opacity-100 scale-100 transition-all duration-200 ease-out;
+}
+
+.modal-exit {
+  @apply opacity-100 scale-100;
+}
+
+.modal-exit-active {
+  @apply opacity-0 scale-95 transition-all duration-200 ease-in;
+}
+
+/* Card enhancements */
+.card-enhanced {
+  @apply shadow-lg border-0 bg-gradient-to-br from-white to-gray-50;
+}
+
+.card-header-enhanced {
+  @apply bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg border-b border-blue-100;
+}
+
+/* Form field enhancements */
+.form-field-enhanced {
+  @apply space-y-2;
+}
+
+.form-field-enhanced input,
+.form-field-enhanced textarea,
+.form-field-enhanced select {
+  @apply w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+}
+
+.form-field-enhanced input:focus,
+.form-field-enhanced textarea:focus,
+.form-field-enhanced select:focus {
+  @apply shadow-lg shadow-blue-100;
+}
+
+/* Button enhancements */
+.button-enhanced {
+  @apply px-6 py-2.5 font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02];
+}
+
+/* File upload area enhancements */
+.upload-area-enhanced {
+  @apply border-2 border-dashed rounded-xl p-6 sm:p-8 text-center transition-all duration-200;
+}
+
+.upload-area-enhanced:hover {
+  @apply border-blue-400 bg-blue-50 scale-[1.01];
+}
+
+.upload-area-enhanced.dragging {
+  @apply border-blue-500 bg-blue-100 scale-[1.02];
+}
+
+/* Responsive animations */
+@media (max-width: 640px) {
+  .animate-slide-in {
+    animation: slideInMobile 0.3s ease-out;
+  }
+  
+  .animate-slide-out {
+    animation: slideOutMobile 0.3s ease-in;
+  }
+}
+
+@keyframes slideInMobile {
   from {
+    transform: translate(-50%, -50%) scale(0.95);
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
+    transform: translate(-50%, -50%) scale(1);
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-/* Focus states for accessibility */
-.focus-visible:focus {
-  outline: 2px solid hsl(207, 90%, 54%);
-  outline-offset: 2px;
-}
-
-/* Custom button variants */
-.btn-healthcare {
-  @apply bg-primary text-primary-foreground hover:bg-blue-700 transition-colors font-medium;
-}
-
-.btn-healthcare-outline {
-  @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors font-medium;
-}
-
-/* Custom loading spinner */
-.loading-spinner {
-  border: 2px solid hsl(60, 4.8%, 95.9%);
-  border-top: 2px solid hsl(207, 90%, 54%);
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Status indicators */
-.status-taken {
-  @apply bg-green-500 text-white;
-}
-
-.status-pending {
-  @apply border-2 border-gray-300 text-gray-400;
-}
-
-.status-missed {
-  @apply bg-red-500 text-white;
-}
-
-/* Responsive design improvements */
-@media (max-width: 768px) {
-  .material-icons {
-    font-size: 20px;
+@keyframes slideOutMobile {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0;
   }
 }
 
@@ -256,86 +469,147 @@
   .no-print {
     display: none !important;
   }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  :root {
-    --border: hsl(0, 0%, 0%);
-    --input: hsl(0, 0%, 90%);
-  }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .fade-in,
-  .loading-spinner {
-    animation: none;
-  }
-}
-
-/* Dashboard responsive improvements */
-@media (max-width: 768px) {
-  .material-icons {
-    font-size: 18px;
-  }
   
-  /* Ensure proper text wrapping and prevent overflow */
-  .dashboard-content {
-    overflow-x: hidden;
-    word-wrap: break-word;
-  }
-  
-  /* Improve button spacing on mobile */
-  .dashboard-actions {
-    gap: 0.5rem;
-  }
-  
-  /* Ensure cards don't overflow on small screens */
-  .dashboard-card {
-    min-width: 0;
-    overflow: hidden;
+  .print-break {
+    page-break-before: always;
   }
 }
 
-/* Prevent horizontal scroll on all screen sizes */
-.dashboard-container {
-  overflow-x: hidden;
-  max-width: 100vw;
+/* Modal scrolling fixes */
+.modal-scrollable {
+  @apply max-h-[90vh] overflow-hidden flex flex-col;
 }
 
-/* Ensure proper flex behavior for dashboard items */
-.dashboard-item {
-  min-width: 0;
-  flex-shrink: 1;
+.modal-header-fixed {
+  @apply flex-shrink-0;
 }
 
-.dashboard-item-fixed {
-  flex-shrink: 0;
+.modal-body-scrollable {
+  @apply flex-1 overflow-y-auto min-h-0;
 }
 
-/* Improve text truncation */
-.text-truncate-container {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.modal-footer-fixed {
+  @apply flex-shrink-0 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3 pt-4 border-t border-gray-200;
 }
 
-/* Responsive grid improvements */
-@media (max-width: 640px) {
-  .grid-responsive {
-    grid-template-columns: 1fr;
-  }
+/* Dialog content fixes */
+.dialog-content-fixed {
+  @apply w-[95vw] max-w-lg sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[90vh] overflow-hidden flex flex-col;
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
-  .grid-responsive {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.dialog-scrollable-content {
+  @apply flex-1 overflow-y-auto pr-2 -mr-2 space-y-4 sm:space-y-6 min-h-0;
 }
 
-@media (min-width: 1025px) {
-  .grid-responsive {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* Ensure proper scrolling in modals */
+.dialog-scrollable {
+  @apply overflow-y-auto;
+}
+
+.dialog-scrollable::-webkit-scrollbar {
+  @apply w-2;
+}
+
+.dialog-scrollable::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+.dialog-scrollable::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full hover:bg-gray-400;
+}
+
+/* Features Section Icon Fixes */
+.features-section-icon {
+  @apply relative z-10 flex items-center justify-center;
+}
+
+.features-section-icon svg {
+  @apply w-full h-full text-white drop-shadow-lg;
+}
+
+.features-section-card {
+  @apply h-full hover:shadow-2xl transition-all duration-500 border-2 border-gray-200 bg-white/95 backdrop-blur-sm relative overflow-hidden;
+}
+
+.features-section-card:hover {
+  @apply border-blue-500 shadow-2xl;
+}
+
+.features-section-icon-container {
+  @apply w-20 h-20 rounded-3xl flex items-center justify-center shadow-2xl relative overflow-hidden;
+}
+
+.features-section-icon-container:hover {
+  @apply scale-110 transform transition-transform duration-300;
+}
+
+/* Ensure icons are visible */
+.features-section-icon-container svg {
+  @apply w-10 h-10 text-white drop-shadow-lg;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Icon background effects */
+.features-section-icon-bg {
+  @apply absolute inset-0 bg-white/20 rounded-3xl;
+}
+
+.features-section-icon-bg:hover {
+  @apply bg-white/30 transition-colors duration-300;
+}
+
+/* Enhanced Toggle Switch Design */
+.enhanced-toggle {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.enhanced-toggle[data-state="checked"] {
+  @apply bg-purple-600 shadow-lg;
+}
+
+.enhanced-toggle[data-state="unchecked"] {
+  @apply bg-gray-300 shadow-md;
+}
+
+.enhanced-toggle-thumb {
+  @apply pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0;
+}
+
+.enhanced-toggle-track {
+  @apply absolute inset-0 rounded-full transition-colors;
+}
+
+.enhanced-toggle-track[data-state="checked"] {
+  @apply bg-purple-600;
+}
+
+.enhanced-toggle-track[data-state="unchecked"] {
+  @apply bg-gray-300;
+}
+
+/* Toggle button hover effects */
+.enhanced-toggle:hover[data-state="checked"] {
+  @apply bg-purple-700 shadow-xl;
+}
+
+.enhanced-toggle:hover[data-state="unchecked"] {
+  @apply bg-gray-400 shadow-lg;
+}
+
+/* Toggle button focus effects */
+.enhanced-toggle:focus-visible {
+  @apply ring-2 ring-purple-500 ring-offset-2;
+}
+
+/* Toggle button animation */
+.enhanced-toggle-thumb {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.enhanced-toggle-thumb[data-state="checked"] {
+  @apply transform translate-x-5 scale-105;
+}
+
+.enhanced-toggle-thumb[data-state="unchecked"] {
+  @apply transform translate-x-0 scale-100;
 }

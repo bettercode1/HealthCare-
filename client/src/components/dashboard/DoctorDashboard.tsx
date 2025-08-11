@@ -661,35 +661,55 @@ const DoctorDashboard: React.FC = () => {
                   <h3 className="text-xl font-bold">Patient Management</h3>
                   <Dialog open={showPatientModal} onOpenChange={setShowPatientModal}>
                     <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700">
+                      <Button className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                         <span className="material-icons mr-2">person_add</span>
                         Add Patient
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Add New Patient</DialogTitle>
+                      <DialogHeader className="pb-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                              <span className="material-icons text-green-600 text-xl">person_add</span>
+                            </div>
+                            <div>
+                              <DialogTitle className="text-2xl font-bold text-green-900">Add New Patient</DialogTitle>
+                              <p className="text-sm text-green-700">Register a new patient to your practice</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowPatientModal(false)}
+                            className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </DialogHeader>
-                      <form onSubmit={handleAddPatient} className="space-y-4">
+                      <form onSubmit={handleAddPatient} className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="name" className="text-gray-700">Full Name</Label>
                             <Input
                               id="name"
                               value={newPatient.name}
                               onChange={(e) => setNewPatient(prev => ({ ...prev, name: e.target.value }))}
                               placeholder="Enter full name"
+                              className="h-11 focus:ring-2 focus:ring-green-500"
                               required
                             />
                           </div>
                           <div>
-                            <Label htmlFor="age">Age</Label>
+                            <Label htmlFor="age" className="text-gray-700">Age</Label>
                             <Input
                               id="age"
                               type="number"
                               value={newPatient.age}
                               onChange={(e) => setNewPatient(prev => ({ ...prev, age: e.target.value }))}
                               placeholder="Age"
+                              className="h-11 focus:ring-2 focus:ring-green-500"
                               required
                             />
                           </div>
@@ -697,23 +717,26 @@ const DoctorDashboard: React.FC = () => {
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="phone">Phone</Label>
+                            <Label htmlFor="phone" className="text-gray-700">Phone</Label>
                             <Input
                               id="phone"
                               value={newPatient.phone}
                               onChange={(e) => setNewPatient(prev => ({ ...prev, phone: e.target.value }))}
                               placeholder="Phone number"
+                              className="h-11 focus:ring-2 focus:ring-green-500"
                               required
                             />
                           </div>
                           <div>
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-gray-700">Email</Label>
                             <Input
                               id="email"
                               type="email"
                               value={newPatient.email}
                               onChange={(e) => setNewPatient(prev => ({ ...prev, email: e.target.value }))}
                               placeholder="Email address"
+                              placeholder="Email address"
+                              className="h-11 focus:ring-2 focus:ring-green-500"
                               required
                             />
                           </div>
@@ -721,9 +744,9 @@ const DoctorDashboard: React.FC = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="gender">Gender</Label>
+                            <Label htmlFor="gender" className="text-gray-700">Gender</Label>
                             <Select value={newPatient.gender} onValueChange={(value) => setNewPatient(prev => ({ ...prev, gender: value }))}>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-11 focus:ring-2 focus:ring-green-500">
                                 <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
                               <SelectContent>
@@ -734,9 +757,9 @@ const DoctorDashboard: React.FC = () => {
                             </Select>
                           </div>
                           <div>
-                            <Label htmlFor="bloodType">Blood Type</Label>
+                            <Label htmlFor="bloodType" className="text-gray-700">Blood Type</Label>
                             <Select value={newPatient.bloodType} onValueChange={(value) => setNewPatient(prev => ({ ...prev, bloodType: value }))}>
-                              <SelectTrigger>
+                              <SelectTrigger className="h-11 focus:ring-2 focus:ring-green-500">
                                 <SelectValue placeholder="Select blood type" />
                               </SelectTrigger>
                               <SelectContent>
@@ -754,8 +777,11 @@ const DoctorDashboard: React.FC = () => {
                         </div>
 
                         <div className="flex space-x-2">
-                          <Button type="submit" className="flex-1">Add Patient</Button>
-                          <Button type="button" variant="outline" onClick={() => setShowPatientModal(false)}>
+                          <Button type="submit" className="flex-1 h-11 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                            <span className="material-icons mr-2">person_add</span>
+                            Add Patient
+                          </Button>
+                          <Button type="button" variant="outline" onClick={() => setShowPatientModal(false)} className="flex-1 h-11 shadow-lg hover:shadow-xl transition-all duration-200">
                             Cancel
                           </Button>
                         </div>

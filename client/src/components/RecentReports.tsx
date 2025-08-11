@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import FileViewer from '@/components/ui/file-viewer';
 import { useFirestore } from '@/hooks/useFirestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDateAsMonthYear } from '@/lib/utils';
@@ -27,6 +28,8 @@ interface Report {
 const RecentReports: React.FC = () => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
+  const [showFileViewer, setShowFileViewer] = useState(false);
+  const [selectedReportForViewing, setSelectedReportForViewing] = useState<Report | null>(null);
   
   const { data: reports } = useFirestore<Report>('reports',
     currentUser?.uid ? [{ field: 'userId', operator: '==', value: currentUser.uid }] : undefined
@@ -93,8 +96,9 @@ const RecentReports: React.FC = () => {
     }
   };
 
-  const handleViewReport = (fileUrl: string) => {
-    window.open(fileUrl, '_blank');
+  const handleViewReport = (report: Report) => {
+    setSelectedReportForViewing(report);
+    setShowFileViewer(true);
   };
 
   const handleDownloadReport = (fileUrl: string, title: string) => {
@@ -180,7 +184,7 @@ const RecentReports: React.FC = () => {
                     size="sm" 
                     className="hover:text-blue-700"
                     style={{ color: 'hsl(207, 90%, 54%)' }}
-                    onClick={() => handleViewReport(report.fileUrl)}
+                    onClick={() => handleViewReport(report)}
                                          title={t('view')}
                   >
                     <span className="material-icons">visibility</span>
@@ -223,6 +227,20 @@ const RecentReports: React.FC = () => {
           </div>
         )}
       </CardContent>
+
+      {/* File Viewer Modal */}
+      {selectedReportForViewing && (
+        <FileViewer
+          isOpen={showFileViewer}
+          onClose={() => {
+            setShowFileViewer(false);
+            setSelectedReportForViewing(null);
+          }}
+          fileUrl={selectedReportForViewing.fileUrl}
+          fileName={selectedReportForViewing.title}
+          fileType={selectedReportForViewing.fileType}
+        />
+      )}
     </Card>
   );
 };

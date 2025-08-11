@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { generateDemoData } from '@/lib/demoData';
 import { HealthcareLoading } from '@/components/ui/loading';
@@ -8,6 +9,7 @@ interface DashboardInitializerProps {
 }
 
 const DashboardInitializer: React.FC<DashboardInitializerProps> = ({ children }) => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const [isInitializing, setIsInitializing] = useState(false);
   const [initializationComplete, setInitializationComplete] = useState(false);
@@ -51,7 +53,7 @@ const DashboardInitializer: React.FC<DashboardInitializerProps> = ({ children })
   if (isInitializing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <HealthcareLoading text="Initializing dashboard..." />
+        <HealthcareLoading text={t('initializingDashboardText')} />
       </div>
     );
   }

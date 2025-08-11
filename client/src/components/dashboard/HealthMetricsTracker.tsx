@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -23,6 +24,7 @@ interface HealthMetric {
 }
 
 const HealthMetricsTracker: React.FC = () => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const { toast } = useToast();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -60,8 +62,8 @@ const HealthMetricsTracker: React.FC = () => {
       if (metricForm.type === 'blood_pressure') {
         if (!metricForm.systolic || !metricForm.diastolic) {
           toast({
-            title: 'Error',
-            description: 'Please enter both systolic and diastolic values',
+            title: t('error'),
+            description: t('pleaseEnterBothSystolicAndDiastolicValues'),
             variant: 'destructive',
           });
           return;
@@ -74,8 +76,8 @@ const HealthMetricsTracker: React.FC = () => {
       } else {
         if (!metricForm.value) {
           toast({
-            title: 'Error',
-            description: 'Please enter a value',
+            title: t('error'),
+            description: t('pleaseEnterAValue'),
             variant: 'destructive',
           });
           return;
@@ -218,23 +220,41 @@ const HealthMetricsTracker: React.FC = () => {
           </CardTitle>
           <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
             <DialogTrigger asChild>
-              <Button className="text-white hover:bg-blue-700" style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                 <span className="material-icons mr-2 text-sm">add</span>
                 Add Metric
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Health Metric</DialogTitle>
+              <DialogHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="material-icons text-blue-600 text-xl">add</span>
+                    </div>
+                    <div>
+                      <DialogTitle className="text-2xl font-bold text-blue-900">Add Health Metric</DialogTitle>
+                      <p className="text-sm text-blue-700">Track your health measurements and vital signs</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAddModal(false)}
+                    className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </DialogHeader>
-              <form onSubmit={handleAddMetric} className="space-y-4">
+              <form onSubmit={handleAddMetric} className="space-y-6">
                 <div>
-                  <Label htmlFor="type">{t('metricType')}</Label>
+                  <Label htmlFor="type" className="text-gray-700">{t('metricType')}</Label>
                   <Select 
                     value={metricForm.type} 
                     onValueChange={(value) => setMetricForm(prev => ({ ...prev, type: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 focus:ring-2 focus:ring-blue-500">
                       <SelectValue placeholder={t('selectMetricType')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -250,31 +270,33 @@ const HealthMetricsTracker: React.FC = () => {
                 {metricForm.type === 'blood_pressure' ? (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="systolic">{t('systolic')} (mmHg)</Label>
+                      <Label htmlFor="systolic" className="text-gray-700">{t('systolic')} (mmHg)</Label>
                       <Input
                         id="systolic"
                         type="number"
                         value={metricForm.systolic}
                         onChange={(e) => setMetricForm(prev => ({ ...prev, systolic: e.target.value }))}
                         placeholder="120"
+                        className="h-11 focus:ring-2 focus:ring-blue-500"
                         required
                       />
                     </div>
                     <div>
-                      <Label htmlFor="diastolic">{t('diastolic')} (mmHg)</Label>
+                      <Label htmlFor="diastolic" className="text-gray-700">{t('diastolic')} (mmHg)</Label>
                       <Input
                         id="diastolic"
                         type="number"
                         value={metricForm.diastolic}
                         onChange={(e) => setMetricForm(prev => ({ ...prev, diastolic: e.target.value }))}
                         placeholder="80"
+                        className="h-11 focus:ring-2 focus:ring-blue-500"
                         required
                       />
                     </div>
                   </div>
                 ) : (
                   <div>
-                    <Label htmlFor="value">{t('value')}</Label>
+                    <Label htmlFor="value" className="text-gray-700">{t('value')}</Label>
                     <Input
                       id="value"
                       type="number"
@@ -282,34 +304,36 @@ const HealthMetricsTracker: React.FC = () => {
                       value={metricForm.value}
                       onChange={(e) => setMetricForm(prev => ({ ...prev, value: e.target.value }))}
                       placeholder="Enter value"
+                      className="h-11 focus:ring-2 focus:ring-blue-500"
                       required
                     />
                   </div>
                 )}
                 
                 <div>
-                  <Label htmlFor="notes">{t('notes')} ({t('optional')})</Label>
+                  <Label htmlFor="notes" className="text-gray-700">{t('notes')} ({t('optional')})</Label>
                   <Input
                     id="notes"
                     value={metricForm.notes}
                     onChange={(e) => setMetricForm(prev => ({ ...prev, notes: e.target.value }))}
                     placeholder="Additional notes"
+                    className="h-11 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="flex space-x-2">
                   <Button 
                     type="submit" 
-                    className="flex-1 text-white hover:bg-blue-700"
-                    style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
+                    className="flex-1 h-11 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                   >
+                    <span className="material-icons mr-2">add</span>
                     Add Metric
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setShowAddModal(false)}
-                    className="flex-1"
+                    className="flex-1 h-11 shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Cancel
                   </Button>

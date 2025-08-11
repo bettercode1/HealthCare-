@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { generateDemoData } from '@/lib/demoData';
 import { HealthcareLoading } from '@/components/ui/loading';
@@ -12,13 +13,21 @@ import Footer from '@/components/Footer';
 import LoginModal from '@/components/LoginModal';
 import ChatbotWidget from '@/components/ChatbotWidget';
 import { MedicalLoading } from '@/components/ui/loading';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+
+import { FileUploadPopup } from '@/components/ui/file-upload-popup';
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
   const { currentUser, userData } = useAuth();
+  const { toast } = useToast();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isNavigatingToLogin, setIsNavigatingToLogin] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [initializationComplete, setInitializationComplete] = useState(false);
+
 
   // Dashboard initialization logic
   useEffect(() => {
@@ -90,7 +99,7 @@ const Home: React.FC = () => {
   if (isInitializing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <HealthcareLoading text="Initializing dashboard..." />
+        <HealthcareLoading text={t('initializingDashboardText')} />
       </div>
     );
   }
@@ -133,6 +142,10 @@ const Home: React.FC = () => {
           </div>
         )}
 
+
+
+
+
       </main>
 
       {/* Footer (Always visible) */}
@@ -148,16 +161,16 @@ const Home: React.FC = () => {
       <ChatbotWidget />
 
       {/* Loading Overlay for Login Navigation */}
-              {isNavigatingToLogin && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-8 shadow-2xl">
-              <MedicalLoading 
-                text="Preparing your healthcare dashboard..." 
-                className="text-center"
-              />
-            </div>
+      {isNavigatingToLogin && (
+        <div className="fixed inset-0 bg-black bg-opacity-95 backdrop-blur-lg flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-xl p-8 shadow-2xl border-2 border-blue-200">
+            <MedicalLoading 
+              text={t('preparingYourHealthcareDashboard')} 
+              className="text-center"
+            />
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };

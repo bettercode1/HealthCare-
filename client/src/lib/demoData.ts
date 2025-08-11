@@ -73,12 +73,7 @@ const sampleReportAnalysis = {
     criticalCount: 1,
     overallStatus: 'critical',
     riskLevel: 'high',
-    recommendations: [
-      'Immediate medical attention required',
-      'Follow up with healthcare provider',
-      'Monitor kidney function closely',
-      'Consider dietary changes for cholesterol'
-    ]
+    recommendations: []
   },
   metadata: {
     labName: 'City Medical Lab',
@@ -890,25 +885,29 @@ export const generateDemoData = async (userId: string, userRole: string, userEma
     console.log(`Generating demo data for ${userRole} user: ${userEmail}`);
 
     // Generate data based on user role using localStorage instead of Firebase
+    let result;
     switch (userRole) {
       case 'patient':
-        await generatePatientDemoDataLocal(userId);
+        result = await generatePatientDemoDataLocal(userId);
         break;
       case 'doctor':
-        await generateDoctorDemoDataLocal(userId, userEmail);
+        result = await generateDoctorDemoDataLocal(userId, userEmail);
         break;
       case 'lab':
-        await generateLabDemoDataLocal(userId, userEmail);
+        result = await generateLabDemoDataLocal(userId, userEmail);
         break;
       default:
         console.log('Unknown user role, skipping demo data generation');
+        return null;
     }
 
-    console.log('Demo data generated successfully');
+    console.log('Demo data generated successfully:', result);
+    return result;
   } catch (error) {
     console.error('Error generating demo data:', error);
     // Don't throw error, just log it and continue
     console.log('Continuing without demo data generation');
+    return null;
   }
 };
 
@@ -1071,56 +1070,64 @@ export const generateAppointmentsDemoData = (userId: string) => {
   return appointments;
 };
 
-export const generatePatientDemoDataLocal = (userId: string) => {
+export const generatePatientDemoDataLocal = async (userId: string) => {
   console.log('=== GENERATE PATIENT DEMO DATA LOCAL DEBUG ===');
   console.log('Generating demo data for patient user:', userId);
   console.log('User ID type:', typeof userId);
   console.log('User ID value:', userId);
 
-  // Generate family members first
-  console.log('Calling generateFamilyMembersDemoData...');
-  const familyMembers = generateFamilyMembersDemoData(userId);
-  console.log('Generated family members result:', familyMembers);
-  console.log('Family members length:', familyMembers.length);
-  
-  // Generate all types of demo data with family members
-  console.log('Generating other demo data...');
-  const medications = generateMedicationsDemoData(userId, familyMembers);
-  const doseRecords = generateDoseRecordsDemoData(userId, familyMembers);
-  const prescriptions = generatePrescriptionsDemoData(userId);
-  const reports = generateReportsDemoData(userId, familyMembers);
-  const appointments = generateAppointmentsDemoData(userId);
-  const healthMetrics = generateHealthMetricsDemoData(userId);
-  const diseaseAnalysis = generateDiseaseAnalysisDemoData(userId, familyMembers);
-  const healthTrends = generateHealthTrendsDemoData(userId);
-  
-  console.log('Demo data stored in localStorage for user:', userId);
-  console.log('Medications:', medications.length);
-  console.log('Dose Records:', doseRecords.length);
-  console.log('Prescriptions:', prescriptions.length);
-  console.log('Family Members:', familyMembers.length);
-  console.log('Reports:', reports.length);
-  console.log('Appointments:', appointments.length);
-  console.log('Health Metrics:', healthMetrics.length);
-  console.log('Disease Analysis:', diseaseAnalysis.length);
-  console.log('Health Trends:', healthTrends.length);
+  try {
+    // Generate family members first
+    console.log('Calling generateFamilyMembersDemoData...');
+    const familyMembers = generateFamilyMembersDemoData(userId);
+    console.log('Generated family members result:', familyMembers);
+    console.log('Family members length:', familyMembers.length);
+    
+    // Generate all types of demo data with family members
+    console.log('Generating other demo data...');
+    const medications = generateMedicationsDemoData(userId, familyMembers);
+    const doseRecords = generateDoseRecordsDemoData(userId, familyMembers);
+    const prescriptions = generatePrescriptionsDemoData(userId);
+    const reports = generateReportsDemoData(userId, familyMembers);
+    const appointments = generateAppointmentsDemoData(userId);
+    const healthMetrics = generateHealthMetricsDemoData(userId);
+    const diseaseAnalysis = generateDiseaseAnalysisDemoData(userId, familyMembers);
+    const healthTrends = generateHealthTrendsDemoData(userId);
+    const selfReminders = generateSelfRemindersDemoData(userId, medications, doseRecords);
+    
+    console.log('Demo data stored in localStorage for user:', userId);
+    console.log('Medications:', medications.length);
+    console.log('Dose Records:', doseRecords.length);
+    console.log('Prescriptions:', prescriptions.length);
+    console.log('Family Members:', familyMembers.length);
+    console.log('Reports:', reports.length);
+    console.log('Appointments:', appointments.length);
+    console.log('Health Metrics:', healthMetrics.length);
+    console.log('Disease Analysis:', diseaseAnalysis.length);
+    console.log('Health Trends:', healthTrends.length);
+    console.log('Self Reminders:', selfReminders.length);
 
-  // Verify data was stored
-  const storedFamilyMembers = localStorage.getItem('mock_family_members');
-  console.log('Stored family members in localStorage:', storedFamilyMembers);
-  console.log('Stored family members parsed:', JSON.parse(storedFamilyMembers || '[]'));
+    // Verify data was stored
+    const storedFamilyMembers = localStorage.getItem('mock_family_members');
+    console.log('Stored family members in localStorage:', storedFamilyMembers);
+    console.log('Stored family members parsed:', JSON.parse(storedFamilyMembers || '[]'));
 
-  return {
-    medications,
-    doseRecords,
-    prescriptions,
-    familyMembers,
-    reports,
-    appointments,
-    healthMetrics,
-    diseaseAnalysis,
-    healthTrends
-  };
+    return {
+      medications,
+      doseRecords,
+      prescriptions,
+      familyMembers,
+      reports,
+      appointments,
+      healthMetrics,
+      diseaseAnalysis,
+      healthTrends,
+      selfReminders
+    };
+  } catch (error) {
+    console.error('Error in generatePatientDemoDataLocal:', error);
+    throw error;
+  }
 };
 
 const generateDoctorDemoDataLocal = async (userId: string, userEmail: string) => {
@@ -1382,6 +1389,326 @@ export const generateHealthTrendsDemoData = (userId: string) => {
   localStorage.setItem('mock_health_trends', JSON.stringify(healthTrends));
   console.log('Health trends stored in localStorage');
   return healthTrends;
+};
+
+// Generate self reminders demo data with medication synchronization
+export const generateSelfRemindersDemoData = (userId: string, medications: any[] = [], doseRecords: any[] = []) => {
+  console.log('Generating self reminders demo data for user:', userId);
+  
+  // Get current date for scheduling
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  
+  // Create medication-based reminders from existing medications
+  const medicationReminders = medications.map((med, index) => {
+    const reminderTime = new Date();
+    reminderTime.setHours(8 + (index * 4), 0, 0, 0); // Spread times throughout the day
+    
+    return {
+      id: `reminder_med_${Date.now()}_${index}`,
+      userId,
+      title: `Take ${med.medicationName}`,
+      description: `Reminder to take ${med.medicationName} ${med.dosage}`,
+      medicationName: med.medicationName,
+      dosage: med.dosage,
+      doseStrength: med.doseStrength,
+      doseForm: med.doseForm,
+      administrationMethod: med.administrationMethod || 'oral',
+      type: 'medication' as const,
+      frequency: med.frequency || 'daily',
+      times: [reminderTime.toTimeString().slice(0, 5)],
+      days: med.days || [],
+      isActive: true,
+      nextReminder: reminderTime.toISOString(),
+      lastReminder: null,
+      instructions: med.instructions || `Take ${med.medicationName} as prescribed`,
+      specialInstructions: med.specialInstructions || '',
+      sideEffects: med.sideEffects || [],
+      category: 'prescription',
+      color: ['blue', 'green', 'purple', 'orange'][index % 4],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  });
+
+  // Create custom health reminders
+  const customReminders = [
+    {
+      id: `reminder_custom_${Date.now()}_1`,
+      userId,
+      title: 'Blood Pressure Check',
+      description: 'Daily blood pressure monitoring reminder',
+      medicationName: '',
+      dosage: '',
+      doseStrength: '',
+      doseForm: '',
+      administrationMethod: '',
+      type: 'checkup' as const,
+      frequency: 'daily',
+      times: ['07:00'],
+      days: [],
+      isActive: true,
+      nextReminder: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 0, 0).toISOString(),
+      lastReminder: null,
+      instructions: 'Check blood pressure in the morning before taking medications',
+      specialInstructions: 'Record readings in health tracker',
+      sideEffects: [],
+      category: 'health_monitoring',
+      color: 'red',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: `reminder_custom_${Date.now()}_2`,
+      userId,
+      title: 'Blood Sugar Test',
+      description: 'Monitor blood glucose levels',
+      medicationName: '',
+      dosage: '',
+      doseStrength: '',
+      doseForm: '',
+      administrationMethod: '',
+      type: 'checkup' as const,
+      frequency: 'daily',
+      times: ['08:00', '18:00'],
+      days: [],
+      isActive: true,
+      nextReminder: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 0, 0).toISOString(),
+      lastReminder: null,
+      instructions: 'Test blood sugar before breakfast and dinner',
+      specialInstructions: 'Record in diabetes tracker app',
+      sideEffects: [],
+      category: 'health_monitoring',
+      color: 'yellow',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: `reminder_custom_${Date.now()}_3`,
+      userId,
+      title: 'Exercise Reminder',
+      description: 'Daily physical activity reminder',
+      medicationName: '',
+      dosage: '',
+      doseStrength: '',
+      doseForm: '',
+      administrationMethod: '',
+      type: 'custom' as const,
+      frequency: 'daily',
+      times: ['17:00'],
+      days: [],
+      isActive: true,
+      nextReminder: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 17, 0, 0).toISOString(),
+      lastReminder: null,
+      instructions: '30 minutes of moderate exercise (walking, cycling, or swimming)',
+      specialInstructions: 'Avoid exercise if blood pressure is high',
+      sideEffects: [],
+      category: 'lifestyle',
+      color: 'green',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: `reminder_custom_${Date.now()}_4`,
+      userId,
+      title: 'Doctor Appointment',
+      description: 'Follow-up appointment with cardiologist',
+      medicationName: '',
+      dosage: '',
+      doseStrength: '',
+      doseForm: '',
+      administrationMethod: '',
+      type: 'appointment' as const,
+      frequency: 'once',
+      times: ['10:00'],
+      days: [],
+      isActive: true,
+      nextReminder: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 10, 0, 0).toISOString(),
+      lastReminder: null,
+      instructions: 'Prepare questions about blood pressure medication',
+      specialInstructions: 'Bring recent blood pressure readings',
+      sideEffects: [],
+      category: 'appointment',
+      color: 'purple',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    },
+    {
+      id: `reminder_custom_${Date.now()}_5`,
+      userId,
+      title: 'Medication Refill',
+      description: 'Refill Lisinopril prescription',
+      medicationName: 'Lisinopril',
+      dosage: '10mg',
+      doseStrength: '10mg',
+      doseForm: 'tablet',
+      administrationMethod: 'oral',
+      type: 'medication' as const,
+      frequency: 'once',
+      times: ['09:00'],
+      days: [],
+      isActive: true,
+      nextReminder: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3, 9, 0, 0).toISOString(),
+      lastReminder: null,
+      instructions: 'Call pharmacy to refill prescription',
+      specialInstructions: 'Check if insurance covers refill',
+      sideEffects: [],
+      category: 'prescription',
+      color: 'blue',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }
+  ];
+
+  // Combine all reminders
+  const allReminders = [...medicationReminders, ...customReminders];
+
+  console.log('Generated self reminders:', allReminders);
+  localStorage.setItem('mock_self_reminders', JSON.stringify(allReminders));
+  console.log('Self reminders stored in localStorage');
+  return allReminders;
+};
+
+// Demo data for self reminders
+export const sampleSelfReminders = [
+  {
+    id: 'reminder1',
+    userId: 'demo-patient-1',
+    title: 'Morning Blood Pressure Medication',
+    description: 'Take your blood pressure medication with breakfast',
+    medicationName: 'Lisinopril',
+    dosage: '10mg',
+    doseStrength: '10mg',
+    doseForm: 'tablet',
+    administrationMethod: 'oral',
+    type: 'medication' as const,
+    frequency: 'daily' as const,
+    times: ['08:00'],
+    days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+    isActive: true,
+    nextReminder: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    lastReminder: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    instructions: 'Take with food in the morning',
+    specialInstructions: 'Avoid salt substitutes containing potassium',
+    sideEffects: ['dizziness', 'dry cough'],
+    category: 'cardiovascular',
+    color: 'blue',
+    createdAt: new Date('2024-01-01').toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'reminder2',
+    userId: 'demo-patient-1',
+    title: 'Diabetes Medication',
+    description: 'Take your diabetes medication with meals',
+    medicationName: 'Metformin',
+    dosage: '500mg',
+    doseStrength: '500mg',
+    doseForm: 'tablet',
+    administrationMethod: 'oral',
+    type: 'medication' as const,
+    frequency: 'daily' as const,
+    times: ['08:00', '20:00'],
+    days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+    isActive: true,
+    nextReminder: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+    lastReminder: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    instructions: 'Take with meals to reduce stomach upset',
+    specialInstructions: 'Take with food, avoid alcohol',
+    sideEffects: ['nausea', 'diarrhea', 'loss of appetite'],
+    category: 'diabetes',
+    color: 'green',
+    createdAt: new Date('2024-01-01').toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'reminder3',
+    userId: 'demo-patient-1',
+    title: 'Vitamin Supplement',
+    description: 'Take your daily vitamin supplement',
+    medicationName: 'Vitamin D',
+    dosage: '1000IU',
+    doseStrength: '1000IU',
+    doseForm: 'capsule',
+    administrationMethod: 'oral',
+    type: 'medication' as const,
+    frequency: 'daily' as const,
+    times: ['12:00'],
+    days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+    isActive: true,
+    nextReminder: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    lastReminder: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    instructions: 'Take with meal for better absorption',
+    specialInstructions: 'Take with fatty meal for better absorption',
+    sideEffects: [],
+    category: 'vitamins',
+    color: 'yellow',
+    createdAt: new Date('2024-01-01').toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
+// Simple fallback demo data creation
+export const createMinimalDemoData = (userId: string) => {
+  console.log('Creating minimal demo data for user:', userId);
+  
+  try {
+    // Create basic health metrics
+    const basicHealthMetrics = [
+      {
+        id: 'basic_1',
+        userId,
+        name: 'Blood Pressure',
+        value: 120,
+        unit: 'mmHg',
+        status: 'normal',
+        trend: 'stable',
+        lastUpdated: new Date().toISOString(),
+        targetRange: { min: 90, max: 140 }
+      }
+    ];
+    
+    // Create basic disease analysis
+    const basicDiseaseAnalysis = [
+      {
+        id: 'basic_1',
+        userId,
+        diseaseName: 'Hypertension',
+        riskLevel: 'low',
+        probability: 25,
+        symptoms: ['None currently'],
+        aiInsights: 'Low risk based on current readings',
+        recommendations: ['Monitor blood pressure', 'Maintain healthy lifestyle'],
+        lastAnalyzed: new Date().toISOString(),
+        medications: [],
+        lifestyleFactors: []
+      }
+    ];
+    
+    // Create basic health trends
+    const basicHealthTrends = [
+      {
+        id: 'basic_1',
+        userId,
+        metricName: 'Blood Pressure',
+        trend: 'stable',
+        change: 0,
+        period: '1 month',
+        lastUpdated: new Date().toISOString()
+      }
+    ];
+    
+    // Store in localStorage
+    localStorage.setItem('mock_health_metrics', JSON.stringify(basicHealthMetrics));
+    localStorage.setItem('mock_disease_analysis', JSON.stringify(basicDiseaseAnalysis));
+    localStorage.setItem('mock_health_trends', JSON.stringify(basicHealthTrends));
+    
+    console.log('Minimal demo data created successfully');
+    return { basicHealthMetrics, basicDiseaseAnalysis, basicHealthTrends };
+  } catch (error) {
+    console.error('Error creating minimal demo data:', error);
+    return null;
+  }
 };
 
 

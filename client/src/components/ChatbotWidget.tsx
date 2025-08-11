@@ -89,11 +89,11 @@ const ChatbotWidget: React.FC = () => {
   });
 
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-6 right-6 z-[9998]">
       {/* Chatbot Toggle Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full shadow-lg text-white hover:bg-blue-700"
+        className="w-14 h-14 rounded-full shadow-2xl text-white hover:bg-blue-700 border-2 border-white"
         style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
       >
         <span className="material-icons">
@@ -103,7 +103,7 @@ const ChatbotWidget: React.FC = () => {
       
       {/* Chatbot Window */}
       {isOpen && (
-        <Card className="absolute bottom-16 right-0 w-80 h-96 shadow-2xl">
+        <Card className="absolute bottom-16 right-0 w-80 h-96 shadow-2xl border-2 border-blue-200 bg-white">
           <CardHeader className="text-white rounded-t-xl" style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}>
             <CardTitle className="flex items-center space-x-2 text-sm">
               <span className="material-icons">support_agent</span>

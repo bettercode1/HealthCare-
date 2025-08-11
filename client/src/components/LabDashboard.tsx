@@ -134,11 +134,35 @@ const LabDashboard: React.FC = () => {
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileSelect}
                   required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:transition-colors"
                 />
                 {selectedFile && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    {t('selected')}: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                  </p>
+                  <div className="mt-3 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+                      <div className="flex items-center space-x-3 min-w-0 flex-1">
+                        <span className="material-icons text-blue-600 text-xl flex-shrink-0">description</span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-blue-900 truncate">
+                            {selectedFile.name}
+                          </p>
+                          <p className="text-xs text-blue-700">
+                            Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                          <p className="text-xs text-blue-600 mt-1">
+                            Type: {selectedFile.type || 'Unknown'}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFile(null)}
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 p-2 rounded-full transition-colors flex-shrink-0"
+                        title="Remove file"
+                      >
+                        <span className="material-icons text-lg">close</span>
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
               
@@ -221,7 +245,7 @@ const LabDashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <p className="text-2xl font-bold text-blue-600">{reports.length}</p>
                 <p className="text-sm text-gray-600">{t('reportsUploaded')}</p>

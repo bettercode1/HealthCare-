@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
 import { familyAPI } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -217,33 +218,52 @@ const FamilyMembers: React.FC = () => {
           </CardTitle>
           <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" style={{ color: 'hsl(207, 90%, 54%)' }}>
+              <Button variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                 <span className="material-icons">person_add</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add Family Member</DialogTitle>
+              <DialogHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                      <span className="material-icons text-indigo-600 text-xl">person_add</span>
+                    </div>
+                    <div>
+                      <DialogTitle className="text-2xl font-bold text-indigo-900">Add Family Member</DialogTitle>
+                      <p className="text-sm text-indigo-700">Add a new family member to your health profile</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAddModal(false)}
+                    className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </DialogHeader>
-              <form onSubmit={handleAddMember} className="space-y-4">
+              <form onSubmit={handleAddMember} className="space-y-6">
                 <div>
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name" className="text-gray-700">Full Name</Label>
                   <Input
                     id="name"
                     value={newMember.name}
                     onChange={(e) => setNewMember(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="Enter full name"
+                    className="h-11 focus:ring-2 focus:ring-indigo-500"
                     required
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="relationship">Relationship</Label>
+                  <Label htmlFor="relationship" className="text-gray-700">Relationship</Label>
                   <Select 
                     value={newMember.relationship} 
                     onValueChange={(value) => setNewMember(prev => ({ ...prev, relationship: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 focus:ring-2 focus:ring-indigo-500">
                       <SelectValue placeholder="Select relationship" />
                     </SelectTrigger>
                     <SelectContent>
@@ -258,7 +278,7 @@ const FamilyMembers: React.FC = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="age">Age</Label>
+                    <Label htmlFor="age" className="text-gray-700">Age</Label>
                     <Input
                       id="age"
                       type="number"
@@ -267,16 +287,17 @@ const FamilyMembers: React.FC = () => {
                       value={newMember.age}
                       onChange={(e) => setNewMember(prev => ({ ...prev, age: e.target.value }))}
                       placeholder="Enter age"
+                      className="h-11 focus:ring-2 focus:ring-indigo-500"
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="gender">Gender</Label>
+                    <Label htmlFor="gender" className="text-gray-700">Gender</Label>
                     <Select 
                       value={newMember.gender} 
                       onValueChange={(value) => setNewMember(prev => ({ ...prev, gender: value }))}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11 focus:ring-2 focus:ring-indigo-500">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
@@ -289,22 +310,23 @@ const FamilyMembers: React.FC = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="contactNumber">Contact Number</Label>
+                  <Label htmlFor="contactNumber" className="text-gray-700">Contact Number</Label>
                   <Input
                     id="contactNumber"
                     value={newMember.contactNumber}
                     onChange={(e) => setNewMember(prev => ({ ...prev, contactNumber: e.target.value }))}
                     placeholder="Enter contact number"
+                    className="h-11 focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="bloodType">Blood Type</Label>
+                  <Label htmlFor="bloodType" className="text-gray-700">Blood Type</Label>
                   <Select 
                     value={newMember.bloodType} 
                     onValueChange={(value) => setNewMember(prev => ({ ...prev, bloodType: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 focus:ring-2 focus:ring-indigo-500">
                       <SelectValue placeholder="Select blood type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -323,23 +345,24 @@ const FamilyMembers: React.FC = () => {
                     id="emergencyContact"
                     checked={newMember.emergencyContact}
                     onChange={(e) => setNewMember(prev => ({ ...prev, emergencyContact: e.target.checked }))}
+                    className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                   />
-                  <Label htmlFor="emergencyContact">Emergency Contact</Label>
+                  <Label htmlFor="emergencyContact" className="text-gray-700">Emergency Contact</Label>
                 </div>
                 
                 <div className="flex space-x-2">
                   <Button 
                     type="submit" 
-                    className="flex-1 text-white hover:bg-blue-700"
-                    style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
+                    className="flex-1 h-11 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                   >
+                    <span className="material-icons mr-2">person_add</span>
                     Add Member
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setShowAddModal(false)}
-                    className="flex-1"
+                    className="flex-1 h-11 shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Cancel
                   </Button>

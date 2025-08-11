@@ -76,7 +76,7 @@ const Navigation: React.FC<NavigationProps> = ({ onShowLogin, onScrollToPlans, o
       animate="visible"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex flex-col sm:flex-row justify-between h-auto sm:h-16 py-2 sm:py-0">
           <motion.div 
             className="flex items-center"
             variants={logoVariants}
@@ -115,7 +115,7 @@ const Navigation: React.FC<NavigationProps> = ({ onShowLogin, onScrollToPlans, o
           
           {currentUser && userData ? (
             <motion.div 
-              className="flex items-center space-x-4"
+              className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -125,7 +125,7 @@ const Navigation: React.FC<NavigationProps> = ({ onShowLogin, onScrollToPlans, o
               </motion.div>
               
               <motion.div 
-                className="flex items-center space-x-2"
+                className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 text-center sm:text-left"
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 400 }}
@@ -177,7 +177,7 @@ const Navigation: React.FC<NavigationProps> = ({ onShowLogin, onScrollToPlans, o
             </motion.div>
           ) : (
             <motion.div 
-              className="flex items-center space-x-4"
+              className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -187,41 +187,47 @@ const Navigation: React.FC<NavigationProps> = ({ onShowLogin, onScrollToPlans, o
               </motion.div>
               
               <motion.div variants={itemVariants}>
-                <Button 
-                  variant="ghost" 
-                  onClick={onScrollToPlans} 
-                  className="text-gray-600 hover:text-gray-900 relative overflow-hidden group"
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400 }}
                 >
-                  <motion.span
-                    className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <span className="relative z-10">{t('plans')}</span>
-                </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={onScrollToPlans} 
+                    className="text-gray-600 hover:text-gray-900 relative overflow-hidden group"
+                  >
+                    <motion.span
+                      className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "100%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <span className="relative z-10">{t('plans')}</span>
+                  </Button>
+                </motion.div>
               </motion.div>
               
               <motion.div variants={itemVariants}>
-                <Button 
-                  variant="ghost" 
-                  onClick={onScrollToFeatures} 
-                  className="text-gray-600 hover:text-gray-900 relative overflow-hidden group"
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400 }}
                 >
-                  <motion.span
-                    className="absolute inset-0 bg-green-50 opacity-0 group-hover:opacity-100"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <span className="relative z-10">{t('features')}</span>
-                </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={onScrollToFeatures} 
+                    className="text-gray-600 hover:text-gray-900 relative overflow-hidden group"
+                  >
+                    <motion.span
+                      className="absolute inset-0 bg-green-50 opacity-0 group-hover:opacity-100"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "100%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <span className="relative z-10">{t('features')}</span>
+                  </Button>
+                </motion.div>
               </motion.div>
               
               <motion.div variants={itemVariants}>
