@@ -58,6 +58,15 @@ const enTranslations = {
     reminderPaused: 'Reminder Paused',
     personalMedication: 'Personal Medication',
     untitledReminder: 'Untitled Reminder',
+    noCriticalAlerts: 'No critical alerts',
+    
+
+    
+
+    
+
+    
+
     
     // Additional Dashboard Keys
     runAnalysis: 'Run Analysis',
@@ -813,6 +822,7 @@ const hiTranslations = {
     reminderPaused: 'अनुस्मारक रोका गया',
     personalMedication: 'व्यक्तिगत दवा',
     untitledReminder: 'अनामित अनुस्मारक',
+    noCriticalAlerts: 'कोई महत्वपूर्ण अलर्ट नहीं',
     
     // Additional Dashboard Keys
     runAnalysis: 'विश्लेषण चलाएं',
@@ -1564,6 +1574,7 @@ const mrTranslations = {
     reminderPaused: 'स्मरणपत्र थांबवले',
     personalMedication: 'वैयक्तिक औषध',
     untitledReminder: 'अनामित स्मरणपत्र',
+    noCriticalAlerts: 'कोणतीही गंभीर सूचना नाहीत',
     
     // Additional Dashboard Keys
     runAnalysis: 'विश्लेषण चालवा',

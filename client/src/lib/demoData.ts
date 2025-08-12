@@ -195,7 +195,7 @@ const sampleMedications = [
 // Sample reports with enhanced metadata
 const sampleReports = [
   {
-    title: 'Blood Test Results - January 2024',
+    title: 'Blood Test Results - January 2024', // This will be handled by the component using t('bloodTestResults')
     reportType: 'bloodTest',
     fileUrl: 'https://example.com/report1.pdf',
     analysis: sampleReportAnalysis,

@@ -1339,7 +1339,7 @@ const SelfHealthDashboard: React.FC = () => {
                     <FileText className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-blue-700">Total Reports</p>
+                    <p className="text-sm font-semibold text-blue-700">{t('totalReports')}</p>
                     <p className="text-2xl font-bold text-blue-900">{reports.length}</p>
                     <p className="text-xs text-blue-600">
                       {reports.filter(r => r.status === 'active').length} active
@@ -1356,11 +1356,11 @@ const SelfHealthDashboard: React.FC = () => {
                     <Pill className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-green-700">Active Prescriptions</p>
+                    <p className="text-sm font-semibold text-green-700">{t('activePrescriptions')}</p>
                     <p className="text-2xl font-bold text-green-900">
                       {prescriptions.filter(p => p.status === 'active').length}
                     </p>
-                    <p className="text-xs text-green-600">Current medications</p>
+                    <p className="text-xs text-green-600">{t('currentMedications')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -1373,7 +1373,7 @@ const SelfHealthDashboard: React.FC = () => {
                     <Brain className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-purple-700">AI Insights</p>
+                    <p className="text-sm font-semibold text-purple-700">{t('aiInsights')}</p>
                     <p className="text-2xl font-bold text-purple-900">{aiInsights.length}</p>
                     <p className="text-xs text-purple-600">
                       {aiInsights.filter(i => i.severity === 'critical').length} critical
@@ -1390,9 +1390,9 @@ const SelfHealthDashboard: React.FC = () => {
                     <Activity className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-orange-700">Health Score</p>
+                    <p className="text-sm font-semibold text-orange-700">{t('healthScore')}</p>
                     <p className="text-2xl font-bold text-orange-900">85%</p>
-                    <p className="text-xs text-orange-600">Based on latest data</p>
+                    <p className="text-xs text-orange-600">{t('basedOnLatestData')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -1409,9 +1409,9 @@ const SelfHealthDashboard: React.FC = () => {
                     <BellRing className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-pink-700">Self Reminders</p>
+                    <p className="text-sm font-semibold text-pink-700">{t('selfReminders')}</p>
                     <p className="text-2xl font-bold text-pink-900">{reminderCount}</p>
-                    <p className="text-xs text-pink-600">Active reminders</p>
+                    <p className="text-xs text-pink-600">{t('activeReminders')}</p>
                   </div>
                   <div className="text-pink-400">
                     <span className="material-icons text-sm">arrow_forward</span>
@@ -1428,7 +1428,7 @@ const SelfHealthDashboard: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <FileText className="w-5 h-5" />
-                  <span>Recent Reports</span>
+                  <span>{t('recentReports')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1466,7 +1466,7 @@ const SelfHealthDashboard: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <AlertTriangle className="w-5 h-5 text-red-600" />
-                  <span>Critical Alerts</span>
+                  <span>{t('criticalAlerts')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1483,7 +1483,7 @@ const SelfHealthDashboard: React.FC = () => {
                       ))}
                   </div>
                 ) : (
-                  <p className="text-green-600 text-center py-4">No critical alerts</p>
+                  <p className="text-green-600 text-center py-4">{t('noCriticalAlerts')}</p>
                 )}
               </CardContent>
             </Card>
@@ -1512,7 +1512,7 @@ const SelfHealthDashboard: React.FC = () => {
                               {report.reportType} • {report.labName}
                             </p>
                             <p className="text-xs text-gray-500">
-                              Uploaded: {new Date(report.uploadedAt).toLocaleDateString()}
+                              {t('uploaded')}: {new Date(report.uploadedAt).toLocaleDateString()}
                             </p>
                             
                             {/* AI Analysis Summary */}
@@ -1531,11 +1531,11 @@ const SelfHealthDashboard: React.FC = () => {
                                     {report.analysis.summary.overallStatus}
                                   </Badge>
                                   <div className="flex items-center space-x-2 text-xs text-gray-600">
-                                    <span>Normal: {report.analysis.summary.normalCount}</span>
-                                    <span>Abnormal: {report.analysis.summary.abnormalCount}</span>
+                                    <span>{t('normal')}: {report.analysis.summary.normalCount}</span>
+                                    <span>{t('abnormal')}: {report.analysis.summary.abnormalCount}</span>
                                     {report.analysis.summary.criticalCount > 0 && (
                                       <span className="text-red-600 font-medium">
-                                        Critical: {report.analysis.summary.criticalCount}
+                                        {t('critical')}: {report.analysis.summary.criticalCount}
                                       </span>
                                     )}
                                   </div>
@@ -1544,7 +1544,7 @@ const SelfHealthDashboard: React.FC = () => {
                                 {/* Quick Recommendations */}
                                 {report.analysis.summary.recommendations.length > 0 && (
                                   <div className="text-xs text-gray-600">
-                                    <span className="font-medium">Recommendations:</span> {report.analysis.summary.recommendations[0]}
+                                    <span className="font-medium">{t('recommendations')}:</span> {report.analysis.summary.recommendations[0]}
                                     {report.analysis.summary.recommendations.length > 1 && '...'}
                                   </div>
                                 )}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ interface Report {
 }
 
 const RecentReports: React.FC = () => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const { toast } = useToast();
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -289,7 +291,7 @@ const RecentReports: React.FC = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold text-gray-900">
-            Recent Reports ({reports.length})
+            {t('recentReports')} ({reports.length})
           </CardTitle>
           <div className="flex space-x-2">
             <Button 
