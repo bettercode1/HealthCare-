@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -221,6 +222,7 @@ const mockMedications: Medication[] = [
 ];
 
 const AIMedicationsDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const [medications, setMedications] = useState<Medication[]>(mockMedications);
   const [filteredMedications, setFilteredMedications] = useState<Medication[]>(mockMedications);
   const [searchTerm, setSearchTerm] = useState('');
@@ -289,7 +291,7 @@ const AIMedicationsDashboard: React.FC = () => {
   // CRUD Operations
   const addMedication = () => {
     if (!newMedication.name || !newMedication.dosage || !newMedication.familyMember) {
-      alert('Please fill in all required fields');
+      alert(t('pleaseFillAllRequiredFields'));
       return;
     }
 
@@ -369,15 +371,15 @@ const AIMedicationsDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Medications Dashboard</h1>
-          <p className="text-gray-600">Manage medications for your entire family</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('medicationsDashboard')}</h1>
+          <p className="text-gray-600">{t('manageMedicationsForFamily')}</p>
         </div>
         <Button 
           onClick={() => setIsAddDialogOpen(true)}
           className="bg-blue-600 hover:bg-blue-700"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add Medication
+          {t('addMedication')}
         </Button>
       </div>
 
@@ -386,11 +388,11 @@ const AIMedicationsDashboard: React.FC = () => {
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="space-y-2">
-              <Label>Search</Label>
+              <Label>{t('search')}</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search medications..."
+                  placeholder={t('searchMedications')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -399,46 +401,46 @@ const AIMedicationsDashboard: React.FC = () => {
             </div>
             
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{t('status')}</Label>
               <Select value={filterStatus} onValueChange={setFilterStatus}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="paused">Paused</SelectItem>
-                  <SelectItem value="overdue">Overdue</SelectItem>
+                  <SelectItem value="all">{t('allStatus')}</SelectItem>
+                  <SelectItem value="active">{t('active')}</SelectItem>
+                  <SelectItem value="completed">{t('completed')}</SelectItem>
+                  <SelectItem value="paused">{t('paused')}</SelectItem>
+                  <SelectItem value="overdue">{t('overdue')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Category</Label>
+              <Label>{t('category')}</Label>
               <Select value={filterCategory} onValueChange={setFilterCategory}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="antibiotic">Antibiotic</SelectItem>
-                  <SelectItem value="painkiller">Painkiller</SelectItem>
-                  <SelectItem value="vitamin">Vitamin</SelectItem>
-                  <SelectItem value="chronic">Chronic</SelectItem>
-                  <SelectItem value="emergency">Emergency</SelectItem>
+                  <SelectItem value="all">{t('allCategories')}</SelectItem>
+                  <SelectItem value="antibiotic">{t('antibiotic')}</SelectItem>
+                  <SelectItem value="painkiller">{t('painkiller')}</SelectItem>
+                  <SelectItem value="vitamin">{t('vitamin')}</SelectItem>
+                  <SelectItem value="chronic">{t('chronic')}</SelectItem>
+                  <SelectItem value="emergency">{t('emergency')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Family Member</Label>
+              <Label>{t('familyMember')}</Label>
               <Select value={filterFamilyMember} onValueChange={setFilterFamilyMember}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Members</SelectItem>
+                  <SelectItem value="all">{t('allMembers')}</SelectItem>
                   {mockFamilyMembers.map(member => (
                     <SelectItem key={member.id} value={member.name}>
                       {member.name}
@@ -449,16 +451,16 @@ const AIMedicationsDashboard: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Sort By</Label>
+              <Label>{t('sortBy')}</Label>
               <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="startDate">Start Date</SelectItem>
-                  <SelectItem value="status">Status</SelectItem>
-                  <SelectItem value="familyMember">Family Member</SelectItem>
+                  <SelectItem value="name">{t('name')}</SelectItem>
+                  <SelectItem value="startDate">{t('startDate')}</SelectItem>
+                  <SelectItem value="status">{t('status')}</SelectItem>
+                  <SelectItem value="familyMember">{t('familyMember')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -467,22 +469,30 @@ const AIMedicationsDashboard: React.FC = () => {
           <div className="flex justify-end mt-4">
             <Button
               variant="outline"
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              onClick={() => {
+                setSearchTerm('');
+                setFilterStatus('all');
+                setFilterCategory('all');
+                setFilterFamilyMember('all');
+                setSortBy('name');
+              }}
+              className="flex items-center space-x-2"
             >
-              {sortOrder === 'asc' ? '↑ Ascending' : '↓ Descending'}
+              <Filter className="w-4 h-4" />
+              <span>{t('clearFilters')}</span>
             </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Medications</p>
-                <p className="text-2xl font-bold text-gray-900">{medications.length}</p>
+                <p className="text-sm font-medium text-gray-600">{t('totalMedications')}</p>
+                <p className="text-2xl font-bold text-gray-900">{filteredMedications.length}</p>
               </div>
               <Pill className="w-8 h-8 text-blue-600" />
             </div>
@@ -493,9 +503,9 @@ const AIMedicationsDashboard: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active</p>
+                <p className="text-sm font-medium text-gray-600">{t('active')}</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {medications.filter(m => m.status === 'active').length}
+                  {filteredMedications.filter(m => m.status === 'active').length}
                 </p>
               </div>
               <CheckCircle className="w-8 h-8 text-green-600" />
@@ -507,12 +517,12 @@ const AIMedicationsDashboard: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Paused</p>
+                <p className="text-sm font-medium text-gray-600">{t('paused')}</p>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {medications.filter(m => m.status === 'paused').length}
+                  {filteredMedications.filter(m => m.status === 'paused').length}
                 </p>
               </div>
-              <AlertCircle className="w-8 h-8 text-yellow-600" />
+              <XCircle className="w-8 h-8 text-yellow-600" />
             </div>
           </CardContent>
         </Card>
@@ -521,12 +531,12 @@ const AIMedicationsDashboard: React.FC = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Overdue</p>
+                <p className="text-sm font-medium text-gray-600">{t('overdue')}</p>
                 <p className="text-2xl font-bold text-red-600">
-                  {medications.filter(m => m.status === 'overdue').length}
+                  {filteredMedications.filter(m => m.status === 'overdue').length}
                 </p>
               </div>
-              <XCircle className="w-8 h-8 text-red-600" />
+              <AlertCircle className="w-8 h-8 text-red-600" />
             </div>
           </CardContent>
         </Card>
@@ -535,7 +545,7 @@ const AIMedicationsDashboard: React.FC = () => {
       {/* Medications List */}
       <Card>
         <CardHeader>
-          <CardTitle>Medications ({filteredMedications.length})</CardTitle>
+          <CardTitle>{t('medications')} ({filteredMedications.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -563,43 +573,43 @@ const AIMedicationsDashboard: React.FC = () => {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
                           <div>
-                            <span className="font-medium">Dosage:</span> {medication.dosage}
+                            <span className="font-medium">{t('dosage')}:</span> {medication.dosage}
                           </div>
                           <div>
-                            <span className="font-medium">Frequency:</span> {medication.frequency}
+                            <span className="font-medium">{t('frequency')}:</span> {medication.frequency}
                           </div>
                           <div>
-                            <span className="font-medium">Time:</span> {medication.time}
+                            <span className="font-medium">{t('time')}:</span> {medication.time}
                           </div>
                           <div>
-                            <span className="font-medium">Duration:</span> {medication.duration}
+                            <span className="font-medium">{t('duration')}:</span> {medication.duration}
                           </div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
                           <div>
-                            <span className="font-medium">Family Member:</span> {medication.familyMember}
+                            <span className="font-medium">{t('familyMember')}:</span> {medication.familyMember}
                           </div>
                           <div>
-                            <span className="font-medium">Doctor:</span> {medication.doctor}
+                            <span className="font-medium">{t('doctor')}:</span> {medication.doctor}
                           </div>
                           <div>
-                            <span className="font-medium">Pharmacy:</span> {medication.pharmacy}
+                            <span className="font-medium">{t('pharmacy')}:</span> {medication.pharmacy}
                           </div>
                           <div>
-                            <span className="font-medium">Cost:</span> ${medication.cost}
+                            <span className="font-medium">{t('cost')}:</span> ${medication.cost}
                           </div>
                         </div>
                         
                         {medication.instructions && (
                           <div className="text-sm text-gray-600">
-                            <span className="font-medium">Instructions:</span> {medication.instructions}
+                            <span className="font-medium">{t('instructions')}:</span> {medication.instructions}
                           </div>
                         )}
                         
                         {medication.sideEffects.length > 0 && (
                           <div className="text-sm text-gray-600">
-                            <span className="font-medium">Side Effects:</span> {medication.sideEffects.join(', ')}
+                            <span className="font-medium">{t('sideEffects')}:</span> {medication.sideEffects.join(', ')}
                           </div>
                         )}
                       </div>
@@ -633,7 +643,7 @@ const AIMedicationsDashboard: React.FC = () => {
                             onClick={() => toggleMedicationStatus(medication.id, 'active')}
                             className={medication.status === 'active' ? 'bg-green-100 text-green-800' : ''}
                           >
-                            Active
+                            {t('active')}
                           </Button>
                           <Button
                             size="sm"
@@ -641,7 +651,7 @@ const AIMedicationsDashboard: React.FC = () => {
                             onClick={() => toggleMedicationStatus(medication.id, 'paused')}
                             className={medication.status === 'paused' ? 'bg-yellow-100 text-yellow-800' : ''}
                           >
-                            Pause
+                            {t('pause')}
                           </Button>
                           <Button
                             size="sm"
@@ -649,7 +659,7 @@ const AIMedicationsDashboard: React.FC = () => {
                             onClick={() => toggleMedicationStatus(medication.id, 'completed')}
                             className={medication.status === 'completed' ? 'bg-blue-100 text-blue-800' : ''}
                           >
-                            Complete
+                            {t('complete')}
                           </Button>
                         </div>
                       </div>
@@ -666,76 +676,76 @@ const AIMedicationsDashboard: React.FC = () => {
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add New Medication</DialogTitle>
+            <DialogTitle>{t('addNewMedication')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Medication Name *</Label>
+                <Label>{t('medicationName')} *</Label>
                 <Input
                   value={newMedication.name}
                   onChange={(e) => setNewMedication({...newMedication, name: e.target.value})}
-                  placeholder="Enter medication name"
+                  placeholder={t('enterMedicationName')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Dosage *</Label>
+                <Label>{t('dosage')} *</Label>
                 <Input
                   value={newMedication.dosage}
                   onChange={(e) => setNewMedication({...newMedication, dosage: e.target.value})}
-                  placeholder="e.g., 500mg"
+                  placeholder={t('dosagePlaceholder')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Frequency</Label>
+                <Label>{t('frequency')}</Label>
                 <Input
                   value={newMedication.frequency}
                   onChange={(e) => setNewMedication({...newMedication, frequency: e.target.value})}
-                  placeholder="e.g., Twice daily"
+                  placeholder={t('frequencyPlaceholder')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Time</Label>
+                <Label>{t('time')}</Label>
                 <Input
                   value={newMedication.time}
                   onChange={(e) => setNewMedication({...newMedication, time: e.target.value})}
-                  placeholder="e.g., 8:00 AM, 8:00 PM"
+                  placeholder={t('timePlaceholder')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Duration</Label>
+                <Label>{t('duration')}</Label>
                 <Input
                   value={newMedication.duration}
                   onChange={(e) => setNewMedication({...newMedication, duration: e.target.value})}
-                  placeholder="e.g., 7 days"
+                  placeholder={t('durationPlaceholder')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Category</Label>
+                <Label>{t('category')}</Label>
                 <Select value={newMedication.category} onValueChange={(value: any) => setNewMedication({...newMedication, category: value})}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="antibiotic">Antibiotic</SelectItem>
-                    <SelectItem value="painkiller">Painkiller</SelectItem>
-                    <SelectItem value="vitamin">Vitamin</SelectItem>
-                    <SelectItem value="chronic">Chronic</SelectItem>
-                    <SelectItem value="emergency">Emergency</SelectItem>
+                    <SelectItem value="antibiotic">{t('antibiotic')}</SelectItem>
+                    <SelectItem value="painkiller">{t('painkiller')}</SelectItem>
+                    <SelectItem value="vitamin">{t('vitamin')}</SelectItem>
+                    <SelectItem value="chronic">{t('chronic')}</SelectItem>
+                    <SelectItem value="emergency">{t('emergency')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               <div className="space-y-2">
-                <Label>Family Member *</Label>
+                <Label>{t('familyMember')} *</Label>
                 <Select value={newMedication.familyMember} onValueChange={(value: any) => setNewMedication({...newMedication, familyMember: value})}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select family member" />
+                    <SelectValue placeholder={t('selectFamilyMember')} />
                   </SelectTrigger>
                   <SelectContent>
                     {mockFamilyMembers.map(member => (
@@ -748,7 +758,7 @@ const AIMedicationsDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label>Start Date</Label>
+                <Label>{t('startDate')}</Label>
                 <Input
                   type="date"
                   value={newMedication.startDate}
@@ -757,7 +767,7 @@ const AIMedicationsDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label>End Date</Label>
+                <Label>{t('endDate')}</Label>
                 <Input
                   type="date"
                   value={newMedication.endDate}
@@ -766,25 +776,25 @@ const AIMedicationsDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label>Doctor</Label>
+                <Label>{t('doctor')}</Label>
                 <Input
                   value={newMedication.doctor}
                   onChange={(e) => setNewMedication({...newMedication, doctor: e.target.value})}
-                  placeholder="Enter doctor name"
+                  placeholder={t('enterDoctorName')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Pharmacy</Label>
+                <Label>{t('pharmacy')}</Label>
                 <Input
                   value={newMedication.pharmacy}
                   onChange={(e) => setNewMedication({...newMedication, pharmacy: e.target.value})}
-                  placeholder="Enter pharmacy name"
+                  placeholder={t('enterPharmacyName')}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label>Cost</Label>
+                <Label>{t('cost')}</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -795,41 +805,41 @@ const AIMedicationsDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label>Insurance</Label>
+                <Label>{t('insurance')}</Label>
                 <Input
                   value={newMedication.insurance}
                   onChange={(e) => setNewMedication({...newMedication, insurance: e.target.value})}
-                  placeholder="Enter insurance provider"
+                  placeholder={t('enterInsuranceProvider')}
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label>Instructions</Label>
+              <Label>{t('instructions')}</Label>
               <Textarea
                 value={newMedication.instructions}
                 onChange={(e) => setNewMedication({...newMedication, instructions: e.target.value})}
-                placeholder="Enter medication instructions"
+                placeholder={t('enterMedicationInstructions')}
                 rows={3}
               />
             </div>
             
             <div className="space-y-2">
-              <Label>Notes</Label>
+              <Label>{t('notes')}</Label>
               <Textarea
                 value={newMedication.notes}
                 onChange={(e) => setNewMedication({...newMedication, notes: e.target.value})}
-                placeholder="Enter additional notes"
+                placeholder={t('enterAdditionalNotes')}
                 rows={2}
               />
             </div>
             
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button onClick={addMedication}>
-                Add Medication
+                {t('addMedication')}
               </Button>
             </div>
           </div>
@@ -840,13 +850,13 @@ const AIMedicationsDashboard: React.FC = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Medication</DialogTitle>
+            <DialogTitle>{t('editMedication')}</DialogTitle>
           </DialogHeader>
           {editingMedication && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Medication Name</Label>
+                  <Label>{t('medicationName')}</Label>
                   <Input
                     value={editingMedication.name}
                     onChange={(e) => setEditingMedication({...editingMedication, name: e.target.value})}
@@ -854,7 +864,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Dosage</Label>
+                  <Label>{t('dosage')}</Label>
                   <Input
                     value={editingMedication.dosage}
                     onChange={(e) => setEditingMedication({...editingMedication, dosage: e.target.value})}
@@ -862,7 +872,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Frequency</Label>
+                  <Label>{t('frequency')}</Label>
                   <Input
                     value={editingMedication.frequency}
                     onChange={(e) => setEditingMedication({...editingMedication, frequency: e.target.value})}
@@ -870,7 +880,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Time</Label>
+                  <Label>{t('time')}</Label>
                   <Input
                     value={editingMedication.time}
                     onChange={(e) => setEditingMedication({...editingMedication, time: e.target.value})}
@@ -878,7 +888,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Duration</Label>
+                  <Label>{t('duration')}</Label>
                   <Input
                     value={editingMedication.duration}
                     onChange={(e) => setEditingMedication({...editingMedication, duration: e.target.value})}
@@ -886,38 +896,38 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Status</Label>
+                  <Label>{t('status')}</Label>
                   <Select value={editingMedication.status} onValueChange={(value: any) => setEditingMedication({...editingMedication, status: value})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="paused">Paused</SelectItem>
-                      <SelectItem value="overdue">Overdue</SelectItem>
+                      <SelectItem value="active">{t('active')}</SelectItem>
+                      <SelectItem value="completed">{t('completed')}</SelectItem>
+                      <SelectItem value="paused">{t('paused')}</SelectItem>
+                      <SelectItem value="overdue">{t('overdue')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Category</Label>
+                  <Label>{t('category')}</Label>
                   <Select value={editingMedication.category} onValueChange={(value: any) => setEditingMedication({...editingMedication, category: value})}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="antibiotic">Antibiotic</SelectItem>
-                      <SelectItem value="painkiller">Painkiller</SelectItem>
-                      <SelectItem value="vitamin">Vitamin</SelectItem>
-                      <SelectItem value="chronic">Chronic</SelectItem>
-                      <SelectItem value="emergency">Emergency</SelectItem>
+                      <SelectItem value="antibiotic">{t('antibiotic')}</SelectItem>
+                      <SelectItem value="painkiller">{t('painkiller')}</SelectItem>
+                      <SelectItem value="vitamin">{t('vitamin')}</SelectItem>
+                      <SelectItem value="chronic">{t('chronic')}</SelectItem>
+                      <SelectItem value="emergency">{t('emergency')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Family Member</Label>
+                  <Label>{t('familyMember')}</Label>
                   <Select value={editingMedication.familyMember} onValueChange={(value: any) => setEditingMedication({...editingMedication, familyMember: value})}>
                     <SelectTrigger>
                       <SelectValue />
@@ -933,7 +943,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Doctor</Label>
+                  <Label>{t('doctor')}</Label>
                   <Input
                     value={editingMedication.doctor}
                     onChange={(e) => setEditingMedication({...editingMedication, doctor: e.target.value})}
@@ -941,7 +951,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Pharmacy</Label>
+                  <Label>{t('pharmacy')}</Label>
                   <Input
                     value={editingMedication.pharmacy}
                     onChange={(e) => setEditingMedication({...editingMedication, pharmacy: e.target.value})}
@@ -949,7 +959,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Cost</Label>
+                  <Label>{t('cost')}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -959,7 +969,7 @@ const AIMedicationsDashboard: React.FC = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Insurance</Label>
+                  <Label>{t('insurance')}</Label>
                   <Input
                     value={editingMedication.insurance}
                     onChange={(e) => setEditingMedication({...editingMedication, insurance: e.target.value})}
@@ -968,7 +978,7 @@ const AIMedicationsDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label>Instructions</Label>
+                <Label>{t('instructions')}</Label>
                 <Textarea
                   value={editingMedication.instructions}
                   onChange={(e) => setEditingMedication({...editingMedication, instructions: e.target.value})}
@@ -977,7 +987,7 @@ const AIMedicationsDashboard: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <Label>Notes</Label>
+                <Label>{t('notes')}</Label>
                 <Textarea
                   value={editingMedication.notes}
                   onChange={(e) => setEditingMedication({...editingMedication, notes: e.target.value})}
@@ -987,10 +997,10 @@ const AIMedicationsDashboard: React.FC = () => {
               
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button onClick={updateMedication}>
-                  Update Medication
+                  {t('updateMedication')}
                 </Button>
               </div>
             </div>

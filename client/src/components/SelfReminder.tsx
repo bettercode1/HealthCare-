@@ -889,19 +889,19 @@ const SelfReminder: React.FC = () => {
                  <div className="flex items-center space-x-2">
                    <span className="material-icons text-blue-600 text-sm">medication</span>
                    <span className="text-xs sm:text-sm text-blue-600">
-                     {selfReminders?.filter(r => r.category === 'prescription').length || 0} <span className="hidden sm:inline">Prescription Reminders</span><span className="sm:hidden">Prescription</span>
+                     {selfReminders?.filter(r => r.category === 'prescription').length || 0} <span className="hidden sm:inline">{t('prescriptionReminders')}</span><span className="sm:hidden">{t('prescription')}</span>
                    </span>
                  </div>
                  <div className="flex items-center space-x-2">
                    <span className="material-icons text-purple-600 text-sm">family_restroom</span>
                    <span className="text-xs sm:text-sm text-purple-600">
-                     {selfReminders?.filter(r => r.category === 'family_medication').length || 0} <span className="hidden sm:inline">Family Reminders</span><span className="sm:hidden">Family</span>
+                     {selfReminders?.filter(r => r.category === 'family_medication').length || 0} <span className="hidden sm:inline">{t('familyReminders')}</span><span className="sm:hidden">{t('family')}</span>
                    </span>
                  </div>
                  <div className="flex items-center space-x-2">
                    <span className="material-icons text-orange-600 text-sm">schedule</span>
                    <span className="text-xs sm:text-sm text-orange-600">
-                     {selfReminders?.filter(r => r.category === 'custom').length || 0} <span className="hidden sm:inline">Custom Reminders</span><span className="sm:hidden">Custom</span>
+                     {selfReminders?.filter(r => r.category === 'custom').length || 0} <span className="hidden sm:inline">{t('customReminders')}</span><span className="sm:hidden">{t('custom')}</span>
                    </span>
                  </div>
                </div>
@@ -924,9 +924,9 @@ const SelfReminder: React.FC = () => {
                   <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
                     <span className="material-icons text-purple-500 text-4xl">medication</span>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">No Self Reminders Set</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">{t('noSelfRemindersSet')}</h3>
                   <p className="text-gray-600 mb-6 max-w-md mx-auto text-sm sm:text-base">
-                    Start setting up your personal medication reminders to ensure you never miss a dose.
+                    {t('startSettingUpPersonalReminders')}
                   </p>
                 </motion.div>
               ) : (
@@ -963,13 +963,13 @@ const SelfReminder: React.FC = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-2 mb-2">
                               <h3 className="font-bold text-gray-900 text-base sm:text-lg">
-                                {reminder.title || reminder.medicationName || 'Untitled Reminder'}
+                                {reminder.title || reminder.medicationName || t('untitledReminder')}
                               </h3>
                               <Badge 
                                 variant={reminder.isActive ? "default" : "secondary"}
                                 className={`${reminder.isActive ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-600 border-gray-200'}`}
                               >
-                                {reminder.isActive ? 'Active' : 'Inactive'}
+                                {reminder.isActive ? t('active') : t('inactive')}
                               </Badge>
                               <Badge variant="outline" className="text-xs">
                                 {getFrequencyText(reminder.frequency)}
@@ -990,26 +990,26 @@ const SelfReminder: React.FC = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3">
                               <div>
                                 <p className="text-sm text-gray-500">
-                                  <span className="font-semibold">Medication:</span> {reminder.medicationName || 'Not specified'}
+                                  <span className="font-semibold">{t('medication')}:</span> {reminder.medicationName || t('notSpecified')}
                                 </p>
                                 <p className="text-sm text-gray-500">
-                                  <span className="font-semibold">Dosage:</span> {reminder.dosage || 'Not specified'}
+                                  <span className="font-semibold">{t('dosage')}:</span> {reminder.dosage || t('notSpecified')}
                                 </p>
                                 {reminder.doseStrength && (
                                   <p className="text-sm text-gray-500">
-                                    <span className="font-semibold">Strength:</span> {reminder.doseStrength}
+                                    <span className="font-semibold">{t('strength')}:</span> {reminder.doseStrength}
                                   </p>
                                 )}
                               </div>
                               <div>
                                 <p className="text-sm text-gray-500">
-                                  <span className="font-semibold">Form:</span> {getDoseFormLabel(reminder.doseForm) || 'Not specified'}
+                                  <span className="font-semibold">{t('form')}:</span> {getDoseFormLabel(reminder.doseForm) || t('notSpecified')}
                                 </p>
                                 <p className="text-sm text-gray-500">
-                                  <span className="font-semibold">Method:</span> {getAdministrationLabel(reminder.administrationMethod) || 'Not specified'}
+                                  <span className="font-semibold">{t('method')}:</span> {getAdministrationLabel(reminder.administrationMethod) || t('notSpecified')}
                                 </p>
                                 <p className="text-sm text-gray-500">
-                                  <span className="font-semibold">Times:</span> {reminder.times?.length > 0 ? reminder.times.join(', ') : 'Not specified'}
+                                  <span className="font-semibold">{t('times')}:</span> {reminder.times?.length > 0 ? reminder.times.join(', ') : t('notSpecified')}
                                 </p>
                               </div>
                             </div>
@@ -1019,12 +1019,12 @@ const SelfReminder: React.FC = () => {
                               <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                                 {reminder.instructions && (
                                   <p className="text-sm text-blue-800 mb-1">
-                                    <span className="font-semibold">Instructions:</span> {reminder.instructions}
+                                    <span className="font-semibold">{t('instructions')}:</span> {reminder.instructions}
                                   </p>
                                 )}
                                 {reminder.specialInstructions && (
                                   <p className="text-sm text-blue-800">
-                                    <span className="font-semibold">Special:</span> {reminder.specialInstructions}
+                                    <span className="font-semibold">{t('special')}:</span> {reminder.specialInstructions}
                                   </p>
                                 )}
                               </div>
@@ -1035,13 +1035,13 @@ const SelfReminder: React.FC = () => {
                               <div className="flex items-center space-x-2">
                                 <div className={`w-3 h-3 rounded-full ${reminder.isActive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
                                 <span className="text-xs text-gray-500">
-                                  {reminder.isActive ? 'Reminder Active' : 'Reminder Paused'}
+                                  {reminder.isActive ? t('reminderActive') : t('reminderPaused')}
                                 </span>
                               </div>
                               
                               <div className="flex items-center space-x-1">
                                 <span className="material-icons text-purple-500 text-sm">schedule</span>
-                                <span className="text-xs text-purple-600">Personal Medication</span>
+                                <span className="text-xs text-purple-600">{t('personalMedication')}</span>
                               </div>
                               
                               {reminder.days && reminder.days.length > 0 && (

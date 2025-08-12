@@ -416,7 +416,7 @@ const PatientDashboard: React.FC = () => {
                           variant="ghost" 
                           size="sm"
                           onClick={() => handleViewReport(report)}
-                          title="View Report"
+                          title={t('viewReport')}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -424,7 +424,7 @@ const PatientDashboard: React.FC = () => {
                           variant="ghost" 
                           size="sm"
                           onClick={() => handleDownloadReport(report)}
-                          title="Download Report"
+                          title={t('downloadReport')}
                         >
                           <Download className="h-4 w-4" />
                         </Button>

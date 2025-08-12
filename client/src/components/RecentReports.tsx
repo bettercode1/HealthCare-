@@ -7,6 +7,7 @@ import FileViewer from '@/components/ui/file-viewer';
 import { useFirestore } from '@/hooks/useFirestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDateAsMonthYear } from '@/lib/utils';
+import BettercodeLogo from './BettercodeLogo';
 
 interface Report {
   id: string;
@@ -86,13 +87,13 @@ const RecentReports: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 text-green-800">Active</Badge>;
+        return <Badge className="bg-green-100 text-green-800">{t('active')}</Badge>;
       case 'expired':
-        return <Badge className="bg-red-100 text-red-800">Expired</Badge>;
+        return <Badge className="bg-red-100 text-red-800">{t('expired')}</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">{t('pending')}</Badge>;
       default:
-        return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
+        return <Badge className="bg-gray-100 text-gray-800">{t('unknown')}</Badge>;
     }
   };
 
@@ -138,8 +139,8 @@ const RecentReports: React.FC = () => {
           {sortedReports.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-gray-400 text-4xl mb-2">📄</div>
-              <p className="text-gray-500">{t('noReportsYet')}</p>
-              <p className="text-sm text-gray-400 mt-1">{t('uploadFirstReport')}</p>
+              <p className="text-gray-500">{t('noReportsFound')}</p>
+              <p className="text-sm text-gray-400 mt-1">{t('uploadYourFirstReport')}</p>
             </div>
           ) : (
             sortedReports.map((report) => (
@@ -241,6 +242,11 @@ const RecentReports: React.FC = () => {
           fileType={selectedReportForViewing.fileType}
         />
       )}
+
+      {/* Bettercode Logo */}
+      <div className="mt-6 pt-4 border-t border-gray-200">
+        <BettercodeLogo variant="minimal" className="justify-center" />
+      </div>
     </Card>
   );
 };

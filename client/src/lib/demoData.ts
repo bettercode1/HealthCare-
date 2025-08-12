@@ -1139,8 +1139,13 @@ const generateDoctorDemoDataLocal = async (userId: string, userEmail: string) =>
       name: 'John Smith',
       age: 35,
       phone: '+1-555-0123',
+      email: 'john.smith@email.com',
       lastVisit: '2025-01-01T00:00:00',
-      nextAppointment: '2025-01-20T10:00:00'
+      nextAppointment: '2025-01-20T10:00:00',
+      healthStatus: 'Stable',
+      currentMedications: ['Lisinopril', 'Metformin', 'Aspirin'],
+      allergies: ['Penicillin', 'Shellfish'],
+      notes: 'Patient shows good progress with diabetes management. Blood pressure under control.'
     },
     {
       id: 'patient_2',
@@ -1148,8 +1153,78 @@ const generateDoctorDemoDataLocal = async (userId: string, userEmail: string) =>
       name: 'Sarah Johnson',
       age: 28,
       phone: '+1-555-0124',
+      email: 'sarah.johnson@email.com',
       lastVisit: '2024-12-15T00:00:00',
-      nextAppointment: '2025-01-25T14:00:00'
+      nextAppointment: '2025-01-25T14:00:00',
+      healthStatus: 'Improving',
+      currentMedications: ['Ibuprofen', 'Vitamin D'],
+      allergies: ['Latex'],
+      notes: 'Recovering from minor surgery. Wound healing well.'
+    },
+    {
+      id: 'patient_3',
+      doctorId: userId,
+      name: 'Michael Chen',
+      age: 42,
+      phone: '+1-555-0125',
+      email: 'michael.chen@email.com',
+      lastVisit: '2024-12-20T00:00:00',
+      nextAppointment: '2025-01-30T09:00:00',
+      healthStatus: 'Monitoring',
+      currentMedications: ['Atorvastatin', 'Omega-3'],
+      allergies: ['None known'],
+      notes: 'High cholesterol levels. Dietary changes recommended.'
+    }
+  ];
+
+  const prescriptions = [
+    {
+      id: 'pres_1',
+      doctorId: userId,
+      patientId: 'patient_1',
+      patientName: 'John Smith',
+      diagnosis: 'Type 2 Diabetes, Hypertension',
+      medication: 'Metformin',
+      dosage: '500mg',
+      frequency: 'Twice daily',
+      duration: 'Ongoing',
+      instructions: 'Take with meals to reduce stomach upset',
+      refillInstructions: 'Refill every 30 days',
+      status: 'active',
+      createdAt: '2024-12-01T00:00:00',
+      updatedAt: '2024-12-01T00:00:00'
+    },
+    {
+      id: 'pres_2',
+      doctorId: userId,
+      patientId: 'patient_1',
+      patientName: 'John Smith',
+      diagnosis: 'Hypertension',
+      medication: 'Lisinopril',
+      dosage: '10mg',
+      frequency: 'Once daily',
+      duration: 'Ongoing',
+      instructions: 'Take in the morning, avoid salt substitutes',
+      refillInstructions: 'Refill every 30 days',
+      status: 'active',
+      createdAt: '2024-11-15T00:00:00',
+      updatedAt: '2024-11-15T00:00:00'
+    },
+    {
+      id: 'pres_3',
+      doctorId: userId,
+      patientId: 'patient_2',
+      patientName: 'Sarah Johnson',
+      diagnosis: 'Post-surgical pain',
+      medication: 'Ibuprofen',
+      dosage: '400mg',
+      frequency: 'Every 6 hours as needed',
+      duration: '7 days',
+      instructions: 'Take with food to prevent stomach irritation',
+      refillInstructions: 'No refill needed',
+      status: 'completed',
+      createdAt: '2024-12-15T00:00:00',
+      updatedAt: '2024-12-15T00:00:00'
     }
   ];
 
@@ -1158,67 +1233,230 @@ const generateDoctorDemoDataLocal = async (userId: string, userEmail: string) =>
       id: 'apt_1',
       doctorId: userId,
       patientId: 'patient_1',
+      patientName: 'John Smith',
       purpose: 'Regular Checkup',
       dateTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       status: 'confirmed',
-      notes: 'Annual physical examination',
-      patientName: 'John Smith',
-      duration: 30
+      notes: 'Annual physical examination, review diabetes management',
+      duration: 30,
+      followUpNotes: ''
     },
     {
       id: 'apt_2',
       doctorId: userId,
       patientId: 'patient_2',
+      patientName: 'Sarah Johnson',
       purpose: 'Follow-up',
       dateTime: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
       status: 'pending',
-      notes: 'Follow-up on diabetes management',
-      patientName: 'Sarah Johnson',
-      duration: 45
+      notes: 'Follow-up on post-surgical recovery',
+      duration: 45,
+      followUpNotes: ''
+    },
+    {
+      id: 'apt_3',
+      doctorId: userId,
+      patientId: 'patient_3',
+      patientName: 'Michael Chen',
+      purpose: 'Cholesterol Review',
+      dateTime: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'confirmed',
+      notes: 'Review cholesterol levels and dietary changes',
+      duration: 30,
+      followUpNotes: ''
+    }
+  ];
+
+  const labRequests = [
+    {
+      id: 'lab_req_1',
+      doctorId: userId,
+      doctorName: 'Dr. Sarah Johnson',
+      patientId: 'patient_1',
+      patientName: 'John Smith',
+      testType: 'Blood Test',
+      priority: 'normal',
+      notes: 'Complete blood count, HbA1c, lipid panel',
+      status: 'pending',
+      createdAt: '2025-01-01T00:00:00'
+    },
+    {
+      id: 'lab_req_2',
+      doctorId: userId,
+      doctorName: 'Dr. Sarah Johnson',
+      patientId: 'patient_3',
+      patientName: 'Michael Chen',
+      testType: 'Lipid Panel',
+      priority: 'high',
+      notes: 'Follow-up cholesterol test',
+      status: 'pending',
+      createdAt: '2025-01-02T00:00:00'
     }
   ];
 
   // Store data directly in the correct localStorage keys
   localStorage.setItem('mock_patients', JSON.stringify(patients));
+  localStorage.setItem('mock_prescriptions', JSON.stringify(prescriptions));
   localStorage.setItem('mock_appointments', JSON.stringify(appointments));
+  localStorage.setItem('mock_labRequests', JSON.stringify(labRequests));
   
   console.log('Doctor demo data stored in localStorage for user:', userId);
   console.log('Patients:', patients.length);
+  console.log('Prescriptions:', prescriptions.length);
   console.log('Appointments:', appointments.length);
+  console.log('Lab Requests:', labRequests.length);
 };
 
 const generateLabDemoDataLocal = async (userId: string, userEmail: string) => {
   // Lab-specific demo data
-  const reports = [
+  const labRequests = [
+    {
+      id: 'lab_req_1',
+      labId: userId,
+      doctorId: 'doctor_1',
+      doctorName: 'Dr. Sarah Johnson',
+      patientId: 'patient_1',
+      patientName: 'John Smith',
+      testType: 'Blood Test',
+      priority: 'normal',
+      notes: 'Complete blood count, HbA1c, lipid panel',
+      status: 'completed',
+      createdAt: '2025-01-01T00:00:00',
+      requestedDate: '2025-01-01T00:00:00',
+      completedDate: '2025-01-01T08:00:00'
+    },
+    {
+      id: 'lab_req_2',
+      labId: userId,
+      doctorId: 'doctor_1',
+      doctorName: 'Dr. Sarah Johnson',
+      patientId: 'patient_2',
+      patientName: 'Sarah Johnson',
+      testType: 'X-Ray Chest',
+      priority: 'high',
+      notes: 'Post-surgical chest X-ray to check for complications',
+      status: 'completed',
+      createdAt: '2024-12-15T00:00:00',
+      requestedDate: '2024-12-15T00:00:00',
+      completedDate: '2024-12-15T10:30:00'
+    },
+    {
+      id: 'lab_req_3',
+      labId: userId,
+      doctorId: 'doctor_1',
+      doctorName: 'Dr. Sarah Johnson',
+      patientId: 'patient_3',
+      patientName: 'Michael Chen',
+      testType: 'Lipid Panel',
+      priority: 'normal',
+      notes: 'Cholesterol and triglyceride levels',
+      status: 'pending',
+      createdAt: '2025-01-02T00:00:00',
+      requestedDate: '2025-01-02T00:00:00'
+    }
+  ];
+
+  const labReports = [
     {
       id: 'report_1',
       labId: userId,
       patientId: 'patient_1',
-      title: 'Blood Test Results',
+      patientName: 'John Smith',
+      doctorId: 'doctor_1',
+      doctorName: 'Dr. Sarah Johnson',
+      title: 'Complete Blood Count & HbA1c',
+      testType: 'Blood Test',
+      fileURL: 'mock://storage/reports/blood_test_001.pdf',
+      notes: 'Routine blood work for diabetes management',
       status: 'completed',
       createdAt: '2025-01-01T00:00:00',
       completedAt: '2025-01-01T08:00:00',
-      patientName: 'John Smith',
-      labName: 'MedLab Diagnostics'
+      testParameters: [
+        {
+          name: 'Hemoglobin',
+          value: 14.2,
+          unit: 'g/dL',
+          normalRange: '12-16',
+          status: 'normal'
+        },
+        {
+          name: 'HbA1c',
+          value: 6.8,
+          unit: '%',
+          normalRange: '<7.0',
+          status: 'normal'
+        },
+        {
+          name: 'Glucose',
+          value: 95,
+          unit: 'mg/dL',
+          normalRange: '70-100',
+          status: 'normal'
+        }
+      ],
+      normalRanges: {
+        'Hemoglobin': '12-16 g/dL',
+        'HbA1c': '<7.0%',
+        'Glucose': '70-100 mg/dL'
+      },
+      results: {
+        'Hemoglobin': 14.2,
+        'HbA1c': 6.8,
+        'Glucose': 95
+      },
+      overallStatus: 'normal',
+      recommendations: ['Continue current diabetes management plan', 'Monitor HbA1c every 3 months']
     },
     {
       id: 'report_2',
       labId: userId,
       patientId: 'patient_2',
-      title: 'X-Ray Chest',
+      patientName: 'Sarah Johnson',
+      doctorId: 'doctor_1',
+      doctorName: 'Dr. Sarah Johnson',
+      title: 'Chest X-Ray',
+      testType: 'X-Ray',
+      fileURL: 'mock://storage/reports/chest_xray_001.jpg',
+      notes: 'Post-surgical chest X-ray',
       status: 'completed',
       createdAt: '2024-12-15T00:00:00',
       completedAt: '2024-12-15T10:30:00',
-      patientName: 'Sarah Johnson',
-      labName: 'City Medical Lab'
+      testParameters: [
+        {
+          name: 'Lung Fields',
+          value: 'Clear',
+          unit: 'N/A',
+          normalRange: 'Clear',
+          status: 'normal'
+        },
+        {
+          name: 'Heart Size',
+          value: 'Normal',
+          unit: 'N/A',
+          normalRange: 'Normal',
+          status: 'normal'
+        }
+      ],
+      normalRanges: {
+        'Lung Fields': 'Clear',
+        'Heart Size': 'Normal'
+      },
+      results: {
+        'Lung Fields': 'Clear',
+        'Heart Size': 'Normal'
+      },
+      overallStatus: 'normal',
+      recommendations: ['No abnormalities detected', 'Continue post-surgical recovery as planned']
     }
   ];
 
   // Store data directly in the correct localStorage keys
-  localStorage.setItem('mock_reports', JSON.stringify(reports));
+  localStorage.setItem('mock_labRequests', JSON.stringify(labRequests));
+  localStorage.setItem('mock_reports', JSON.stringify(labReports));
   
   console.log('Lab demo data stored in localStorage for user:', userId);
-  console.log('Reports:', reports.length);
+  console.log('Lab Requests:', labRequests.length);
+  console.log('Lab Reports:', labReports.length);
 };
 
 export const clearDemoData = async (userId: string) => {

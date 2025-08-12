@@ -153,11 +153,11 @@ const HealthMetricsTracker: React.FC = () => {
         <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-green-900 mb-1">Health Overview</h3>
+              <h3 className="text-lg font-semibold text-green-900 mb-1">{t('healthOverview')}</h3>
               <p className="text-green-700 text-sm">
                 {sortedMetrics.length > 0 
-                  ? `Tracking ${sortedMetrics.length} health metrics over the last 7 days`
-                  : 'Start tracking your vital signs to monitor your health'
+                  ? t('trackingHealthMetrics', { count: sortedMetrics.length })
+                  : t('startTrackingVitalSigns')
                 }
               </p>
             </div>
@@ -165,7 +165,7 @@ const HealthMetricsTracker: React.FC = () => {
               <div className="text-2xl font-bold text-green-600">
                 {sortedMetrics.filter(m => m.bloodPressure || m.heartRate || m.weight || m.bloodSugar || m.temperature).length}
               </div>
-              <div className="text-xs text-green-600">Active Metrics</div>
+              <div className="text-xs text-green-600">{t('activeMetrics')}</div>
             </div>
           </div>
         </div>
@@ -196,8 +196,8 @@ const HealthMetricsTracker: React.FC = () => {
                 <div className="w-12 h-12 mx-auto mb-2 bg-red-100 rounded-full flex items-center justify-center">
                   <Droplets className="h-6 w-6 text-red-500" />
                 </div>
-                <div className="text-gray-500 text-sm">No data</div>
-                <div className="text-xs text-gray-400 mt-1">Add blood pressure reading</div>
+                <div className="text-gray-500 text-sm">{t('noData')}</div>
+                <div className="text-xs text-gray-400 mt-1">{t('addBloodPressureReading')}</div>
               </div>
             )}
           </div>
@@ -224,8 +224,8 @@ const HealthMetricsTracker: React.FC = () => {
                 <div className="w-12 h-12 mx-auto mb-2 bg-red-100 rounded-full flex items-center justify-center">
                   <Heart className="h-6 w-6 text-red-500" />
                 </div>
-                <div className="text-gray-500 text-sm">No data</div>
-                <div className="text-xs text-gray-400 mt-1">Add heart rate reading</div>
+                <div className="text-gray-500 text-sm">{t('noData')}</div>
+                <div className="text-xs text-gray-400 mt-1">{t('addHeartRateReading')}</div>
               </div>
             )}
           </div>
@@ -249,8 +249,8 @@ const HealthMetricsTracker: React.FC = () => {
                 <div className="w-12 h-12 mx-auto mb-2 bg-blue-100 rounded-full flex items-center justify-center">
                   <Scale className="h-6 w-6 text-blue-500" />
                 </div>
-                <div className="text-gray-500 text-sm">No data</div>
-                <div className="text-xs text-gray-400 mt-1">Add weight reading</div>
+                <div className="text-gray-500 text-sm">{t('noData')}</div>
+                <div className="text-xs text-gray-400 mt-1">{t('addWeightReading')}</div>
               </div>
             )}
           </div>
@@ -277,8 +277,8 @@ const HealthMetricsTracker: React.FC = () => {
                 <div className="w-12 h-12 mx-auto mb-2 bg-purple-100 rounded-full flex items-center justify-center">
                   <Activity className="h-6 w-6 text-purple-500" />
                 </div>
-                <div className="text-gray-500 text-sm">No data</div>
-                <div className="text-xs text-gray-400 mt-1">Add blood sugar reading</div>
+                <div className="text-gray-500 text-sm">{t('noData')}</div>
+                <div className="text-xs text-gray-400 mt-1">{t('addBloodSugarReading')}</div>
               </div>
             )}
           </div>
@@ -308,8 +308,8 @@ const HealthMetricsTracker: React.FC = () => {
               <div className="w-12 h-12 mx-auto mb-2 bg-orange-100 rounded-full flex items-center justify-center">
                 <Thermometer className="h-6 w-6 text-orange-500" />
               </div>
-              <div className="text-gray-500 text-sm">No data</div>
-              <div className="text-xs text-gray-400 mt-1">Add temperature reading</div>
+              <div className="text-gray-500 text-sm">{t('noData')}</div>
+              <div className="text-xs text-gray-400 mt-1">{t('addTemperatureReading')}</div>
             </div>
           )}
         </div>
@@ -320,7 +320,7 @@ const HealthMetricsTracker: React.FC = () => {
             <h3 className="font-medium text-gray-900">{t('recentHistory')}</h3>
             {sortedMetrics.length > 0 && (
               <Badge variant="outline" className="text-xs">
-                {sortedMetrics.length} entries
+                {t('entries', { count: sortedMetrics.length })}
               </Badge>
             )}
           </div>

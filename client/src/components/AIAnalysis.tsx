@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import BettercodeLogo from './BettercodeLogo';
 
 const AIAnalysis: React.FC = () => {
   const { t } = useTranslation();
@@ -201,6 +202,11 @@ const AIAnalysis: React.FC = () => {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Bettercode Logo */}
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <BettercodeLogo variant="minimal" className="justify-center" />
         </div>
 
       </CardContent>

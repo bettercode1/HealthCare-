@@ -427,7 +427,7 @@ const PatientDashboard: React.FC = () => {
       {loading && (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your health data...</p>
+          <p className="mt-4 text-gray-600">{t('loadingDashboard')}</p>
         </div>
       )}
 
@@ -592,7 +592,7 @@ const PatientDashboard: React.FC = () => {
                     ? updateHealthMetric(selectedMetric.id, { unit: e.target.value })
                     : setNewMetric({ ...newMetric, unit: e.target.value })
                   }
-                  placeholder="mmHg"
+                  placeholder={t('mmHg')}
                 />
               </div>
             </div>

@@ -34,7 +34,7 @@ const FileUploadPopup: React.FC<FileUploadPopupProps> = ({
   accept = ".pdf,.jpg,.jpeg,.png",
   maxSize = 15,
   className,
-  label = "Upload File",
+      label = t('uploadFile'),
   placeholder = "Choose file or drag and drop",
   showPreview = true,
   disabled = false
@@ -159,7 +159,7 @@ const FileUploadPopup: React.FC<FileUploadPopupProps> = ({
       return (
         <img 
           src={url} 
-          alt="File preview" 
+                          alt={t('filePreview')} 
           className="w-16 h-16 object-cover rounded-lg border border-gray-200"
           onLoad={() => URL.revokeObjectURL(url)}
         />

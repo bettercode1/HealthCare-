@@ -486,8 +486,8 @@ const FamilyManagement: React.FC = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-2xl text-blue-900">Family Insurance Management</CardTitle>
-                    <p className="text-blue-700">Manage insurance policies for all family members</p>
+                    <CardTitle className="text-2xl text-blue-900">{t('familyInsuranceManagement')}</CardTitle>
+                    <p className="text-blue-700">{t('manageInsurancePoliciesForAllFamilyMembers')}</p>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white">

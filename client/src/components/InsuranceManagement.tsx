@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -109,6 +110,7 @@ interface FamilyMember {
 
 export const InsuranceManagement: React.FC = () => {
   const { currentUser } = useAuth();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [policies, setPolicies] = useState<InsurancePolicy[]>([]);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
@@ -670,7 +672,7 @@ export const InsuranceManagement: React.FC = () => {
   };
 
   const handleDeletePolicy = (policyId: string) => {
-    if (window.confirm('Are you sure you want to delete this insurance policy? This action cannot be undone.')) {
+    if (window.confirm(t('confirmDeleteInsurancePolicy'))) {
       try {
         const updatedPolicies = policies.filter(p => p.id !== policyId);
         setPolicies(updatedPolicies);
@@ -686,14 +688,14 @@ export const InsuranceManagement: React.FC = () => {
         }
         
         toast({
-          title: "Success",
-          description: "Policy deleted successfully",
+          title: t('success'),
+          description: t('policyDeletedSuccessfully'),
         });
       } catch (error) {
         console.error('Error deleting policy:', error);
         toast({
-          title: "Error",
-          description: "Failed to delete policy",
+          title: t('error'),
+          description: t('failedToDeletePolicy'),
           variant: "destructive",
         });
       }
@@ -1225,7 +1227,7 @@ startxref
     URL.revokeObjectURL(url);
     
     toast({
-      title: "Download Started",
+              title: t('downloadStarted'),
       description: `${doc.name} is being downloaded`,
     });
   };
@@ -2280,6 +2282,8 @@ startxref
            </Card>
          </TabsContent>
                </Tabs>
+
+
 
          {/* PDF Viewer Modal */}
          {showPdfViewer && selectedDocument && (

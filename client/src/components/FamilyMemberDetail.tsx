@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import { familyAPI, medicationAPI, doseAPI, reportAPI, diseaseAnalysisAPI } from '../lib/api';
@@ -25,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { Loading } from '@/components/ui/loading';
 import FileViewer from '@/components/ui/file-viewer';
 import { motion } from 'framer-motion';
+import BettercodeLogo from './BettercodeLogo';
 
 interface FamilyMember {
   id: string;
@@ -132,6 +134,7 @@ const FamilyMemberDetail: React.FC<{
   isOpen: boolean;
   onClose: () => void;
 }> = ({ memberId, isOpen, onClose }) => {
+  const { t } = useTranslation();
   const { userData } = useAuth();
   const { toast } = useToast();
   const [member, setMember] = useState<FamilyMember | null>(null);
@@ -288,7 +291,7 @@ const FamilyMemberDetail: React.FC<{
       console.error('Error adding medication:', error);
       toast({
         title: 'Error',
-        description: 'Failed to add medication',
+        description: t('failedToAddMedication'),
         variant: 'destructive'
       });
     }
@@ -325,7 +328,7 @@ const FamilyMemberDetail: React.FC<{
       console.error('Error adding report:', error);
       toast({
         title: 'Error',
-        description: 'Failed to upload report',
+        description: t('uploadError'),
         variant: 'destructive'
       });
     }
@@ -496,7 +499,7 @@ const FamilyMemberDetail: React.FC<{
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
           <Alert variant="destructive">
-            <AlertDescription>Family member not found</AlertDescription>
+            <AlertDescription>{t('familyMemberNotFound')}</AlertDescription>
           </Alert>
         </DialogContent>
       </Dialog>
@@ -532,7 +535,7 @@ const FamilyMemberDetail: React.FC<{
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  {member.relationship} • Age {member.age} • {member.gender}
+                  {member.relationship} • {t('age')}: {member.age} • {t('gender')}: {member.gender}
                 </motion.p>
               </div>
             </div>
@@ -545,14 +548,14 @@ const FamilyMemberDetail: React.FC<{
                 >
                   <Badge variant="destructive" className="text-sm animate-pulse bg-red-500 text-white">
                     <span className="material-icons text-xs mr-1">emergency</span>
-                    <span className="hidden sm:inline">Emergency Contact</span>
-                    <span className="sm:hidden">Emergency</span>
+                    <span className="hidden sm:inline">{t('emergencyContact')}</span>
+                    <span className="sm:hidden">{t('emergency')}</span>
                   </Badge>
                 </motion.div>
               )}
               {member.bloodType && (
                 <Badge variant="outline" className="text-white border-white/30 bg-white/10">
-                  {member.bloodType}
+                  {t('bloodType')}: {member.bloodType}
                 </Badge>
               )}
               <Button
@@ -561,8 +564,8 @@ const FamilyMemberDetail: React.FC<{
                 className="text-white/90 hover:text-white hover:bg-white/20 transition-all duration-200"
               >
                 <span className="material-icons mr-2">edit</span>
-                <span className="hidden sm:inline">Edit Profile</span>
-                <span className="sm:hidden">Edit</span>
+                <span className="hidden sm:inline">{t('editProfile')}</span>
+                <span className="sm:hidden">{t('edit')}</span>
               </Button>
             </div>
           </div>
@@ -576,7 +579,7 @@ const FamilyMemberDetail: React.FC<{
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h3 className="text-lg font-bold text-blue-900 mb-4">Health Data Summary</h3>
+            <h3 className="text-lg font-bold text-blue-900 mb-4">{t('healthDataSummary')}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
               <motion.div 
                 className="text-center p-4 bg-white rounded-lg border border-blue-200 shadow-sm"
@@ -588,7 +591,7 @@ const FamilyMemberDetail: React.FC<{
                   <span className="material-icons text-blue-600 text-xl">medication</span>
                 </div>
                 <div className="text-2xl font-bold text-blue-700">{medications.length}</div>
-                <div className="text-sm text-blue-600">Medications</div>
+                <div className="text-sm text-blue-600">{t('medications')}</div>
               </motion.div>
               
               <motion.div 
@@ -601,7 +604,7 @@ const FamilyMemberDetail: React.FC<{
                   <span className="material-icons text-green-600 text-xl">schedule</span>
                 </div>
                 <div className="text-2xl font-bold text-green-700">{doseRecords.length}</div>
-                <div className="text-sm text-green-600">Dose Records</div>
+                <div className="text-sm text-green-600">{t('doseRecords')}</div>
               </motion.div>
               
               <motion.div 
@@ -614,7 +617,7 @@ const FamilyMemberDetail: React.FC<{
                   <span className="material-icons text-orange-600 text-xl">description</span>
                 </div>
                 <div className="text-2xl font-bold text-orange-700">{reports.length}</div>
-                <div className="text-sm text-orange-600">Reports</div>
+                <div className="text-sm text-orange-600">{t('reports')}</div>
               </motion.div>
               
               <motion.div 
@@ -627,7 +630,7 @@ const FamilyMemberDetail: React.FC<{
                   <span className="material-icons text-purple-600 text-xl">psychology</span>
                 </div>
                 <div className="text-2xl font-bold text-purple-700">{diseaseAnalysis.length}</div>
-                <div className="text-sm text-purple-600">AI Analysis</div>
+                <div className="text-sm text-purple-600">{t('aiAnalysis')}</div>
               </motion.div>
             </div>
           </motion.div>
@@ -698,31 +701,31 @@ const FamilyMemberDetail: React.FC<{
                     <CardContent className="p-6 space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-white p-3 rounded-lg border border-blue-100">
-                          <Label className="text-xs font-medium text-gray-600">Age</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('age')}</Label>
                           <p className="text-lg font-bold text-blue-900">{member.age} years</p>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-blue-100">
-                          <Label className="text-xs font-medium text-gray-600">Gender</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('gender')}</Label>
                           <p className="text-lg font-bold text-blue-900">{member.gender || 'Not specified'}</p>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-blue-100">
-                          <Label className="text-xs font-medium text-gray-600">Blood Type</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('bloodType')}</Label>
                           <p className="text-lg font-bold text-blue-900">{member.bloodType || 'Not specified'}</p>
                         </div>
                         <div className="bg-white p-3 rounded-lg border border-blue-100">
-                          <Label className="text-xs font-medium text-gray-600">Contact</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('contact')}</Label>
                           <p className="text-lg font-bold text-blue-900">{member.contactNumber || 'Not specified'}</p>
                         </div>
                       </div>
                       {member.occupation && (
                         <div className="bg-white p-3 rounded-lg border border-blue-100">
-                          <Label className="text-xs font-medium text-gray-600">Occupation</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('occupation')}</Label>
                           <p className="text-lg font-bold text-blue-900">{member.occupation}</p>
                         </div>
                       )}
                       {member.address && (
                         <div className="bg-white p-3 rounded-lg border border-blue-100">
-                          <Label className="text-xs font-medium text-gray-600">Address</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('address')}</Label>
                           <p className="text-sm font-semibold text-blue-900">{member.address}</p>
                         </div>
                       )}
@@ -747,59 +750,59 @@ const FamilyMemberDetail: React.FC<{
                       <div className="grid grid-cols-3 gap-4">
                         {member.height ? (
                           <div className="bg-white p-3 rounded-lg border border-green-100 text-center">
-                            <Label className="text-xs font-medium text-gray-600">Height</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('height')}</Label>
                             <p className="text-lg font-bold text-green-900">{member.height} cm</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                            <Label className="text-xs font-medium text-gray-500">Height</Label>
-                            <p className="text-sm text-gray-500">Not recorded</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('height')}</Label>
+                            <p className="text-sm text-gray-500">{t('notRecorded')}</p>
                           </div>
                         )}
                         {member.weight ? (
                           <div className="bg-white p-3 rounded-lg border border-green-100 text-center">
-                            <Label className="text-xs font-medium text-gray-600">Weight</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('weight')}</Label>
                             <p className="text-lg font-bold text-green-900">{member.weight} kg</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                            <Label className="text-xs font-medium text-gray-500">Weight</Label>
-                            <p className="text-sm text-gray-500">Not recorded</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('weight')}</Label>
+                            <p className="text-sm text-gray-500">{t('notRecorded')}</p>
                           </div>
                         )}
                         {member.bmi ? (
                           <div className="bg-white p-3 rounded-lg border border-green-100 text-center">
-                            <Label className="text-xs font-medium text-gray-600">BMI</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('bmi')}</Label>
                             <p className="text-lg font-bold text-green-900">{member.bmi}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 text-center">
-                            <Label className="text-xs font-medium text-gray-500">BMI</Label>
-                            <p className="text-sm text-gray-500">Not calculated</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('bmi')}</Label>
+                            <p className="text-sm text-gray-500">{t('notCalculated')}</p>
                           </div>
                         )}
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         {member.visionTest ? (
                           <div className="bg-white p-3 rounded-lg border border-green-100">
-                            <Label className="text-xs font-medium text-gray-600">Vision</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('vision')}</Label>
                             <p className="text-lg font-bold text-green-900">{member.visionTest}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Vision</Label>
-                            <p className="text-sm text-gray-500">Not tested</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('vision')}</Label>
+                            <p className="text-sm text-gray-500">{t('notTested')}</p>
                           </div>
                         )}
                         {member.hearingTest ? (
                           <div className="bg-white p-3 rounded-lg border border-green-100">
-                            <Label className="text-xs font-medium text-gray-600">Hearing</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('hearing')}</Label>
                             <p className="text-lg font-bold text-green-900">{member.hearingTest}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Hearing</Label>
-                            <p className="text-sm text-gray-500">Not tested</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('hearing')}</Label>
+                            <p className="text-sm text-gray-500">{t('notTested')}</p>
                           </div>
                         )}
                       </div>
@@ -824,7 +827,7 @@ const FamilyMemberDetail: React.FC<{
                       <div className="grid grid-cols-2 gap-4">
                         {member.allergies && member.allergies.length > 0 ? (
                           <div className="bg-white p-3 rounded-lg border border-red-100">
-                            <Label className="text-xs font-medium text-gray-600">Allergies</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('allergies')}</Label>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {member.allergies.map((allergy, index) => (
                                 <Badge key={index} variant="destructive" className="text-xs">
@@ -835,13 +838,13 @@ const FamilyMemberDetail: React.FC<{
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Allergies</Label>
-                            <p className="text-sm text-gray-500">None recorded</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('allergies')}</Label>
+                            <p className="text-sm text-gray-500">{t('noneRecorded')}</p>
                           </div>
                         )}
                         {member.medicalConditions && member.medicalConditions.length > 0 ? (
                           <div className="bg-white p-3 rounded-lg border border-red-100">
-                            <Label className="text-xs font-medium text-gray-600">Medical Conditions</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('medicalConditions')}</Label>
                             <div className="flex flex-wrap gap-1 mt-1">
                               {member.medicalConditions.map((condition, index) => (
                                 <Badge key={index} variant="outline" className="text-xs border-red-200 text-red-700">
@@ -852,32 +855,32 @@ const FamilyMemberDetail: React.FC<{
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Medical Conditions</Label>
-                            <p className="text-sm text-gray-500">None recorded</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('medicalConditions')}</Label>
+                            <p className="text-sm text-gray-500">{t('noneRecorded')}</p>
                           </div>
                         )}
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         {member.emergencyContact ? (
                           <div className="bg-white p-3 rounded-lg border border-red-100">
-                            <Label className="text-xs font-medium text-gray-600">Emergency Contact</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('emergencyContact')}</Label>
                             <p className="text-sm font-semibold text-red-900">{member.emergencyContact}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Emergency Contact</Label>
-                            <p className="text-sm text-gray-500">Not specified</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('emergencyContact')}</Label>
+                            <p className="text-sm text-gray-500">{t('notSpecified')}</p>
                           </div>
                         )}
                         {member.insuranceProvider ? (
                           <div className="bg-white p-3 rounded-lg border border-red-100">
-                            <Label className="text-xs font-medium text-gray-600">Insurance</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('insurance')}</Label>
                             <p className="text-sm font-semibold text-red-900">{member.insuranceProvider}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Insurance</Label>
-                            <p className="text-sm text-gray-500">Not specified</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('insurance')}</Label>
+                            <p className="text-sm text-gray-500">{t('notSpecified')}</p>
                           </div>
                         )}
                       </div>
@@ -902,30 +905,30 @@ const FamilyMemberDetail: React.FC<{
                       <div className="grid grid-cols-2 gap-4">
                         {member.nextCheckup ? (
                           <div className="bg-white p-3 rounded-lg border border-purple-100">
-                            <Label className="text-xs font-medium text-gray-600">Next Checkup</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('nextCheckup')}</Label>
                             <p className="text-sm font-semibold text-purple-900">{member.nextCheckup}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Next Checkup</Label>
-                            <p className="text-sm text-gray-500">Not scheduled</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('nextCheckup')}</Label>
+                            <p className="text-sm text-gray-500">{t('notScheduled')}</p>
                           </div>
                         )}
                         {member.nextDentalCheckup ? (
                           <div className="bg-white p-3 rounded-lg border border-purple-100">
-                            <Label className="text-xs font-medium text-gray-600">Next Dental</Label>
+                            <Label className="text-xs font-medium text-gray-600">{t('nextDental')}</Label>
                             <p className="text-sm font-semibold text-purple-900">{member.nextDentalCheckup}</p>
                           </div>
                         ) : (
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <Label className="text-xs font-medium text-gray-500">Next Dental</Label>
-                            <p className="text-sm text-gray-500">Not scheduled</p>
+                            <Label className="text-xs font-medium text-gray-500">{t('nextDental')}</Label>
+                            <p className="text-sm text-gray-500">{t('notScheduled')}</p>
                           </div>
                         )}
                       </div>
                       {member.lastCheckup && (
                         <div className="bg-white p-3 rounded-lg border border-purple-100">
-                          <Label className="text-xs font-medium text-gray-600">Last Checkup</Label>
+                          <Label className="text-xs font-medium text-gray-600">{t('lastCheckup')}</Label>
                           <p className="text-sm font-semibold text-purple-900">{member.lastCheckup}</p>
                         </div>
                       )}
@@ -961,7 +964,7 @@ const FamilyMemberDetail: React.FC<{
                             Vital Sign
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Blood Pressure</h4>
+                        <h4 className="font-semibold text-gray-900 mb-2">{t('bloodPressure')}</h4>
                         {member.bloodPressure ? (
                           <div className="space-y-2">
                             <div className="flex justify-between items-center">
@@ -979,7 +982,7 @@ const FamilyMemberDetail: React.FC<{
                         ) : (
                           <div className="text-center py-4">
                             <span className="material-icons text-gray-400 text-2xl mb-2">monitor_heart</span>
-                            <p className="text-sm text-gray-500">No blood pressure data</p>
+                            <p className="text-sm text-gray-500">{t('noBloodPressureData')}</p>
                           </div>
                         )}
                       </div>
@@ -994,7 +997,7 @@ const FamilyMemberDetail: React.FC<{
                             Vital Sign
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Heart Rate</h4>
+                        <h4 className="font-semibold text-gray-900 mb-2">{t('heartRate')}</h4>
                         {member.heartRate ? (
                           <div className="space-y-2">
                             <div className="text-center">
@@ -1007,7 +1010,7 @@ const FamilyMemberDetail: React.FC<{
                         ) : (
                           <div className="text-center py-4">
                             <span className="material-icons text-gray-400 text-2xl mb-2">favorite</span>
-                            <p className="text-sm text-gray-500">No heart rate data</p>
+                            <p className="text-sm text-gray-500">{t('noHeartRateData')}</p>
                           </div>
                         )}
                       </div>
@@ -1022,7 +1025,7 @@ const FamilyMemberDetail: React.FC<{
                             Vital Sign
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Body Temperature</h4>
+                        <h4 className="font-semibold text-gray-900 mb-2">{t('bodyTemperature')}</h4>
                         {member.temperature ? (
                           <div className="space-y-2">
                             <div className="text-center">
@@ -1035,7 +1038,7 @@ const FamilyMemberDetail: React.FC<{
                         ) : (
                           <div className="text-center py-4">
                             <span className="material-icons text-gray-400 text-2xl mb-2">thermostat</span>
-                            <p className="text-sm text-gray-500">No temperature data</p>
+                            <p className="text-sm text-gray-500">{t('noTemperatureData')}</p>
                           </div>
                         )}
                       </div>
@@ -1050,7 +1053,7 @@ const FamilyMemberDetail: React.FC<{
                             Vital Sign
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Oxygen Saturation</h4>
+                        <h4 className="font-semibold text-gray-900 mb-2">{t('oxygenSaturation')}</h4>
                         {member.oxygenSaturation ? (
                           <div className="space-y-2">
                             <div className="text-center">
@@ -1063,7 +1066,7 @@ const FamilyMemberDetail: React.FC<{
                         ) : (
                           <div className="text-center py-4">
                             <span className="material-icons text-gray-400 text-2xl mb-2">air</span>
-                            <p className="text-sm text-gray-500">No oxygen data</p>
+                            <p className="text-sm text-gray-500">{t('noOxygenData')}</p>
                           </div>
                         )}
                       </div>
@@ -1078,7 +1081,7 @@ const FamilyMemberDetail: React.FC<{
                             Vital Sign
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Respiratory Rate</h4>
+                        <h4 className="font-semibold text-gray-900 mb-2">{t('respiratoryRate')}</h4>
                         {member.respiratoryRate ? (
                           <div className="space-y-2">
                             <div className="text-center">
@@ -1091,7 +1094,7 @@ const FamilyMemberDetail: React.FC<{
                         ) : (
                           <div className="text-center py-4">
                             <span className="material-icons text-gray-400 text-2xl mb-2">airline_seat_flat</span>
-                            <p className="text-sm text-gray-500">No respiratory data</p>
+                            <p className="text-sm text-gray-500">{t('noRespiratoryData')}</p>
                           </div>
                         )}
                       </div>
@@ -1106,7 +1109,7 @@ const FamilyMemberDetail: React.FC<{
                             Vital Sign
                           </Badge>
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Blood Sugar</h4>
+                        <h4 className="font-semibold text-gray-900 mb-2">{t('bloodSugar')}</h4>
                         {member.bloodSugar ? (
                           <div className="space-y-2">
                             <div className="text-center">
@@ -1119,7 +1122,7 @@ const FamilyMemberDetail: React.FC<{
                         ) : (
                           <div className="text-center py-4">
                             <span className="material-icons text-gray-400 text-2xl mb-2">water_drop</span>
-                            <p className="text-sm text-gray-500">No blood sugar data</p>
+                            <p className="text-sm text-gray-500">{t('noBloodSugarData')}</p>
                           </div>
                         )}
                       </div>
@@ -1185,19 +1188,19 @@ const FamilyMemberDetail: React.FC<{
                                  
                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                     <Label className="text-xs font-medium text-gray-600">Start Date</Label>
+                                     <Label className="text-xs font-medium text-gray-600">{t('startDate')}</Label>
                                      <p className="text-sm font-semibold text-gray-900">{med.startDate}</p>
                                    </div>
                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                     <Label className="text-xs font-medium text-gray-600">End Date</Label>
+                                     <Label className="text-xs font-medium text-gray-600">{t('endDate')}</Label>
                                      <p className="text-sm font-semibold text-gray-900">{med.endDate || 'Ongoing'}</p>
                                    </div>
                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                     <Label className="text-xs font-medium text-gray-600">Instructions</Label>
+                                     <Label className="text-xs font-medium text-gray-600">{t('instructions')}</Label>
                                      <p className="text-sm font-semibold text-gray-900">{med.instructions}</p>
                                    </div>
                                    <div className="bg-gray-50 p-3 rounded-lg">
-                                     <Label className="text-xs font-medium text-gray-600">Times</Label>
+                                     <Label className="text-xs font-medium text-gray-600">{t('times')}</Label>
                                      <p className="text-sm font-semibold text-gray-900">{med.times.join(', ')}</p>
                                    </div>
                                  </div>
@@ -1216,7 +1219,7 @@ const FamilyMemberDetail: React.FC<{
                         <div className="w-24 h-24 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
                           <span className="material-icons text-blue-600 text-3xl">medication</span>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Medications Found</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('noMedicationsFound')}</h3>
                         <p className="text-gray-500">This family member doesn't have any medications recorded yet.</p>
                       </motion.div>
                     )}
@@ -1309,7 +1312,7 @@ const FamilyMemberDetail: React.FC<{
                                 )}
                                 {dose.status === 'taken' && dose.takenTime && (
                                   <div className="text-right">
-                                    <p className="text-sm font-medium text-green-700">Taken at</p>
+                                    <p className="text-sm font-medium text-green-700">{t('takenAt')}</p>
                                     <p className="text-xs text-green-600">{new Date(dose.takenTime).toLocaleString()}</p>
                                   </div>
                                 )}
@@ -1318,7 +1321,7 @@ const FamilyMemberDetail: React.FC<{
                             
                             {dose.notes && (
                               <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                                <Label className="text-xs font-medium text-orange-700 mb-1 block">Notes</Label>
+                                <Label className="text-xs font-medium text-orange-700 mb-1 block">{t('notes')}</Label>
                                 <p className="text-sm text-orange-800">{dose.notes}</p>
                               </div>
                             )}
@@ -1335,7 +1338,7 @@ const FamilyMemberDetail: React.FC<{
                         <div className="w-24 h-24 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
                           <span className="material-icons text-orange-600 text-3xl">schedule</span>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Dose Records Found</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('noDoseRecordsFound')}</h3>
                         <p className="text-gray-500">This family member doesn't have any medication doses scheduled yet.</p>
                       </motion.div>
                     )}
@@ -1400,18 +1403,18 @@ const FamilyMemberDetail: React.FC<{
                                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-3">
                                     {report.doctorName && (
                                       <div className="bg-gray-50 p-3 rounded-lg">
-                                        <Label className="text-xs font-medium text-gray-600">Doctor</Label>
+                                        <Label className="text-xs font-medium text-gray-600">{t('doctor')}</Label>
                                         <p className="text-sm font-semibold text-gray-900">{report.doctorName}</p>
                                       </div>
                                     )}
                                     {report.labName && (
                                       <div className="bg-gray-50 p-3 rounded-lg">
-                                        <Label className="text-xs font-medium text-gray-600">Lab</Label>
+                                        <Label className="text-xs font-medium text-gray-600">{t('lab')}</Label>
                                         <p className="text-sm font-semibold text-gray-900">{report.labName}</p>
                                       </div>
                                     )}
                                     <div className="bg-gray-50 p-3 rounded-lg">
-                                      <Label className="text-xs font-medium text-gray-600">Uploaded</Label>
+                                      <Label className="text-xs font-medium text-gray-600">{t('uploaded')}</Label>
                                       <p className="text-sm font-semibold text-gray-900">
                                         {new Date(report.uploadedAt).toLocaleDateString()}
                                       </p>
@@ -1420,7 +1423,7 @@ const FamilyMemberDetail: React.FC<{
 
                                   {report.notes && (
                                     <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200">
-                                      <Label className="text-xs font-medium text-indigo-700 mb-1 block">Notes</Label>
+                                      <Label className="text-xs font-medium text-indigo-700 mb-1 block">{t('notes')}</Label>
                                       <p className="text-sm text-indigo-800">{report.notes}</p>
                                     </div>
                                   )}
@@ -1473,7 +1476,7 @@ const FamilyMemberDetail: React.FC<{
                         <div className="w-24 h-24 mx-auto mb-4 bg-indigo-100 rounded-full flex items-center justify-center">
                           <span className="material-icons text-indigo-600 text-3xl">description</span>
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Reports Found</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('noReportsFound')}</h3>
                         <p className="text-gray-500">This family member doesn't have any health reports uploaded yet.</p>
                       </motion.div>
                     )}
@@ -1485,7 +1488,7 @@ const FamilyMemberDetail: React.FC<{
             {/* AI Analysis Tab */}
             <TabsContent value="analysis" className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">AI Disease Analysis</h3>
+                <h3 className="text-lg font-semibold">{t('aiDiseaseAnalysis')}</h3>
                 <Button onClick={handleRunAIAnalysis}>
                   <span className="material-icons mr-2">psychology</span>
                   Run Analysis
@@ -1567,11 +1570,11 @@ const FamilyMemberDetail: React.FC<{
           <Dialog open={showAddMedication} onOpenChange={setShowAddMedication}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add Medication</DialogTitle>
+                <DialogTitle>{t('addMedication')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="medicineName">Medicine Name</Label>
+                  <Label htmlFor="medicineName">{t('medicineName')}</Label>
                   <Input
                     id="medicineName"
                     value={newMedication.medicineName}
@@ -1580,7 +1583,7 @@ const FamilyMemberDetail: React.FC<{
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="dosage">Dosage</Label>
+                    <Label htmlFor="dosage">{t('dosage')}</Label>
                     <Input
                       id="dosage"
                       value={newMedication.dosage}
@@ -1588,7 +1591,7 @@ const FamilyMemberDetail: React.FC<{
                     />
                   </div>
                   <div>
-                    <Label htmlFor="doseStrength">Strength</Label>
+                    <Label htmlFor="doseStrength">{t('strength')}</Label>
                     <Input
                       id="doseStrength"
                       value={newMedication.doseStrength}
@@ -1598,36 +1601,36 @@ const FamilyMemberDetail: React.FC<{
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="doseForm">Form</Label>
+                    <Label htmlFor="doseForm">{t('form')}</Label>
                     <Select value={newMedication.doseForm} onValueChange={(value) => setNewMedication({...newMedication, doseForm: value})}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="tablet">Tablet</SelectItem>
-                        <SelectItem value="capsule">Capsule</SelectItem>
-                        <SelectItem value="liquid">Liquid</SelectItem>
-                        <SelectItem value="injection">Injection</SelectItem>
+                        <SelectItem value="tablet">{t('tablet')}</SelectItem>
+                        <SelectItem value="capsule">{t('capsule')}</SelectItem>
+                        <SelectItem value="liquid">{t('liquid')}</SelectItem>
+                        <SelectItem value="injection">{t('injection')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="frequency">Frequency</Label>
+                    <Label htmlFor="frequency">{t('frequency')}</Label>
                     <Select value={newMedication.frequency} onValueChange={(value) => setNewMedication({...newMedication, frequency: value})}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="twice_daily">Twice Daily</SelectItem>
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="as_needed">As Needed</SelectItem>
+                        <SelectItem value="daily">{t('daily')}</SelectItem>
+                        <SelectItem value="twice_daily">{t('twiceDaily')}</SelectItem>
+                        <SelectItem value="weekly">{t('weekly')}</SelectItem>
+                        <SelectItem value="as_needed">{t('asNeeded')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="instructions">Instructions</Label>
+                  <Label htmlFor="instructions">{t('instructions')}</Label>
                   <Textarea
                     id="instructions"
                     value={newMedication.instructions}
@@ -1636,7 +1639,7 @@ const FamilyMemberDetail: React.FC<{
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="startDate">Start Date</Label>
+                    <Label htmlFor="startDate">{t('startDate')}</Label>
                     <Input
                       id="startDate"
                       type="date"
@@ -1645,7 +1648,7 @@ const FamilyMemberDetail: React.FC<{
                     />
                   </div>
                   <div>
-                    <Label htmlFor="endDate">End Date (Optional)</Label>
+                    <Label htmlFor="endDate">{t('endDateOptional')}</Label>
                     <Input
                       id="endDate"
                       type="date"
@@ -1656,10 +1659,10 @@ const FamilyMemberDetail: React.FC<{
                 </div>
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" onClick={() => setShowAddMedication(false)}>
-                    Cancel
+                    {t('cancel')}
                   </Button>
                   <Button onClick={handleAddMedication}>
-                    Add Medication
+                    {t('addMedication')}
                   </Button>
                 </div>
               </div>
@@ -1674,16 +1677,16 @@ const FamilyMemberDetail: React.FC<{
               <DialogCloseButton />
               <DialogHeader>
                 <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
-                  Upload Report
+                  {t('uploadReport')}
                 </DialogTitle>
                 <DialogDescription className="text-sm text-gray-600 mb-4">
-                  Upload medical reports, prescriptions, and health documents
+                  {t('uploadReportDescription')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 sm:space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="reportTitle" className="text-sm font-medium text-gray-700">
-                    Report Title
+                    {t('reportTitle')}
                   </Label>
                   <Input
                     id="reportTitle"
@@ -1697,28 +1700,28 @@ const FamilyMemberDetail: React.FC<{
                 
                 <div className="space-y-2">
                   <Label htmlFor="reportType" className="text-sm font-medium text-gray-700">
-                    Report Type
+                    {t('reportType')}
                   </Label>
                   <Select
                     value={newReport.type}
                     onValueChange={(value) => setNewReport(prev => ({ ...prev, type: value }))}
                   >
                     <SelectTrigger className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                      <SelectValue placeholder="Select report type" />
+                      <SelectValue placeholder={t('selectReportType')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="bloodTest">Blood Test</SelectItem>
-                      <SelectItem value="xray">X-Ray</SelectItem>
-                      <SelectItem value="mri">MRI</SelectItem>
-                      <SelectItem value="ecg">ECG</SelectItem>
-                      <SelectItem value="urineTest">Urine Test</SelectItem>
+                      <SelectItem value="bloodTest">{t('bloodTest')}</SelectItem>
+                      <SelectItem value="xray">{t('xray')}</SelectItem>
+                      <SelectItem value="mri">{t('mri')}</SelectItem>
+                      <SelectItem value="ecg">{t('ecg')}</SelectItem>
+                      <SelectItem value="urineTest">{t('urineTest')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="reportFile" className="text-sm font-medium text-gray-700">
-                    Upload File
+                    {t('uploadFile')}
                   </Label>
                   <Input
                     id="reportFile"
@@ -1738,10 +1741,10 @@ const FamilyMemberDetail: React.FC<{
                               {selectedReportFile.name}
                             </p>
                             <p className="text-xs text-blue-700">
-                              Size: {(selectedReportFile.size / 1024 / 1024).toFixed(2)} MB
+                              {t('size')}: {(selectedReportFile.size / 1024 / 1024).toFixed(2)} MB
                             </p>
                             <p className="text-xs text-blue-600 mt-1">
-                              Type: {selectedReportFile.type || 'Unknown'}
+                              {t('type')}: {selectedReportFile.type || 'Unknown'}
                             </p>
                           </div>
                         </div>
@@ -1749,7 +1752,7 @@ const FamilyMemberDetail: React.FC<{
                           type="button"
                           onClick={() => setSelectedReportFile(null)}
                           className="text-blue-600 hover:text-blue-800 hover:bg-blue-100 p-2 rounded-full transition-colors flex-shrink-0"
-                          title="Remove file"
+                          title={t('removeFile')}
                         >
                           <span className="material-icons text-lg">close</span>
                         </button>
@@ -1787,7 +1790,7 @@ const FamilyMemberDetail: React.FC<{
                     className="w-full sm:w-auto px-6 py-2.5 text-white hover:bg-blue-700 transition-colors shadow-sm"
                     style={{ backgroundColor: 'hsl(207, 90%, 54%)' }}
                   >
-                    Upload Report
+                    {t('uploadReport')}
                   </Button>
                 </DialogFooter>
               </div>
@@ -1800,15 +1803,15 @@ const FamilyMemberDetail: React.FC<{
           <Dialog open={showEditMember} onOpenChange={setShowEditMember}>
             <DialogContent className="max-w-2xl w-[95vw] sm:w-auto max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Edit Family Member</DialogTitle>
+                <DialogTitle>{t('editFamilyMember')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-6">
                 {/* Basic Information */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Basic Information</h3>
+                  <h3 className="text-lg font-semibold">{t('basicInformation')}</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <Label htmlFor="editName">Name</Label>
+                      <Label htmlFor="editName">{t('name')}</Label>
                       <Input
                         id="editName"
                         value={editMember.name || ''}
@@ -1816,7 +1819,7 @@ const FamilyMemberDetail: React.FC<{
                       />
                     </div>
                     <div>
-                      <Label htmlFor="editAge">Age</Label>
+                      <Label htmlFor="editAge">{t('age')}</Label>
                       <Input
                         id="editAge"
                         type="number"
@@ -1827,20 +1830,20 @@ const FamilyMemberDetail: React.FC<{
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <Label htmlFor="editGender">Gender</Label>
+                      <Label htmlFor="editGender">{t('gender')}</Label>
                       <Select value={editMember.gender || ''} onValueChange={(value) => setEditMember({...editMember, gender: value})}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
+                          <SelectItem value="Male">{t('male')}</SelectItem>
+                          <SelectItem value="Female">{t('female')}</SelectItem>
+                          <SelectItem value="Other">{t('other')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="editBloodType">Blood Type</Label>
+                      <Label htmlFor="editBloodType">{t('bloodType')}</Label>
                       <Select value={editMember.bloodType || ''} onValueChange={(value) => setEditMember({...editMember, bloodType: value})}>
                         <SelectTrigger>
                           <SelectValue />
@@ -1859,7 +1862,7 @@ const FamilyMemberDetail: React.FC<{
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="editContact">Contact Number</Label>
+                                          <Label htmlFor="editContact">{t('contactNumber')}</Label>
                     <Input
                       id="editContact"
                       value={editMember.contactNumber || ''}
@@ -1867,7 +1870,7 @@ const FamilyMemberDetail: React.FC<{
                     />
                   </div>
                   <div>
-                    <Label htmlFor="editAddress">Address</Label>
+                                          <Label htmlFor="editAddress">{t('address')}</Label>
                     <Input
                       id="editAddress"
                       value={editMember.address || ''}
@@ -1875,7 +1878,7 @@ const FamilyMemberDetail: React.FC<{
                     />
                   </div>
                   <div>
-                    <Label htmlFor="editOccupation">Occupation</Label>
+                                          <Label htmlFor="editOccupation">{t('occupation')}</Label>
                     <Input
                       id="editOccupation"
                       value={editMember.occupation || ''}
@@ -2018,6 +2021,11 @@ const FamilyMemberDetail: React.FC<{
             fileType={selectedReportForViewing.fileType}
           />
         )}
+
+        {/* Bettercode Logo */}
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <BettercodeLogo variant="minimal" className="justify-center" />
+        </div>
       </DialogContent>
     </Dialog>
   );

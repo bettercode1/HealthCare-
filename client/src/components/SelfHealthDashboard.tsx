@@ -806,15 +806,15 @@ const SelfHealthDashboard: React.FC = () => {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl text-blue-900">Personal Health Dashboard</CardTitle>
-              <p className="text-blue-700">Manage your health reports, prescriptions, and insights in one place</p>
+              <CardTitle className="text-2xl text-blue-900">{t('patientDashboard')}</CardTitle>
+              <p className="text-blue-700">{t('manageYourHealthAndAppointments')}</p>
             </div>
             <div className="flex items-center space-x-3">
               <Dialog open={showAddReport} onOpenChange={setShowAddReport}>
                 <DialogTrigger asChild>
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                     <Upload className="w-4 h-4 mr-2" />
-                    Upload Report
+                    {t('uploadReport')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -822,9 +822,9 @@ const SelfHealthDashboard: React.FC = () => {
                     <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                       <Upload className="w-8 h-8 text-blue-600" />
                     </div>
-                    <DialogTitle className="text-2xl font-bold text-gray-900">Upload Health Report</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold text-gray-900">{t('uploadHealthReport')}</DialogTitle>
                     <DialogDescription className="text-gray-600">
-                      Upload medical reports, lab results, and health documents for AI analysis
+                      {t('uploadHealthReportDescription')}
                     </DialogDescription>
                   </DialogHeader>
                   
@@ -855,17 +855,17 @@ const SelfHealthDashboard: React.FC = () => {
                           onValueChange={(value: HealthReport['reportType']) => setNewReport(prev => ({ ...prev, reportType: value }))}
                         >
                           <SelectTrigger className="h-11 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                            <SelectValue placeholder="Select report type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="bloodtest">🩸 Blood Test</SelectItem>
-                            <SelectItem value="xray">📷 X-Ray</SelectItem>
-                            <SelectItem value="mri">🧠 MRI</SelectItem>
-                            <SelectItem value="ecg">💓 ECG</SelectItem>
-                            <SelectItem value="urinetest">🧪 Urine Test</SelectItem>
-                            <SelectItem value="scan">🔍 Scan</SelectItem>
-                            <SelectItem value="other">📄 Other</SelectItem>
-                          </SelectContent>
+                                              <SelectValue placeholder={t('selectReportType')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bloodtest">🩸 {t('bloodTest')}</SelectItem>
+                  <SelectItem value="xray">📷 {t('xray')}</SelectItem>
+                  <SelectItem value="mri">🧠 {t('mri')}</SelectItem>
+                  <SelectItem value="ecg">💓 {t('ecg')}</SelectItem>
+                  <SelectItem value="urinetest">🧪 {t('urineTest')}</SelectItem>
+                  <SelectItem value="scan">🔍 {t('scan')}</SelectItem>
+                  <SelectItem value="other">📄 {t('other')}</SelectItem>
+                </SelectContent>
                         </Select>
                       </div>
                       
@@ -1005,7 +1005,7 @@ const SelfHealthDashboard: React.FC = () => {
                             {newReport.imageFile.type.startsWith('image/') ? (
                               <img
                                 src={URL.createObjectURL(newReport.imageFile)}
-                                alt="Report preview"
+                                alt={t('reportPreview')}
                                 className="w-full h-32 object-cover rounded-lg border border-gray-200"
                               />
                             ) : newReport.imageFile.type === 'application/pdf' && (
@@ -1157,7 +1157,7 @@ const SelfHealthDashboard: React.FC = () => {
                           min="0"
                           value={newPrescription.refills || ''}
                           onChange={(e) => setNewPrescription(prev => ({ ...prev, refills: parseInt(e.target.value) || 0 }))}
-                          placeholder="Number of refills"
+                          placeholder={t('numberOfRefills')}
                           className="h-11 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                         />
                       </div>
@@ -1261,7 +1261,7 @@ const SelfHealthDashboard: React.FC = () => {
                             
                             <img
                               src={URL.createObjectURL(newPrescription.imageFile)}
-                              alt="Prescription preview"
+                              alt={t('prescriptionPreview')}
                               className="w-full h-32 object-cover rounded-lg border border-gray-200"
                             />
                           </div>
@@ -1562,7 +1562,7 @@ const SelfHealthDashboard: React.FC = () => {
                               size="sm"
                               onClick={() => setSelectedReport(report)}
                               className="hover:bg-blue-50 hover:text-blue-600"
-                              title="View Details"
+                              title={t('viewDetails')}
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
@@ -1572,7 +1572,7 @@ const SelfHealthDashboard: React.FC = () => {
                                 size="sm"
                                 onClick={() => handleViewPDF(report)}
                                 className="hover:bg-green-50 hover:text-green-600"
-                                title="View PDF"
+                                title={t('viewPdf')}
                               >
                                 <FileText className="w-4 h-4" />
                               </Button>
@@ -1582,7 +1582,7 @@ const SelfHealthDashboard: React.FC = () => {
                               size="sm"
                               onClick={() => handleDownloadReport(report)}
                               className="hover:bg-purple-50 hover:text-purple-600"
-                              title="Download Report"
+                              title={t('downloadReport')}
                             >
                               <Download className="w-4 h-4" />
                             </Button>

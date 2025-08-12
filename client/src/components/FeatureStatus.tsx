@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFirestore } from '@/hooks/useFirestore';
 import { useRealtimeDb } from '@/hooks/useRealtimeDb';
@@ -20,6 +21,7 @@ import {
   Shield,
   Zap
 } from 'lucide-react';
+import BettercodeLogo from './BettercodeLogo';
 
 interface FeatureStatusProps {
   className?: string;
@@ -37,6 +39,8 @@ const FeatureStatus: React.FC<FeatureStatusProps> = ({ className }) => {
     doseTracking: { status: 'loading', count: 0, lastSync: null },
     aiAnalysis: { status: 'loading', count: 0, lastSync: null }
   });
+
+  const { t } = useTranslation();
 
   // Firestore data hooks
   const { data: reports, loading: reportsLoading } = useFirestore('reports',
@@ -134,13 +138,13 @@ const FeatureStatus: React.FC<FeatureStatusProps> = ({ className }) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800">{t('active')}</Badge>;
       case 'loading':
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Loading</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{t('loading')}</Badge>;
       case 'inactive':
-        return <Badge variant="destructive" className="bg-red-100 text-red-800">Inactive</Badge>;
+        return <Badge variant="destructive" className="bg-red-100 text-red-800">{t('inactive')}</Badge>;
       default:
-        return <Badge variant="outline">Unknown</Badge>;
+        return <Badge variant="outline">{t('unknown')}</Badge>;
     }
   };
 
@@ -176,7 +180,7 @@ const FeatureStatus: React.FC<FeatureStatusProps> = ({ className }) => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Shield className="h-5 w-5" />
-          <span>Feature Status</span>
+          <span>{t('featureStatus')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -204,12 +208,17 @@ const FeatureStatus: React.FC<FeatureStatusProps> = ({ className }) => {
         
         <div className="mt-4 pt-4 border-t">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Data Synchronization</span>
+            <span className="text-gray-600">{t('dataSynchronization')}</span>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-600">Real-time</span>
+              <span className="text-green-600">{t('realTime')}</span>
             </div>
           </div>
+        </div>
+
+        {/* Bettercode Logo */}
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <BettercodeLogo variant="minimal" className="justify-center" />
         </div>
       </CardContent>
     </Card>

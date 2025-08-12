@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loading } from '@/components/ui/loading';
 import FamilyMemberDetail from '../FamilyMemberDetail';
+import BettercodeLogo from '../BettercodeLogo';
 
 interface FamilyMember {
   id: string;
@@ -264,7 +265,7 @@ const FamilyMembers: React.FC = () => {
                     onValueChange={(value) => setNewMember(prev => ({ ...prev, relationship: value }))}
                   >
                     <SelectTrigger className="h-11 focus:ring-2 focus:ring-indigo-500">
-                      <SelectValue placeholder="Select relationship" />
+                                                      <SelectValue placeholder={t('selectRelationship')} />
                     </SelectTrigger>
                     <SelectContent>
                       {relationships.map((relation) => (
@@ -286,7 +287,7 @@ const FamilyMembers: React.FC = () => {
                       max="120"
                       value={newMember.age}
                       onChange={(e) => setNewMember(prev => ({ ...prev, age: e.target.value }))}
-                      placeholder="Enter age"
+                      placeholder={t('enterAge')}
                       className="h-11 focus:ring-2 focus:ring-indigo-500"
                       required
                     />
@@ -298,7 +299,7 @@ const FamilyMembers: React.FC = () => {
                       onValueChange={(value) => setNewMember(prev => ({ ...prev, gender: value }))}
                     >
                       <SelectTrigger className="h-11 focus:ring-2 focus:ring-indigo-500">
-                        <SelectValue placeholder="Select gender" />
+                                                        <SelectValue placeholder={t('selectGender')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Male">Male</SelectItem>
@@ -425,7 +426,7 @@ const FamilyMembers: React.FC = () => {
                       handleRemoveMember(member.id, member.name);
                     }}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    title="Remove Member"
+                    title={t('removeMember')}
                   >
                     <span className="material-icons text-sm">delete</span>
                   </Button>
@@ -457,6 +458,11 @@ const FamilyMembers: React.FC = () => {
           <Button variant="link" className="w-full text-center p-0 h-auto hover:text-blue-700" style={{ color: 'hsl(207, 90%, 54%)' }}>
             Manage Family Health →
           </Button>
+        </div>
+
+        {/* Bettercode Logo */}
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <BettercodeLogo variant="minimal" className="justify-center" />
         </div>
       </CardContent>
     </Card>

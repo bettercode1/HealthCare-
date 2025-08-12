@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ interface Appointment {
 }
 
 const UpcomingAppointments: React.FC = () => {
+  const { t } = useTranslation();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
@@ -69,13 +71,13 @@ const UpcomingAppointments: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Upcoming Appointments
+            {t('upcomingAppointments')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-6">
             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-            <p className="text-gray-500 text-sm">No upcoming appointments</p>
+            <p className="text-gray-500 text-sm">{t('noUpcomingAppointments')}</p>
           </div>
         </CardContent>
       </Card>
@@ -85,13 +87,13 @@ const UpcomingAppointments: React.FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calendar className="h-5 w-5" />
-          Upcoming Appointments
-          <Badge variant="secondary" className="ml-auto">
-            {appointments.length}
-          </Badge>
-        </CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            {t('upcomingAppointments')}
+            <Badge variant="secondary" className="ml-auto">
+              {appointments.length}
+            </Badge>
+          </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {appointments.map((appointment) => (
@@ -121,7 +123,7 @@ const UpcomingAppointments: React.FC = () => {
                     ) : (
                       <>
                         <User className="h-3 w-3 text-green-600" />
-                        <span className="text-xs text-green-700">You</span>
+                        <span className="text-xs text-green-700">{t('you')}</span>
                       </>
                     )}
                   </div>
@@ -154,7 +156,7 @@ const UpcomingAppointments: React.FC = () => {
                   minute: '2-digit' 
                 })}</span>
                 {appointment.duration && (
-                  <span className="text-gray-500">({appointment.duration} min)</span>
+                  <span className="text-gray-500">({appointment.duration} {t('min')})</span>
                 )}
               </div>
 
@@ -162,7 +164,7 @@ const UpcomingAppointments: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3 w-3" />
                   <span>{appointment.location}</span>
-                  {appointment.room && <span>• Room {appointment.room}</span>}
+                  {appointment.room && <span>• {t('room')} {appointment.room}</span>}
                 </div>
               )}
 
@@ -176,7 +178,7 @@ const UpcomingAppointments: React.FC = () => {
         ))}
 
         <Button variant="outline" className="w-full mt-4">
-          View All Appointments
+          {t('viewAllAppointments')}
         </Button>
       </CardContent>
     </Card>

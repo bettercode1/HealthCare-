@@ -453,12 +453,12 @@ const RecentReports: React.FC = () => {
       <CardContent>
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {reportsLoading ? (
-            <HealthcareLoading text="Loading reports..." />
+            <HealthcareLoading text={t('loadingReports')} />
           ) : sortedReports.length === 0 ? (
             <div className="text-center py-8">
               <span className="material-icons text-gray-400 text-4xl mb-2">description</span>
-              <p className="text-gray-500">No reports uploaded yet</p>
-              <p className="text-sm text-gray-400">Upload your first medical report to get started</p>
+              <p className="text-gray-500">{t('noReportsUploadedYet')}</p>
+              <p className="text-sm text-gray-400">{t('uploadFirstMedicalReport')}</p>
             </div>
           ) : (
             sortedReports.slice(0, 10).map((report) => (
@@ -480,7 +480,7 @@ const RecentReports: React.FC = () => {
                     </p>
                     {report.fileSize && (
                       <p className="text-xs text-gray-500">
-                        Size: {formatFileSize(report.fileSize)}
+                        {t('size')}: {formatFileSize(report.fileSize)}
                       </p>
                     )}
                     {report.notes && (
@@ -495,7 +495,7 @@ const RecentReports: React.FC = () => {
                     className="hover:text-blue-700 hover:bg-blue-50"
                     style={{ color: 'hsl(207, 90%, 54%)' }}
                     onClick={() => handleViewReport(report)}
-                    title="View Report"
+                    title={t('viewReport')}
                   >
                     <span className="material-icons">visibility</span>
                   </Button>
@@ -504,7 +504,7 @@ const RecentReports: React.FC = () => {
                     size="sm" 
                     className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                     onClick={() => handleDownloadReport(report.fileURL, report.title)}
-                    title="Download Report"
+                    title={t('downloadReport')}
                   >
                     <span className="material-icons">download</span>
                   </Button>
@@ -512,7 +512,7 @@ const RecentReports: React.FC = () => {
                     variant="ghost" 
                     size="sm" 
                     className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                    title="AI Analysis"
+                    title={t('aiAnalysis')}
                   >
                     <span className="material-icons">psychology</span>
                   </Button>
@@ -521,7 +521,7 @@ const RecentReports: React.FC = () => {
                     size="sm" 
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     onClick={() => handleDeleteReport(report.id, report.title)}
-                    title="Delete Report"
+                    title={t('deleteReport')}
                   >
                     <span className="material-icons">delete</span>
                   </Button>
@@ -534,7 +534,7 @@ const RecentReports: React.FC = () => {
         {sortedReports.length > 10 && (
           <div className="mt-4 pt-4 border-t border-gray-200 text-center">
             <Button variant="link" className="p-0 h-auto hover:text-blue-700" style={{ color: 'hsl(207, 90%, 54%)' }}>
-              View All {reports.length} Reports →
+              {t('viewAllReports', { count: reports.length })} →
             </Button>
           </div>
         )}

@@ -143,7 +143,7 @@ const HowItWorksSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Simple Steps
+            {t('simpleSteps')}
           </motion.h2>
           <motion.p 
             className="text-lg text-gray-600 max-w-2xl mx-auto"
@@ -152,7 +152,7 @@ const HowItWorksSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Get started with your healthcare journey in just a few simple steps
+            {t('getStartedWithHealthcareJourney')}
           </motion.p>
         </motion.div>
         

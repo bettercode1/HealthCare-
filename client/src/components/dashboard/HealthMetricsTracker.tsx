@@ -233,8 +233,8 @@ const HealthMetricsTracker: React.FC = () => {
                       <span className="material-icons text-blue-600 text-xl">add</span>
                     </div>
                     <div>
-                      <DialogTitle className="text-2xl font-bold text-blue-900">Add Health Metric</DialogTitle>
-                      <p className="text-sm text-blue-700">Track your health measurements and vital signs</p>
+                              <DialogTitle className="text-2xl font-bold text-blue-900">{t('addHealthMetric')}</DialogTitle>
+        <p className="text-sm text-blue-700">{t('trackHealthMeasurements')}</p>
                     </div>
                   </div>
                   <Button
@@ -303,7 +303,7 @@ const HealthMetricsTracker: React.FC = () => {
                       step="0.1"
                       value={metricForm.value}
                       onChange={(e) => setMetricForm(prev => ({ ...prev, value: e.target.value }))}
-                      placeholder="Enter value"
+                      placeholder={t('enterValue')}
                       className="h-11 focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -316,7 +316,7 @@ const HealthMetricsTracker: React.FC = () => {
                     id="notes"
                     value={metricForm.notes}
                     onChange={(e) => setMetricForm(prev => ({ ...prev, notes: e.target.value }))}
-                    placeholder="Additional notes"
+                    placeholder={t('additionalNotes')}
                     className="h-11 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -350,7 +350,7 @@ const HealthMetricsTracker: React.FC = () => {
           <div className="space-y-4">
             {/* Recent Metrics */}
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900">Recent Measurements</h4>
+              <h4 className="font-medium text-gray-900">{t('recentMeasurements')}</h4>
               {metrics.slice(0, 5).map((metric) => {
                 const status = getMetricStatus(metric);
                 return (
@@ -391,7 +391,7 @@ const HealthMetricsTracker: React.FC = () => {
             {/* Chart */}
             {chartData.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">7-Day Trend</h4>
+                <h4 className="font-medium text-gray-900 mb-3">{t('sevenDayTrend')}</h4>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
@@ -414,8 +414,8 @@ const HealthMetricsTracker: React.FC = () => {
             {metrics.length === 0 && (
               <div className="text-center py-4">
                 <span className="material-icons text-gray-400 text-3xl mb-2">monitor_heart</span>
-                <p className="text-gray-500">No health metrics recorded yet</p>
-                <p className="text-sm text-gray-400">Start tracking your health metrics</p>
+                <p className="text-gray-500">{t('noHealthMetricsRecorded')}</p>
+                <p className="text-sm text-gray-400">{t('startTrackingHealthMetrics')}</p>
               </div>
             )}
           </div>

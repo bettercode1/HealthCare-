@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { X, User, Shield, FlaskConical, Stethoscope } from 'lucide-react';
+import BettercodeLogo from './BettercodeLogo';
 
 interface LoginModalProps {
   isVisible: boolean;
@@ -24,7 +25,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isVisible, onClose }) => {
   const demoUsers = [
     {
       email: 'patient@demo.com',
-      password: 'password123',
+      password: t('demoPassword'),
       role: t('patient'),
       icon: User,
       color: 'bg-blue-600 hover:bg-blue-700',
@@ -32,7 +33,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isVisible, onClose }) => {
     },
     {
       email: 'doctor@demo.com',
-      password: 'password123',
+      password: t('demoPassword'),
       role: t('doctor'),
       icon: Stethoscope,
       color: 'bg-green-600 hover:bg-green-700',
@@ -40,7 +41,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isVisible, onClose }) => {
     },
     {
       email: 'lab@demo.com',
-      password: 'password123',
+      password: t('demoPassword'),
       role: t('lab'),
       icon: FlaskConical,
       color: 'bg-purple-600 hover:bg-purple-700',
@@ -208,8 +209,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isVisible, onClose }) => {
           {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
-              {t('demoAccountsUsePassword')}: <span className="font-mono bg-gray-100 px-1 rounded">password123</span>
+              {t('demoAccountsUsePassword')}: <span className="font-mono bg-gray-100 px-1 rounded">{t('demoPassword')}</span>
             </p>
+          </div>
+
+          {/* Bettercode Logo */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <BettercodeLogo variant="minimal" className="justify-center" />
           </div>
         </div>
       </DialogContent>

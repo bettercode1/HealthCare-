@@ -423,7 +423,7 @@ const DoseTracker: React.FC = () => {
                         className="bg-rose-600 hover:bg-rose-700 text-white rounded-full px-6 py-3 font-medium shadow-md hover:shadow-lg transition-all duration-300"
                       >
                         <Check className="w-4 h-4 mr-2" />
-                        Mark Taken
+                        {t('markTaken')}
                       </Button>
                     </div>
                   ))}
@@ -464,7 +464,7 @@ const DoseTracker: React.FC = () => {
                           className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-3 font-medium shadow-md hover:shadow-lg transition-all duration-300"
                         >
                           <Check className="w-4 h-4 mr-2" />
-                          Mark Taken
+                          {t('markTaken')}
                         </Button>
                       )}
                       <Button
@@ -474,7 +474,7 @@ const DoseTracker: React.FC = () => {
                         className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full px-6 py-3 font-medium hover:border-gray-400 transition-all duration-300"
                       >
                         <Info className="w-4 h-4 mr-2" />
-                        Details
+                        {t('details')}
                       </Button>
                     </div>
                   </div>
@@ -497,7 +497,7 @@ const DoseTracker: React.FC = () => {
                 {selectedDose.medicationName}
               </DialogTitle>
               <DialogDescription className="text-lg text-gray-600">
-                Dose details and tracking information
+                {t('doseDetailsAndTrackingInformation')}
               </DialogDescription>
             </DialogHeader>
             

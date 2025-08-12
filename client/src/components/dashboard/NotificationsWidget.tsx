@@ -7,6 +7,7 @@ import { useRealtimeDb } from '@/hooks/useRealtimeDb';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loading, HealthcareLoading } from '@/components/ui/loading';
+import BettercodeLogo from '../BettercodeLogo';
 
 interface Notification {
   id: string;
@@ -103,20 +104,20 @@ const NotificationsWidget: React.FC = () => {
   };
 
   const getTimeAgo = (timestamp: any) => {
-    if (!timestamp?.toDate) return 'Just now';
+    if (!timestamp?.toDate) return t('justNow');
     
     const date = timestamp.toDate();
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1) return t('justNow');
+    if (diffInMinutes < 60) return t('minutesAgo', { minutes: diffInMinutes });
     
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInHours < 24) return t('hoursAgo', { hours: diffInHours });
     
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d ago`;
+    if (diffInDays < 7) return t('daysAgo', { days: diffInDays });
     
     return date.toLocaleDateString();
   };
@@ -229,6 +230,11 @@ const NotificationsWidget: React.FC = () => {
             </Button>
           </div>
         )}
+
+        {/* Bettercode Logo */}
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <BettercodeLogo variant="minimal" className="justify-center" />
+        </div>
       </CardContent>
     </Card>
   );

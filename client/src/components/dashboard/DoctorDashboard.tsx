@@ -722,7 +722,7 @@ const DoctorDashboard: React.FC = () => {
                               id="phone"
                               value={newPatient.phone}
                               onChange={(e) => setNewPatient(prev => ({ ...prev, phone: e.target.value }))}
-                              placeholder="Phone number"
+                              placeholder={t('phoneNumber')}
                               className="h-11 focus:ring-2 focus:ring-green-500"
                               required
                             />
@@ -734,8 +734,7 @@ const DoctorDashboard: React.FC = () => {
                               type="email"
                               value={newPatient.email}
                               onChange={(e) => setNewPatient(prev => ({ ...prev, email: e.target.value }))}
-                              placeholder="Email address"
-                              placeholder="Email address"
+                              placeholder={t('emailAddress')}
                               className="h-11 focus:ring-2 focus:ring-green-500"
                               required
                             />
@@ -747,7 +746,7 @@ const DoctorDashboard: React.FC = () => {
                             <Label htmlFor="gender" className="text-gray-700">Gender</Label>
                             <Select value={newPatient.gender} onValueChange={(value) => setNewPatient(prev => ({ ...prev, gender: value }))}>
                               <SelectTrigger className="h-11 focus:ring-2 focus:ring-green-500">
-                                <SelectValue placeholder="Select gender" />
+                                <SelectValue placeholder={t('selectGender')} />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="Male">Male</SelectItem>
@@ -904,7 +903,7 @@ const DoctorDashboard: React.FC = () => {
                             id="purpose"
                             value={newAppointment.purpose}
                             onChange={(e) => setNewAppointment(prev => ({ ...prev, purpose: e.target.value }))}
-                            placeholder="Appointment purpose"
+                            placeholder={t('appointmentPurpose')}
                             required
                           />
                         </div>
@@ -1130,7 +1129,7 @@ const DoctorDashboard: React.FC = () => {
                             id="treatment"
                             value={newMedicalRecord.treatment}
                             onChange={(e) => setNewMedicalRecord(prev => ({ ...prev, treatment: e.target.value }))}
-                            placeholder="Treatment plan"
+                            placeholder={t('treatmentPlan')}
                           />
                         </div>
 

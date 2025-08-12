@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import PatientDashboard from './PatientDashboard';
 import DoctorDashboard from './DoctorDashboard';
 import LabDashboard from './LabDashboard';
+import BettercodeLogo from './BettercodeLogo';
 
 const DashboardContent: React.FC = () => {
   const { t } = useTranslation();
@@ -51,6 +52,11 @@ const DashboardContent: React.FC = () => {
           {userData.role === 'patient' && <PatientDashboard />}
           {userData.role === 'doctor' && <DoctorDashboard />}
           {userData.role === 'lab' && <LabDashboard />}
+        </div>
+
+        {/* Bettercode Logo */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <BettercodeLogo variant="compact" className="justify-center" />
         </div>
 
       </div>

@@ -55,24 +55,6 @@ interface FamilyMember {
   gender: string;
 }
 
-// Helper function to get status badge
-const getStatusBadge = (status: string, t: any) => {
-  switch (status) {
-    case 'confirmed':
-      return <Badge className="bg-green-100 text-green-800 border-green-200">{t('confirmed')}</Badge>;
-    case 'scheduled':
-      return <Badge className="bg-blue-100 text-blue-800 border-blue-200">{t('scheduled')}</Badge>;
-    case 'pending':
-      return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('pending')}</Badge>;
-    case 'cancelled':
-      return <Badge className="bg-red-100 text-red-800 border-red-200">{t('cancelled')}</Badge>;
-    case 'completed':
-      return <Badge className="bg-gray-100 text-gray-800 border-gray-200">{t('completed')}</Badge>;
-    default:
-      return <Badge className="bg-gray-100 text-gray-800 border-gray-200">{t('unknown')}</Badge>;
-  }
-};
-
 // Helper function to get type icon
 const getTypeIcon = (type: string) => {
   switch (type) {
@@ -304,6 +286,24 @@ const UpcomingAppointments: React.FC = () => {
   const { t } = useTranslation();
   const { userData } = useAuth();
   const { toast } = useToast();
+  
+  // Helper function to get status badge
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return <Badge className="bg-green-100 text-green-800 border-green-200">{t('confirmed')}</Badge>;
+      case 'scheduled':
+        return <Badge className="bg-blue-100 text-blue-800 border-blue-200">{t('scheduled')}</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('pending')}</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-red-100 text-red-800 border-red-200">{t('cancelled')}</Badge>;
+      case 'completed':
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-200">{t('completed')}</Badge>;
+      default:
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-200">{t('unknown')}</Badge>;
+    }
+  };
   
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
@@ -593,8 +593,8 @@ const UpcomingAppointments: React.FC = () => {
     // Validate required fields
     if (!newAppointment.purpose || !newAppointment.dateTime) {
       toast({
-        title: 'Validation Error',
-        description: 'Please fill in all required fields',
+        title: t('error'),
+        description: t('pleaseFillAllRequiredFields'),
         variant: 'destructive',
       });
       return;
@@ -603,8 +603,8 @@ const UpcomingAppointments: React.FC = () => {
     // Validate family member selection for family appointments
     if (newAppointment.isFamilyAppointment && !newAppointment.familyMemberId) {
       toast({
-        title: 'Validation Error',
-        description: 'Please select a family member for family appointments',
+        title: t('error'),
+        description: t('pleaseSelectFamilyMember'),
         variant: 'destructive',
       });
       return;
@@ -662,14 +662,14 @@ const UpcomingAppointments: React.FC = () => {
       setShowAddModal(false);
 
       toast({
-        title: 'Success',
-        description: `Appointment scheduled successfully${newAppointment.isFamilyAppointment ? ` for ${familyMemberName}` : ''}`,
+        title: t('success'),
+        description: `${t('appointmentScheduledSuccessfully')}${newAppointment.isFamilyAppointment ? ` ${t('for')} ${familyMemberName}` : ''}`,
       });
     } catch (error) {
       console.error('Error adding appointment:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to schedule appointment. Please try again.',
+        title: t('error'),
+        description: t('failedToScheduleAppointment'),
         variant: 'destructive',
       });
     }
@@ -1249,7 +1249,7 @@ const UpcomingAppointments: React.FC = () => {
                       <SelectContent>
                         <SelectItem value="all">All Types</SelectItem>
                         <SelectItem value="personal">Personal</SelectItem>
-                        <SelectItem value="family">Family</SelectItem>
+                        <SelectItem value="family">{t('family')}</SelectItem>
                       </SelectContent>
                     </Select>
                     
@@ -1268,7 +1268,7 @@ const UpcomingAppointments: React.FC = () => {
                       <div className="space-y-4">
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <h3 className="text-lg font-semibold text-gray-800">Family Appointments</h3>
+                          <h3 className="text-lg font-semibold text-gray-800">{t('familyAppointments')}</h3>
                           <Badge variant="outline" className="ml-2">{familyAppointments.length}</Badge>
                         </div>
                         <div className="grid gap-4">
@@ -1334,7 +1334,7 @@ const UpcomingAppointments: React.FC = () => {
                       <div className="space-y-4">
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <h3 className="text-lg font-semibold text-gray-800">Family Past Appointments</h3>
+                          <h3 className="text-lg font-semibold text-gray-800">{t('familyPastAppointments')}</h3>
                           <Badge variant="outline" className="ml-2">{familyPastAppointments.length}</Badge>
                         </div>
                         <div className="grid gap-4">
@@ -1351,7 +1351,7 @@ const UpcomingAppointments: React.FC = () => {
                                       <h3 className="font-semibold text-gray-900 truncate">{appointment.purpose}</h3>
                                       {getStatusBadge(appointment.status)}
                                       <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
-                                        Family
+                                        {t('family')}
                                       </Badge>
                                     </div>
                                     

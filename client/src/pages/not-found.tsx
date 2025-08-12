@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import BettercodeLogo from "@/components/BettercodeLogo";
 
 export default function NotFound() {
   const { t } = useTranslation();
@@ -17,6 +18,11 @@ export default function NotFound() {
           <p className="mt-4 text-sm text-gray-600">
             {t('pageNotFoundDescription')}
           </p>
+
+          {/* Bettercode Logo */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <BettercodeLogo variant="minimal" className="justify-center" />
+          </div>
         </CardContent>
       </Card>
     </div>

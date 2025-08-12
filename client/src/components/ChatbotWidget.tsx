@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFirestore } from '@/hooks/useFirestore';
 import { useAuth } from '@/contexts/AuthContext';
+import BettercodeLogo from './BettercodeLogo';
 
 interface Message {
   id: string;
@@ -174,6 +175,11 @@ const ChatbotWidget: React.FC = () => {
                   >
                     <span className="material-icons text-sm">send</span>
                   </Button>
+                </div>
+
+                {/* Bettercode Logo */}
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <BettercodeLogo variant="minimal" className="justify-center" />
                 </div>
               </div>
             </div>

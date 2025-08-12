@@ -405,23 +405,23 @@ const LiveDoseTracker: React.FC = () => {
                 <Activity className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Live Dose Tracker</h1>
-                <p className="text-xl text-gray-600">Real-time medication adherence monitoring</p>
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">{t('liveDoseTracker')}</h1>
+                <p className="text-xl text-gray-600">{t('realTimeMedicationAdherence')}</p>
               </div>
             </div>
             
             <div className="flex items-center gap-6">
               <div className="text-center">
                 <div className="text-3xl font-bold text-gray-900">{todayDoses.length}</div>
-                <div className="text-sm text-gray-600">Total Doses</div>
+                <div className="text-sm text-gray-600">{t('totalDoses')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600">{adherenceRate}%</div>
-                <div className="text-sm text-gray-600">Adherence Rate</div>
+                <div className="text-sm text-gray-600">{t('adherenceRate')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-600">{getUpcomingDoses().length}</div>
-                <div className="text-sm text-gray-600">Upcoming</div>
+                <div className="text-sm text-gray-600">{t('upcoming')}</div>
               </div>
             </div>
           </div>
@@ -433,9 +433,9 @@ const LiveDoseTracker: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-purple-600 mb-1">Overall Adherence</p>
+                  <p className="text-sm font-semibold text-purple-600 mb-1">{t('overallAdherence')}</p>
                   <p className="text-3xl font-bold text-purple-900">{adherenceRate}%</p>
-                  <p className="text-xs text-purple-600 mt-1">This month</p>
+                  <p className="text-xs text-purple-600 mt-1">{t('thisMonth')}</p>
                 </div>
                 <div className="w-14 h-14 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg">
                   <TrendingUp className="w-7 h-7 text-white" />
@@ -448,9 +448,9 @@ const LiveDoseTracker: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-green-600 mb-1">Doses Taken</p>
+                  <p className="text-sm font-semibold text-green-600 mb-1">{t('dosesTaken')}</p>
                   <p className="text-3xl font-bold text-green-900">{takenDoses}</p>
-                  <p className="text-xs text-green-600 mt-1">Today</p>
+                  <p className="text-xs text-green-600 mt-1">{t('today')}</p>
                 </div>
                 <div className="w-14 h-14 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
                   <CheckCircle className="w-7 h-7 text-white" />
@@ -463,9 +463,9 @@ const LiveDoseTracker: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-yellow-600 mb-1">Pending</p>
+                  <p className="text-sm font-semibold text-yellow-600 mb-1">{t('pending')}</p>
                   <p className="text-3xl font-bold text-yellow-900">{pendingDoses}</p>
-                  <p className="text-xs text-yellow-600 mt-1">Remaining</p>
+                  <p className="text-xs text-yellow-600 mt-1">{t('remaining')}</p>
                 </div>
                 <div className="w-14 h-14 bg-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
                   <Clock className="w-7 h-7 text-white" />
@@ -478,9 +478,9 @@ const LiveDoseTracker: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-red-600 mb-1">Overdue</p>
+                  <p className="text-sm font-semibold text-red-600 mb-1">{t('overdue')}</p>
                   <p className="text-3xl font-bold text-red-900">{getOverdueDoses().length}</p>
-                  <p className="text-xs text-red-600 mt-1">Missed doses</p>
+                  <p className="text-xs text-red-600 mt-1">{t('missedDoses')}</p>
                 </div>
                 <div className="w-14 h-14 bg-red-500 rounded-xl flex items-center justify-center shadow-lg">
                   <AlertTriangle className="w-7 h-7 text-white" />
@@ -496,7 +496,7 @@ const LiveDoseTracker: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-orange-800 text-xl">
                 <Timer className="w-6 h-6" />
-                <span>Due Now - Take Your Medication</span>
+                <span>{t('dueNowTakeMedication')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -519,7 +519,7 @@ const LiveDoseTracker: React.FC = () => {
                   className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-xl text-lg font-semibold"
                 >
                   <CheckCircle className="w-5 h-5 mr-2" />
-                  Mark Taken
+                  {t('markTaken')}
                 </Button>
               </div>
             </CardContent>
@@ -534,8 +534,8 @@ const LiveDoseTracker: React.FC = () => {
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-gray-900">Today's Doses</CardTitle>
-                <CardDescription className="text-lg">Manage your medication schedule</CardDescription>
+                        <CardTitle className="text-2xl font-bold text-gray-900">{t('todaysDoses')}</CardTitle>
+        <CardDescription className="text-lg">{t('manageMedicationSchedule')}</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -545,8 +545,8 @@ const LiveDoseTracker: React.FC = () => {
                 <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Pill className="w-10 h-10 text-purple-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">No doses scheduled for today</h3>
-                <p className="text-gray-600 text-lg">Your medications will appear here when scheduled</p>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('noDosesScheduledToday')}</h3>
+        <p className="text-gray-600 text-lg">{t('medicationsWillAppearHere')}</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -579,7 +579,7 @@ const LiveDoseTracker: React.FC = () => {
                                 const now = new Date();
                                 if (isNaN(scheduledTime.getTime())) return null;
                                 return scheduledTime < now ? (
-                                  <Badge className="bg-red-100 text-red-800 border-red-200">Overdue</Badge>
+                                  <Badge className="bg-red-100 text-red-800 border-red-200">{t('overdue')}</Badge>
                                 ) : null;
                               } catch (error) {
                                 console.error('Error checking overdue status:', error);
@@ -594,7 +594,7 @@ const LiveDoseTracker: React.FC = () => {
                             {formatTime(dose.scheduledTime)} • {getAdministrationLabel(dose.administrationMethod)}
                           </p>
                           {dose.actualTime && (
-                            <p className="text-sm text-green-600 font-semibold">✓ Taken: {formatTime(dose.actualTime)}</p>
+                            <p className="text-sm text-green-600 font-semibold">✓ {t('taken')}: {formatTime(dose.actualTime)}</p>
                           )}
                         </div>
                       </div>
@@ -608,7 +608,7 @@ const LiveDoseTracker: React.FC = () => {
                               className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
                             >
                               <CheckCircle className="w-4 h-4 mr-2" />
-                              Mark Taken
+                              {t('markTaken')}
                             </Button>
                             <Button
                               size="sm"
@@ -659,21 +659,21 @@ const LiveDoseTracker: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900">Medication</div>
-                      <div className="text-lg">{selectedDose.medicationName}</div>
+                                  <div className="font-medium text-gray-900">{t('medication')}</div>
+            <div className="text-lg">{selectedDose.medicationName}</div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900">Dosage</div>
-                      <div className="text-lg">{selectedDose.dosage} {selectedDose.doseStrength}</div>
+                                  <div className="font-medium text-gray-900">{t('dosage')}</div>
+            <div className="text-lg">{selectedDose.dosage} {selectedDose.doseStrength}</div>
                     </div>
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900">Scheduled Time</div>
-                      <div className="text-lg">{formatTime(selectedDose.scheduledTime)}</div>
+                                  <div className="font-medium text-gray-900">{t('scheduledTime')}</div>
+            <div className="text-lg">{formatTime(selectedDose.scheduledTime)}</div>
                     </div>
                     {selectedDose.actualTime && (
                       <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div className="font-medium text-green-900">Taken At</div>
-                        <div className="text-lg text-green-700">{formatTime(selectedDose.actualTime)}</div>
+                                    <div className="font-medium text-green-900">{t('takenAt')}</div>
+            <div className="text-lg text-green-700">{formatTime(selectedDose.actualTime)}</div>
                       </div>
                     )}
                   </div>
@@ -681,8 +681,8 @@ const LiveDoseTracker: React.FC = () => {
                   <div className="space-y-4">
                     {selectedDose.instructions && (
                       <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="font-medium text-blue-900 mb-2">Instructions</div>
-                        <div className="text-sm text-blue-800">{selectedDose.instructions}</div>
+                                    <div className="font-medium text-blue-900 mb-2">{t('instructions')}</div>
+            <div className="text-sm text-blue-800">{selectedDose.instructions}</div>
                       </div>
                     )}
                     

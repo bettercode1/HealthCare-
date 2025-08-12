@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, FileText, Image, X, CheckCircle, AlertCircle, XCircle, Calendar } from 'lucide-react';
+import BettercodeLogo from './BettercodeLogo';
 
 interface FileUploadProps {
   type: 'prescription' | 'report';
@@ -687,6 +688,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ type, onUploadComplete }) => {
           </div>
         )}
       </CardContent>
+
+      {/* Bettercode Logo */}
+      <div className="mt-6 pt-4 border-t border-gray-200">
+        <BettercodeLogo variant="minimal" className="justify-center" />
+      </div>
     </Card>
   );
 };

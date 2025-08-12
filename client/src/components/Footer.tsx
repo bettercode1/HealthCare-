@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import BettercodeLogo from './BettercodeLogo';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
@@ -52,6 +53,11 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-300">{t('copyright')}</p>
+          
+          {/* Bettercode Logo Section */}
+          <div className="mt-4">
+            <BettercodeLogo variant="default" />
+          </div>
         </div>
       </div>
     </footer>
