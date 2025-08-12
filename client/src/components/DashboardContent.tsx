@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import i18n from '@/lib/i18n';
 import { useAuth } from '@/contexts/AuthContext';
 import PatientDashboard from './PatientDashboard';
 import DoctorDashboard from './DoctorDashboard';
@@ -35,7 +36,7 @@ const DashboardContent: React.FC = () => {
             <div className="flex items-center space-x-4 flex-shrink-0">
               <div className="text-right">
                 <p className="text-sm text-gray-500">{t('lastLogin')}</p>
-                <p className="font-medium text-sm sm:text-base">{new Date().toLocaleDateString()}</p>
+                <p className="font-medium text-sm sm:text-base">{new Date().toLocaleDateString(i18n.language === 'hi' ? 'hi-IN' : i18n.language === 'mr' ? 'mr-IN' : 'en-US')}</p>
               </div>
               <div 
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white flex-shrink-0"

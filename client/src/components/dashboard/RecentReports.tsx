@@ -68,8 +68,8 @@ const RecentReports: React.FC = () => {
     try {
       // Show extraction status
       toast({
-        title: 'Extracting Data',
-        description: 'Analyzing PDF content...',
+        title: t('extractingData'),
+        description: t('analyzingPdfContent'),
       });
 
       // In production, you would use a PDF parsing library like pdf-parse or pdf.js
@@ -88,61 +88,61 @@ const RecentReports: React.FC = () => {
 
       if (fileName.includes('blood') || fileName.includes('cbc') || fileName.includes('metabolic')) {
         extractedData = {
-          title: 'Blood Test Report',
-          reportType: 'Blood Test',
-          labName: 'City Medical Laboratory',
-          doctorName: 'Dr. Sarah Johnson',
-          notes: 'Complete blood count and comprehensive metabolic panel'
+          title: t('bloodTestReport'),
+          reportType: t('bloodTest'),
+          labName: t('cityMedicalLaboratory'),
+          doctorName: t('drSarahJohnson'),
+          notes: t('completeBloodCountAndComprehensiveMetabolicPanel')
         };
       } else if (fileName.includes('xray') || fileName.includes('x-ray') || fileName.includes('chest')) {
         extractedData = {
-          title: 'Chest X-Ray Report',
-          reportType: 'X-Ray',
-          labName: 'Radiology Department',
-          doctorName: 'Dr. Michael Chen',
-          notes: 'Chest X-ray examination for respiratory assessment'
+          title: t('chestXrayReport'),
+          reportType: t('xray'),
+          labName: t('radiologyDepartment'),
+          doctorName: t('drMichaelChen'),
+          notes: t('chestXrayExaminationForRespiratoryAssessment')
         };
       } else if (fileName.includes('mri') || fileName.includes('brain') || fileName.includes('head')) {
         extractedData = {
-          title: 'Brain MRI Report',
-          reportType: 'MRI',
-          labName: 'Advanced Imaging Center',
-          doctorName: 'Dr. Emily Rodriguez',
-          notes: 'Magnetic resonance imaging of the brain'
+          title: t('brainMriReport'),
+          reportType: t('mri'),
+          labName: t('advancedImagingCenter'),
+          doctorName: t('drEmilyRodriguez'),
+          notes: t('magneticResonanceImagingOfTheBrain')
         };
       } else if (fileName.includes('ecg') || fileName.includes('ekg') || fileName.includes('cardio')) {
         extractedData = {
-          title: 'Electrocardiogram Report',
-          reportType: 'ECG',
-          labName: 'Cardiology Department',
-          doctorName: 'Dr. James Wilson',
-          notes: '12-lead electrocardiogram examination'
+          title: t('electrocardiogramReport'),
+          reportType: t('ecg'),
+          labName: t('cardiologyDepartment'),
+          doctorName: t('drJamesWilson'),
+          notes: t('twelveLeadElectrocardiogramExamination')
         };
       } else if (fileName.includes('urine') || fileName.includes('urinalysis')) {
         extractedData = {
-          title: 'Urine Analysis Report',
-          reportType: 'Urine Test',
-          labName: 'Clinical Laboratory',
-          doctorName: 'Dr. Lisa Thompson',
-          notes: 'Urinalysis and microscopic examination'
+          title: t('urineAnalysisReport'),
+          reportType: t('urineTest'),
+          labName: t('clinicalLaboratory'),
+          doctorName: t('drLisaThompson'),
+          notes: t('urinalysisAndMicroscopicExamination')
         };
       } else if (fileName.includes('prescription') || fileName.includes('rx')) {
         extractedData = {
-          title: 'Prescription',
-          reportType: 'Prescription',
-          labName: 'Pharmacy',
-          doctorName: 'Dr. Healthcare Provider',
-          notes: 'Medical prescription document'
+          title: t('prescription'),
+          reportType: t('prescription'),
+          labName: t('pharmacy'),
+          doctorName: t('drHealthcareProvider'),
+          notes: t('medicalPrescriptionDocument')
         };
       } else {
         // Generic extraction for other files with better naming
         const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
         extractedData = {
           title: cleanName.charAt(0).toUpperCase() + cleanName.slice(1),
-          reportType: 'Medical Report',
-          labName: 'Medical Center',
-          doctorName: 'Dr. Healthcare Provider',
-          notes: 'Medical report document'
+          reportType: t('medicalReport'),
+          labName: t('medicalCenter'),
+          doctorName: t('drHealthcareProvider'),
+          notes: t('medicalReportDocument')
         };
       }
 
@@ -155,16 +155,16 @@ const RecentReports: React.FC = () => {
       // Delay the success toast to avoid conflicts
       setTimeout(() => {
         toast({
-          title: 'Data Extracted',
-          description: 'Information has been automatically extracted from the PDF',
+          title: t('dataExtracted'),
+          description: t('informationHasBeenAutomaticallyExtracted'),
         });
       }, 500);
 
     } catch (error) {
       console.error('PDF extraction error:', error);
       toast({
-        title: 'Extraction Failed',
-        description: 'Could not extract data from PDF. Please fill manually.',
+        title: t('extractionFailed'),
+        description: t('couldNotExtractDataFromPdf'),
         variant: 'destructive',
       });
     } finally {
@@ -184,10 +184,10 @@ const RecentReports: React.FC = () => {
       setUploadForm(prev => ({
         ...prev,
         title: fileName.charAt(0).toUpperCase() + fileName.slice(1).replace(/[-_]/g, ' '),
-        reportType: file.type.startsWith('image/') ? 'Image Report' : 'Document Report',
-        labName: prev.labName || 'Medical Center',
-        doctorName: prev.doctorName || 'Dr. Healthcare Provider',
-        notes: prev.notes || `${file.type.startsWith('image/') ? 'Image' : 'Document'} report`
+        reportType: file.type.startsWith('image/') ? t('imageReport') : t('documentReport'),
+        labName: prev.labName || t('medicalCenter'),
+        doctorName: prev.doctorName || t('drHealthcareProvider'),
+        notes: prev.notes || `${file.type.startsWith('image/') ? t('imageReportDocument') : t('documentReportDocument')}`
       }));
     }
   };
@@ -226,14 +226,14 @@ const RecentReports: React.FC = () => {
       setShowUploadModal(false);
 
       toast({
-        title: 'Success',
-        description: 'Report uploaded successfully',
+        title: t('success'),
+        description: t('reportUploadedSuccessfully'),
       });
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to upload report',
+        title: t('error'),
+        description: t('failedToUploadReport'),
         variant: 'destructive',
       });
     } finally {
@@ -254,19 +254,19 @@ const RecentReports: React.FC = () => {
   };
 
   const handleDeleteReport = async (reportId: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+    if (!confirm(t('areYouSureYouWantToDelete', { title }))) return;
 
     try {
       await removeReport(reportId);
       toast({
-        title: 'Success',
-        description: 'Report deleted successfully',
+        title: t('success'),
+        description: t('reportDeletedSuccessfully'),
       });
     } catch (error) {
       console.error('Delete error:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to delete report',
+        title: t('error'),
+        description: t('failedToDeleteReport'),
         variant: 'destructive',
       });
     }
@@ -315,9 +315,9 @@ const RecentReports: React.FC = () => {
                   <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                     <span className="material-icons text-2xl text-blue-600">upload</span>
                   </div>
-                  <DialogTitle className="text-2xl font-bold text-gray-900">Upload Medical Report</DialogTitle>
+                  <DialogTitle className="text-2xl font-bold text-gray-900">{t('uploadMedicalReport')}</DialogTitle>
                   <DialogDescription className="text-gray-600">
-                    Upload your medical reports, prescriptions, or lab results for AI analysis
+                    {t('uploadYourMedicalReports')}
                   </DialogDescription>
                 </DialogHeader>
                 
@@ -326,13 +326,13 @@ const RecentReports: React.FC = () => {
                     <div className="space-y-2">
                       <Label htmlFor="title" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                        Report Title *
+                        {t('reportTitle')}
                       </Label>
                       <Input
                         id="title"
                         value={uploadForm.title}
                         onChange={(e) => setUploadForm(prev => ({ ...prev, title: e.target.value }))}
-                        placeholder="e.g., Blood Test Results - January 2024"
+                        placeholder={t('eGBloodTestResultsJanuary2024')}
                         required
                         className="h-11 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       />
@@ -342,13 +342,13 @@ const RecentReports: React.FC = () => {
                       <div className="space-y-2">
                         <Label htmlFor="reportType" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                           <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                          Report Type *
+                          {t('reportType')}
                         </Label>
                         <Input
                           id="reportType"
                           value={uploadForm.reportType}
                           onChange={(e) => setUploadForm(prev => ({ ...prev, reportType: e.target.value }))}
-                          placeholder="e.g., Blood Test, X-Ray, MRI"
+                          placeholder={t('eGBloodTestXrayMri')}
                           required
                           className="h-11 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         />
@@ -357,13 +357,13 @@ const RecentReports: React.FC = () => {
                       <div className="space-y-2">
                         <Label htmlFor="labName" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                           <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                          Lab/Clinic Name
+                          {t('labClinicName')}
                         </Label>
                         <Input
                           id="labName"
                           value={uploadForm.labName}
                           onChange={(e) => setUploadForm(prev => ({ ...prev, labName: e.target.value }))}
-                          placeholder="e.g., City Medical Laboratory"
+                          placeholder={t('eGCityMedicalLaboratory')}
                           className="h-11 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         />
                       </div>
@@ -373,13 +373,13 @@ const RecentReports: React.FC = () => {
                       <div className="space-y-2">
                         <Label htmlFor="doctorName" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                           <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                          Doctor Name
+                          {t('doctorName')}
                         </Label>
                         <Input
                           id="doctorName"
                           value={uploadForm.doctorName}
                           onChange={(e) => setUploadForm(prev => ({ ...prev, doctorName: e.target.value }))}
-                          placeholder="e.g., Dr. Sarah Johnson"
+                          placeholder={t('eGDrSarahJohnson')}
                           className="h-11 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         />
                       </div>
@@ -388,13 +388,13 @@ const RecentReports: React.FC = () => {
                     <div className="space-y-2">
                       <Label htmlFor="description" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                        Additional Notes
+                        {t('additionalNotes')}
                       </Label>
                       <Textarea
                         id="description"
                         value={uploadForm.notes}
                         onChange={(e) => setUploadForm(prev => ({ ...prev, notes: e.target.value }))}
-                        placeholder="Any additional notes, symptoms, or context about this report..."
+                        placeholder={t('anyAdditionalNotesSymptomsOrContext')}
                         rows={3}
                         className="border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
                       />
@@ -403,7 +403,7 @@ const RecentReports: React.FC = () => {
                     <div className="space-y-4">
                       <Label htmlFor="file" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                         <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                        Report File *
+                        {t('reportFile')}
                       </Label>
                       <FileUploadPopup
                         onFileSelect={handleFileSelect}
@@ -412,7 +412,7 @@ const RecentReports: React.FC = () => {
                         accept=".pdf,.jpg,.jpeg,.png"
                         maxSize={15}
                         label=""
-                        placeholder="Choose medical report file"
+                        placeholder={t('chooseMedicalReportFile')}
                         className="w-full"
                       />
                     </div>
@@ -426,7 +426,7 @@ const RecentReports: React.FC = () => {
                     onClick={() => setShowUploadModal(false)}
                     className="flex-1 h-11 border-gray-300 hover:bg-gray-50"
                   >
-                    Cancel
+                    {t('cancel')}
                   </Button>
                   <Button
                     type="submit"
@@ -437,12 +437,12 @@ const RecentReports: React.FC = () => {
                     {isSubmitting ? (
                       <div className="flex items-center justify-center">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        {isExtractingData ? 'Extracting Data...' : 'Uploading...'}
+                        {isExtractingData ? t('extractingDataLoading') : t('uploading')}
                       </div>
                     ) : (
                       <div className="flex items-center justify-center">
                         <span className="material-icons mr-2">cloud_upload</span>
-                        Upload Report
+                        {t('uploadReportButton')}
                       </div>
                     )}
                   </Button>
